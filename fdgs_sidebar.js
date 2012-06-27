@@ -1,7 +1,3 @@
-// var FDGS_BASE_DOMAIN = "findings.com";
-// var FDGS_LOGGING_ENABLED = true;
-// var FDGS_DISABLE_CACHING = false;
-
 var FDGS = {};
 	var date = new Date();
 	

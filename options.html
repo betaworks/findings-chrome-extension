@@ -1,0 +1,48 @@
+<html>
+<head><title>Findings Extension Options</title></head>
+
+<style>
+  #status { color: red;font-size: 18px; }
+  #options { position: relative; margin: 20px auto; width: 500px; }
+</style>
+<script type="text/javascript">
+// Saves options to localStorage.
+function save_options() {
+  var checkit = document.getElementById("isDev");
+  var domain = document.getElementById("devDomain");
+  var status = document.getElementById("status");
+
+  localStorage["isDev"] = checkit.checked;
+  localStorage["devDomain"] = domain.value;
+
+  status.innerHTML = "Saved!";
+
+  //console.log("localStorage['isDev'] = " + localStorage["isDev"]);
+  //console.log("localStorage['devDomain'] = " + localStorage["devDomain"]);
+
+  setTimeout(function() { status.innerHTML = "";}, 750);
+}
+
+// Restores select box state to saved value from localStorage.
+function restore_options() {
+  var checkit = document.getElementById("isDev");
+  var domain = document.getElementById("devDomain");
+
+  var isDev = eval(localStorage["isDev"]) || false;
+  var devDomain = localStorage["devDomain"] || "dev.findings.com";
+
+  domain.value = devDomain;
+  checkit.checked = isDev;
+}
+
+</script>
+<body onload="restore_options()">
+<div id="options">
+  <h1>Findings.com Extension Options</h1>
+  
+  <input type="checkbox" id="isDev" value="1" onClick="save_options()"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="save_options()">)
+
+  <div id="status" style=""></div>
+</div>
+</body>
+</html>
