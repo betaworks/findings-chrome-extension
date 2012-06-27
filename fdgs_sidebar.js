@@ -24,8 +24,13 @@ var FDGS = {};
 
 		loader: function() {
 			var me = this;
-			var d=new Date();
-			var r=d.getTime();
+			var r = "";
+			
+			if(FDGS_DISABLE_CACHING) {
+				var d=new Date();
+				r=d.getTime();
+			}
+
 			var e=document.createElement('script');
 			var scriptURL =  FDGS.protocol + FDGS_BASE_DOMAIN + '/extension/loader?'+r;
 			FDGS.log("loading " + scriptURL);
