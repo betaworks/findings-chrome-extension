@@ -11,14 +11,20 @@ function save_options() {
   var checkit = document.getElementById("isDev");
   var domain = document.getElementById("devDomain");
   var status = document.getElementById("status");
+  var badgeText = "";
 
   localStorage["isDev"] = checkit.checked;
   localStorage["devDomain"] = domain.value;
 
   status.innerHTML = "Saved!";
 
-  //console.log("localStorage['isDev'] = " + localStorage["isDev"]);
-  //console.log("localStorage['devDomain'] = " + localStorage["devDomain"]);
+  if(eval(localStorage['isDev'])) {
+    badgeText = "DEV!";
+  } else {
+    badgeText = "";
+  }
+
+  chrome.browserAction.setBadgeText({"text": badgeText});
 
   setTimeout(function() { status.innerHTML = "";}, 750);
 }
