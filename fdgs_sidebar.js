@@ -1,13 +1,13 @@
-var FDGS_BASE_DOMAIN = "dev.findings.com";
-var FDGS_LOGGING_ENABLED = true;
-var FDGS_DISABLE_CACHING = false;
+// var FDGS_BASE_DOMAIN = "findings.com";
+// var FDGS_LOGGING_ENABLED = true;
+// var FDGS_DISABLE_CACHING = false;
 
 var FDGS = {};
 	var date = new Date();
 	
 	FDGS = {
 		tab: {},
-		protocol: "http",
+		protocol: document.location.protocol + "//",
 		loaded: false,
 		started: date.getTime(),
 
@@ -26,19 +26,12 @@ var FDGS = {};
             }
         },
 
-		setProtocol: function(tab) { 
-			var me = this;
-			if(window.search.indexOf("https") > 0) {
-				me.protocol = "https";
-			}
-		}, 
-
 		loader: function() {
 			var me = this;
 			var d=new Date();
 			var r=d.getTime();
 			var e=document.createElement('script');
-			var scriptURL = document.location.protocol + "//" + FDGS_BASE_DOMAIN + '/extension/loader?'+r;
+			var scriptURL =  FDGS.protocol + FDGS_BASE_DOMAIN + '/extension/loader?'+r;
 			FDGS.log("loading " + scriptURL);
 
 			e.setAttribute('type','text/javascript');
