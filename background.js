@@ -59,7 +59,7 @@ var app = {
 		//check to see if the user is logged into Findings
 		this.findingsUser = {
 			"isLoggedIn": true,
-			"username": "blah"
+			"username": "corey"
 		}
 	},
 

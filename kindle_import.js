@@ -6,57 +6,28 @@ var kindle_importer = {
 	upcomingAsins: [],
 	usedAsins: [],
 	processedAsins: [],
+	statusDisplayQueue: [{"asin": "", "coverImg": "", "total": 0}],
 	importData: [],
-	readyToSend: false,
     currentBook: {"asin": "", "coverImg": "", "processing": false, "init": function(asin) {this.asin = asin; this.coverImg=""; this.processing=false; }},
-    highlight_total: -1,
+    highlightTotal: 0,
     importKey: -1,
-    post_url: "//" + this.baseDomain + "/bookmarklet/kindlesync/" + this.import_key,
+    postURL: "",
+    statusURL: "",
+	processing: false,
     amazonLoggedIn: false,
 
-	// paginate: function() {
-	// 	readyForNextBook=false;
-	// 	var a={
-	// 		"used_asins[]":usedAsins,
-	// 		current_offset:currentOffset
-	// 	};
-	// 	if(upcomingAsins.length>0){
-	// 		a["upcoming_asins[]"]=upcomingAsins
+	// getUpcomingAsins: function() {
+	// 	var body = $("body");
+	// 	return body.find(".upcoming").text().split(",")
+
+	// },
+
+	// getUsedAsins: function() {
+	// 	var body = $("body");
+	// 	if (body.find(".skipped").size() == 1) {
+	// 	    this.usedAsins.push(body.find(".skipped").text())
 	// 	}
-	// 	$.ajax({
-	// 		url:"https://kindle.amazon.com/your_highlights/next_book",
-	// 		data:a,
-	// 		success:function(e){
-	// 			if(e.length==0){
-	// 				$("#stillLoadingBooks").remove()
-	// 			} else {
-	// 				$("#allHighlightedBooks").append(e);
-	// 				var d=e.indexOf('id="',0)+4;
-	// 				var b=e.indexOf('"',d);
-	// 				var c=$("#"+e.substring(d,b));
-	// 				recordLatestState(c);
-	// 				if(nearPageBottom()){
-	// 					addNextBook()
-	// 				} else {
-	// 					readyForNextBook=true
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// )},
-
-	getUpcomingAsins: function() {
-		var body = $("body");
-		return body.find(".upcoming").text().split(",")
-
-	},
-
-	getUsedAsins: function() {
-		var body = $("body");
-		if (body.find(".skipped").size() == 1) {
-		    this.usedAsins.push(body.find(".skipped").text())
-		}
-	},
+	// },
 
 	//AMAZON'S PAGINATION CODE
 	// addNextBook: function() {
@@ -92,9 +63,10 @@ var kindle_importer = {
 
 	getNextPage: function() {
 		FDGS.log("Getting next page...");
+
 		var _this = this;
 		var page = {};
-		if(!_this.readyToSend) {
+		if(_this.processing) {
 			$.get(_this.nextPageURL, _this.nextPageData, function(src) {
 				page = $(src);
 				//FDGS.log(src);
@@ -108,27 +80,22 @@ var kindle_importer = {
 				_this.getBooks(bookMains);
 			}, "html");
 		} else {
-			FDGS.log("About to send all highlights to Findings...", true);
-			FDGS.log(_this.importData);
+			FDGS.log("Import complete!", true);
+			_this.processing = false;
+			//FDGS.log(_this.importData);
 		}
 	},
 
 	getBooks: function(bookMains) {
         var _this = this;
-        //FDGS.log(content);
-		//
-		// if(bookMains.length == 0) {
-		// 	bookMains = $(content);
-		// }
 
-        FDGS.log(bookMains);
+        //FDGS.log(bookMains);
 
         bookMains.each(function() {
             var currBookMain = $(this);
             var currAsin = $(this).attr("id").substring(0, $(this).attr("id").lastIndexOf("_"));
             var coverImg = "http://images.amazon.com/images/P/" + currAsin + ".01.TZZ.jpg";
             var offset = $(this).attr("id").split("_")[1];
-            FDGS.log("offset = " + offset);
             _this.nextPageData.offset = offset;
             
             if($.inArray(currAsin, _this.processedAsins) < 0) {
@@ -137,19 +104,19 @@ var kindle_importer = {
                 _this.getHighlightJSON(currBookMain, currAsin, function() {
                     _this.processedAsins.push(currAsin);
                     _this.nextPageData.used_asins.push(currAsin);
-                    _this.getNextPage();
-                    //_this.nextPageURL = "https://kindle.amazon.com/your_highlights/next_book"; //needs to be passed without querystring after the first page
+                    _this.postClipsForBook(); //calls getImportStatus, which calls getNextPage() if necessary
                 });
             } else {
             	FDGS.log("Duplicate book found! ASIN: " + currAsin);
             }
         });
     },
-
     
     getHighlightJSON: function(book, asin, callback) {
         var _this = this;
         var clipdata = [];
+
+		_this.importData = []; //clear out previously processed books
 
         //replace HTML control chars
         var title = book.find(".title").text();
@@ -226,8 +193,72 @@ var kindle_importer = {
         if(typeof(callback) != "undefined") callback();
     },
 
+    postClipsForBook: function() {
+    	var _this = this;
+
+    	FDGS.log(_this.importData);
+
+    	$.post(_this.postURL, {"clipdata": JSON.stringify(_this.importData)}, function() {
+    		_this.getImportStatus();
+    	});
+    },
+
+	getImportStatus: function() {
+	    var _this = this;
+
+	    $.getJSON(_this.statusURL, function(response) {
+	        
+	        var last_highlightTotal = _this.highlightTotal;
+	        var docs = response.documents;
+	        var active = false;
+	        
+	        if(response.active) {
+	        	active = true;
+
+	            if(docs.length > 0) {
+	                if(docs[0].count > 0) _this.statusDisplayQueue.highlightTotal = 0; //reset total each time
+
+	                //if($.inArray(_this.currentBook.asin, docs) && $.inArray(_this.currentBook.asin, _this.processed_asins) < 0) {
+	                $.each(docs, function() {
+	                    if($.inArray(this.asin, _this.statusDisplayQueue.displayed_asins) < 0 && $.inArray(this.asin, _this.statusDisplayQueue.upcoming_asins) < 0) {
+	                        var book = {};
+	                        var coverImg = "http://images.amazon.com/images/P/" + this.asin + ".01.TZZ.jpg";
+	            
+	                        book.asin = this.asin;
+	                        book.coverImg = coverImg;
+	                        book.total = this.count;
+
+	                        _this.statusDisplayQueue.unshift(book);
+	                        FDGS.log("added " + book.asin + " to list of books to display");
+	                    }
+	                });
+	            }
+	            
+
+	            //update the aggregate total
+	            for(var i=0; i<docs.length; i++) {
+	                _this.highlightTotal += docs[i].count;
+	            }
+
+	            //now retrieve the next set of highlights
+	            _this.getNextPage();
+
+	        } else {
+	            FDGS.log("import reported as closed")
+	            _this.processing = false;
+	        }
+	    });
+	    
+	    $(".FDGS_main").css("height", document.height+100);
+	    
+	    if(typeof(callback) != "undefined") callback();
+	},
+
 	beginImport: function() {
 		var _this = this;
+
+		//we're now processsing highlights
+		_this.processing = true;
 
 		$.get(_this.highlightsURL, function(src) {
 			var source = $(src).filter("#wholePage");
@@ -252,13 +283,15 @@ var kindle_importer = {
 		var username = FDGS.findingsUser.username || "noname";
 		var d = new Date();
 		key = d.getTime() + username;
-		FDGS.log("This session's import key is " + key, true);
 		return key;
 	},
 
 	start: function() {
 		FDGS.log("Initiating background Kindle import...", true);
 		this.importKey = this.generateImportKey();
+		FDGS.log("This session's import key is " + this.importKey, true);
+	    this.postURL = "https://" + FDGS_BASE_DOMAIN + "/bookmarklet/kindlesync/" + this.importKey,
+	    this.statusURL =  "https://" + FDGS_BASE_DOMAIN + "/bookmarklet/kindlesync/" + this.importKey + "?callback=?",
 		this.beginImport();
 		return this;
 	}
