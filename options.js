@@ -22,10 +22,9 @@
       }
 
       chrome.browserAction.setBadgeText({"text": badgeText});
-    },
 
-    getFindingsLoginStatus: function() {
-      $.getJSON("")
+      this.setEnvironment();
+      this.setBadgeText();
     },
 
     // Restores select box state to saved value from localStorage.
@@ -44,6 +43,51 @@
       checkit.checked = isDev;
       kindleImport.checked = doKindleImport;
     },
+
+    update: function() {
+      //run the functions necessary to set the environment, check login, etc.
+      this.setEnvironment();
+      this.setBadgeText();
+      this.getFindingsLoginStatus();
+
+    },
+
+    //Since I can't access the FDGS object on the background JS page I have to dupe it. Boo!
+    setEnvironment: function() {
+      var _this = this;
+      if(eval(localStorage['isDev'])) {
+        console.log("Findings Chrome Extension is now in DEV MODE.")
+        _this.badgeText = "DEV!";
+
+        localStorage['FDGS_BASE_DOMAIN'] = localStorage['devDomain'];
+        localStorage['FDGS_LOGGING_ENABLED'] = true;
+        localStorage['FDGS_DISABLE_CACHING'] = true;
+
+      } else {
+        localStorage['FDGS_BASE_DOMAIN'] =  "findings.com";
+        localStorage['FDGS_LOGGING_ENABLED'] = false;
+        localStorage['FDGS_DISABLE_CACHING'] = false;
+      }
+    },
+
+    setBadgeText: function(txt) {
+      var _this = this;
+      if(eval(localStorage['isDev'])) {
+        this.badgeText = "DEV!";
+      } else {
+        this.badgeText = "";
+      }
+
+      chrome.browserAction.setBadgeText({"text": _this.badgeText});
+    },
+
+    getFindingsLoginStatus: function() {
+      var userURL = "https:// + " localStorage['FDGS_BASE_DOMAIN'] + "/logged_in";
+      $.getJSON(userURL, function(result) {
+        //do something
+      });
+    },
+
   };
 })(window);
 

@@ -27,7 +27,7 @@ var FDGS = {};
 		setEnvironment: function() {
 			var _this = this;
 			if(eval(localStorage['isDev'])) {
-				console.log("Findings Chrome Extension is in DEV MODE.")
+				console.log("Findings Chrome Extension is now in DEV MODE.")
 				_this.badgeText = "DEV!";
 
 				_this.BASE_DOMAIN = localStorage['devDomain'];
