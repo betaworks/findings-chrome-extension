@@ -16,50 +16,6 @@ var kindle_importer = {
 	processing: false,
     amazonLoggedIn: false,
 
-	// getUpcomingAsins: function() {
-	// 	var body = $("body");
-	// 	return body.find(".upcoming").text().split(",")
-
-	// },
-
-	// getUsedAsins: function() {
-	// 	var body = $("body");
-	// 	if (body.find(".skipped").size() == 1) {
-	// 	    this.usedAsins.push(body.find(".skipped").text())
-	// 	}
-	// },
-
-	//AMAZON'S PAGINATION CODE
-	// addNextBook: function() {
-	// 	readyForNextBook=false;
-	// 	var a={
-	// 		"used_asins[]":usedAsins,
-	// 		current_offset:currentOffset
-	// 	};
-	// 	if(upcomingAsins.length>0){
-	// 		a["upcoming_asins[]"]=upcomingAsins
-	// 	}
-	// 	$.ajax({
-	// 		url:"https://kindle.amazon.com/your_highlights/next_book",
-	// 		data:a,
-	// 		success:function(e){
-	// 			if(e.length==0){
-	// 				$("#stillLoadingBooks").remove()
-	// 			} else {
-	// 				$("#allHighlightedBooks").append(e);
-	// 				var d=e.indexOf('id="',0)+4;
-	// 				var b=e.indexOf('"',d);
-	// 				var c=$("#"+e.substring(d,b));
-	// 				recordLatestState(c);
-	// 				if(nearPageBottom()){
-	// 					addNextBook()
-	// 				} else {
-	// 					readyForNextBook=true
-	// 				}
-	// 			}
-	// 		}
-	// 	});
-	// },
 
 	getNextPage: function() {
 		FDGS.log("Getting next page...");
@@ -249,8 +205,6 @@ var kindle_importer = {
 	        }
 	    });
 	    
-	    $(".FDGS_main").css("height", document.height+100);
-	    
 	    if(typeof(callback) != "undefined") callback();
 	},
 
@@ -308,8 +262,8 @@ var kindle_importer = {
 		FDGS.log("Initiating background Kindle import...", true);
 		this.importKey = this.generateImportKey();
 		FDGS.log("This session's import key is " + this.importKey, true);
-	    this.postURL = "https://" + FDGS_BASE_DOMAIN + "/bookmarklet/kindlesync/" + this.importKey,
-	    this.statusURL =  "https://" + FDGS_BASE_DOMAIN + "/bookmarklet/kindlesync/" + this.importKey + "?callback=?",
+	    this.postURL = "https://" + FDGS.BASE_DOMAIN + "/bookmarklet/kindlesync/" + this.importKey,
+	    this.statusURL =  "https://" + FDGS.BASE_DOMAIN + "/bookmarklet/kindlesync/" + this.importKey + "?callback=?",
 		this.beginImport();
 		return this;
 	}
