@@ -260,18 +260,36 @@ var kindle_importer = {
 		//we're now processsing highlights
 		_this.processing = true;
 
-		$.get(_this.highlightsURL, function(src) {
-			var source = $(src).filter("#wholePage");
-			var all = $(source).find("#allHighlightedBooks");
-			//_this.nextPageURL = "https://kindle.amazon.com" + $(source).find("#stillLoadingBooks~a").attr("href");
-			_this.content = all;
-			var bookMains = $(_this.content).find(".bookMain");
-			_this.getBooks(bookMains);
-		}, "html");
+		_this.getAmazonLoggedInStatus(function() {
+			$.get(_this.highlightsURL, function(src) {
+				var source = $(src).filter("#wholePage");
+				var all = $(source).find("#allHighlightedBooks");
+				//_this.nextPageURL = "https://kindle.amazon.com" + $(source).find("#stillLoadingBooks~a").attr("href");
+				_this.content = all;
+				var bookMains = $(_this.content).find(".bookMain");
+				_this.getBooks(bookMains);
+			}, "html");
+		});
 	},
 
-	getAmazonLoggedInStatus: function() {
+	getAmazonLoggedInStatus: function(callback) {
 		//check to see if the user is logged into Amazon
+
+		if(arguments.length == 0) {
+			var callback = function() { FDGS.log("No callback for login status. Nothing to do. (" + _this.amazonLoggedIn + ")");}
+		}
+
+		var _this = this;
+
+		$.get(this.highlightsURL, function(src) {
+			var source = $(src);
+			if($(source).find("#ap_signin_form").length > 0) {
+				_this.amazonLoggedIn = false;
+			} else {
+				_this.amazonLoggedIn = true;
+			}
+			callback();
+		}, "html");
 	},
 
     //replace < > and & with HTML entities (need to be able to let users highlight HTML in programming references, so I'd rather not strip)
