@@ -5,6 +5,7 @@ body {
 a { color: #548DCB; text-decoration: none; }
 .hidden { display: none; }
 .visible { display: block; }
+.warning { display: block; color: red; font-size: 18px; }
 
 .options {
 	margin: 50px auto;
@@ -20,3 +21,15 @@ a { color: #548DCB; text-decoration: none; }
 }
 
 .optionsList li { display: block; margin: 20px auto; }
+
+.optionsList li div { margin: 10px auto; }
+
+
+#amazon_import_options #amazon_checking_login {
+	padding-left: 20px;
+	background:  url('spinner_small.gif') no-repeat 0px 0px;
+}
+#amazon_import_options #amazon_logged_in select { display: inline-block; }
+#amazon_import_options .amazon_import_interval_disabled { color: #555; }
+#amazon_import_options .amazon_import_interval_enabled.hidden { display: none; }
+#amazon_import_options .amazon_import_interval_disabled.hidden { display: none; }

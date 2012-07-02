@@ -8,7 +8,7 @@
         chrome_dir: "chrome/",
 
 		log: function(msg, use_ts) {
-	        if(localStorage['FDGS_LOGGING_ENABLED']) {
+	        if(FDGS_LOGGING_ENABLED) {
 	            if(typeof(use_ts) == "undefined") use_ts = true;
 	            if(use_ts) {
 	                var date = new Date();
@@ -26,13 +26,13 @@
 			var me = this;
 			var r = "";
 			
-			if(localStorage['FDGS_DISABLE_CACHING']) {
+			if(FDGS_DISABLE_CACHING) {
 				var d=new Date();
 				r=d.getTime();
 			}
 
 			var e=document.createElement('script');
-			var scriptURL =  FDGS.protocol + localStorage['FDGS_BASE_DOMAIN'] + '/extension/loader?'+r;
+			var scriptURL =  FDGS.protocol + FDGS_BASE_DOMAIN + '/extension/loader?'+r;
 			FDGS.log("loading " + scriptURL);
 
 			e.setAttribute('type','text/javascript');
@@ -52,6 +52,7 @@
         },
 
 		start: function() {
+			FDGS.log(FDGS_BASE_DOMAIN)
 			FDGS.log("Opening sidebar...");
 			var me = this;
 			me.loader();

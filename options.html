@@ -32,6 +32,31 @@
       <h2>Amazon Options</h2>
       <ul class="optionsList">
         <li><input type="checkbox" id="doKindleImport" value="1"> Enable Kindle Import</li>
+        <li id="amazon_import_options">
+          <div id="amazon_checking_login" class="visible">Checking Amazon login status...</div>
+
+          <div id="amazon_logged_in" class="hidden">
+            Import my highlights <select id="amazon_import_interval_enabled">
+                <option value="720">Once a month</option>
+                <option value="168">Once a week</option>
+                <option value="24" selected>Once a day</option>
+                <option value="12">Twice a day</option>
+                <option value="1">Every hour</option>
+                <option value=".017">Every minute</option>
+            </select>
+            <select id="amazon_import_interval_disabled" class="hidden"><option value="">Importing must be enabled</option></select>
+
+            <div id="amazon_notifications">
+              <input type="checkbox" id="amazon_notifications_enabled"> Notify me when my highlights have been imported (not implemented)
+            </div>
+          </div>
+
+          <div id="amazon_logged_out" class="hidden">
+            <span class="warning">You are currently logged out of Amazon.</span>In order to 
+            In order to auto-import your Kindle highlights, you must first <a href="https://kindle.amazon.com/your_highlights" target="_blank">login to kindle.amazon.com</a>
+          </div>
+
+        </li>
       </ul>
     </div>
 
