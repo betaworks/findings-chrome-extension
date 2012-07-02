@@ -10,9 +10,6 @@ var FDGS = {};
 		usedAsins: [],
 		findingsUser: {},
 		settings: w.extension_settings,
-		// base_domain: localStorage['FDGS_base_domain'] || "findings.com",
-		// logging_enabled: localStorage['FDGS_logging_enabled'] || false,
-		// disable_caching: localStorage['FDGS_disable_caching'] || false,
 
 		initButton: function () {
 			var _this = this;
@@ -57,16 +54,69 @@ var FDGS = {};
 		},
 
 		startKindleImport: function(FDGS) {
-			this.kindle_importer = importer.start(FDGS);
+			var _this = this;
+			var findingsUser = {};
+			var amazonIsLoggedIn = false;
+
+			_this.getFindingsLoginStatus(function(user) {
+				findingsUser = user;
+
+				_this.getAmazonLoginStatus(function(isLoggedIn) {
+					amazonIsLoggedIn = isLoggedIn;
+
+				if(findingsUser.isLoggedIn && amazonIsLoggedIn && _this.settings.doKindleImport) {
+					_this.log("All systems go for Kindle import...")
+					kindle_importer.start(FDGS);
+				} else {
+					_this.log("Kindle import disabled. Settings: [Findings Logged In: " + findingsUser.isLoggedIn + " Amazon Logged In: " + amazonIsLoggedIn + " Import Enabled: " + _this.settings.doKindleImport + "]");
+				}
+				});
+			});
 		},
 
-		getFindingsLoginStatus: function() {
+		getFindingsLoginStatus: function(callback) {
 			//check to see if the user is logged into Findings
-			this.findingsUser = {
-				"isLoggedIn": true,
-				"username": "corey"
+			var _this = this;
+
+			if(arguments.length == 0) {
+				var callback = function() { FDGS.log("No callback for Findings login status. Nothing to do."); };
 			}
+
+			var userURL = "https://" + this.settings.base_domain + "/logged_in";
+			var returnUser ={"isLoggedIn": false, "username": ""};
+
+			$.getJSON(userURL, function(user) {
+		        if(user.isLoggedIn) {
+		            _this.log("User is logged into Findings as user " + user.username);
+		        } else {
+		            _this.log("User is logged out of Findings!");
+		        }
+		        callback(user);
+			});
 		},
+
+	    getAmazonLoginStatus: function(callback) {
+	      //check to see if the user is logged into Amazon
+	      var _this = this;
+	      var highlightsURL = "https://kindle.amazon.com/your_highlights";
+
+	      if(arguments.length == 0) {
+	        var callback = function() { log("No callback for login status. Nothing to do. (" + _this.amazonLoggedIn + ")");}
+	      }
+
+	      $.get(highlightsURL, function(src) {
+	        var source = $(src);
+	        if($(source).find("#ap_signin_form").length > 0) {
+	          FDGS.log("User is logged out of Amazon!");
+	          _this.amazonLoggedIn = false;
+	        } else {
+	          FDGS.log("User is logged into Amazon!");
+	          _this.amazonLoggedIn = true;
+	        }
+
+	        callback(_this.amazonLoggedIn);
+	      }, "html");
+	    },
 
 		log: function(msg, use_ts) {
 	        // if(localStorage['FDGS_logging_enabled']) {
@@ -85,13 +135,15 @@ var FDGS = {};
 	    },
 
 		init: function() {
-			this.settings = extension_settings();
-			this.settings.log();
-			this.setEnvironment();
-			this.setBadgeText();
-			this.initButton();
+			var _this = this;
 
-			this.getFindingsLoginStatus();
+			_this.settings = extension_settings();
+			_this.settings.log();
+
+			_this.setEnvironment();
+			_this.setBadgeText();
+			_this.initButton();
+			_this.startKindleImport();
 			return this;
 		}
 	}
@@ -101,15 +153,13 @@ var FDGS = {};
 $(document).ready(function() {
 	window.FDGS = App.init();
 
-	if(FDGS.findingsUser.isLoggedIn) {
-		if(eval(localStorage['doKindleImport'])) {
-			kindle_importer.start();
-		} else {
-			FDGS.log("Kindle import disabled by user.");
-		}
-	} else {
-		//prompt for login somehow
-
-	}
+	// if(FDGS.findingsUser.isLoggedIn) {
+	// 	if(eval(localStorage['doKindleImport'])) {
+	// 		kindle_importer.start();
+	// 	} else {
+	// 		FDGS.log("Kindle import disabled by user.");
+	// 	}
+	// } else {
+	//}
 });
 
