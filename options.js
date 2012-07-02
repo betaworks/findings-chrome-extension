@@ -42,6 +42,9 @@
       devDomain.value = domain;
       checkit.checked = isDev;
       kindleImport.checked = doKindleImport;
+
+      //get Findings login status
+      this.getFindingsLoginStatus();
     },
 
     update: function() {
@@ -82,16 +85,57 @@
     },
 
     getFindingsLoginStatus: function() {
-      var userURL = "https:// + " localStorage['FDGS_BASE_DOMAIN'] + "/logged_in";
+      var userURL = "https://" + localStorage['FDGS_BASE_DOMAIN'] + "/logged_in";
       $.getJSON(userURL, function(result) {
-        //do something
+        //console.log(result);
+        if(result.isLoggedIn) {
+            console.log("User is logged into Findings!");
+            var userlink = "<a href='https://" + localStorage['FDGS_BASE_DOMAIN'] + "/" + result.username + "' target='blank'>" + result.username + "</a>";
+            $("#fdgs_username_display").html(userlink);
+            $("#fdgs_login_status .fdgs_logged_in").removeClass("hidden").addClass("visible");
+            $("#fdgs_login_status .fdgs_logged_out").removeClass("visible").addClass("hidden");
+        } else {
+            console.log("User is logged out of Findings!");
+            $("#fdgs_login_status .fdgs_logged_out").removeClass("hidden").addClass("visible");
+            $("#fdgs_login_status .fdgs_logged_in").removeClass("visible").addClass("hidden");
+
+        }
       });
     },
+
+    findingsLogin: function() {
+      console.log("Logging into Findings...");
+      var _this = this;
+      var loginURL = "https://" + localStorage['FDGS_BASE_DOMAIN'] + "/authenticate";
+      var username = $("#fdgs_username").val();
+      var password = $("#fdgs_password").val();
+      var data = {"username": username, "password": password};
+
+      $.getJSON(loginURL, data, function() { _this.getFindingsLoginStatus(); });
+    },
+
+    findingsLogout: function() {
+      console.log("Logging out of Findings...");
+      var _this = this;
+      var logoutURL = "https://" + localStorage['FDGS_BASE_DOMAIN'] + "/logout";
+      $.get(logoutURL, function() {
+        _this.getFindingsLoginStatus();
+      });
+
+    },
+
+    start: function() {
+      var _this = this;
+      this.restore();
+      $("#optionsList li input").click(function() { _this.save(); })
+      $("#fdgs_login").click(function() { _this.findingsLogin(); })
+      $("#fdgs_logout").click(function() { _this.findingsLogout(); });
+
+    }
 
   };
 })(window);
 
 $(document).ready(function() {
-  opt.restore();
-  $("#optionsList li input").click(function() { opt.save(); })
+  opt.start();
 });

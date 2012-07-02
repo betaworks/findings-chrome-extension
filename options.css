@@ -2,19 +2,21 @@ body {
 	font-family: Helvetica, Arial, sans serif;
 }
 
-#options {
+a { color: #548DCB; text-decoration: none; }
+.hidden { display: none; }
+.visible { display: block; }
+
+.options {
 	margin: 50px auto;
 	padding: 20px;
 	width: 800px;
 	border: 1px solid #DDD;
 }
 
-#optionsList {
+.optionsList {
 	display: block;
 	margin: auto;
 	list-style: none;
 }
 
-#optionsList li { display: block; margin: 20px auto; }
-#optionsList #status { color: red;font-size: 18px; }
-#optionsList #options { position: relative; margin: 20px auto; width: 500px; }
+.optionsList li { display: block; margin: 20px auto; }

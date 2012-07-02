@@ -9,20 +9,31 @@
   <script type="text/javascript" src="options.js"></script>
 
   <body>
-    <div id="options">
-      <h1>Findings.com Extension Options</h1>
-      
-      <ul id="optionsList">
-        <li>
-          <label for="fdgs_username">Login to Findings</label><br />
-          <input type="text" id="fdgs_username" value="" size="30" placeholder="Findings username"> username<br />
-          <input type="password" id="fdgs_username" value="" size="30" placeholder="Findings password"> password<br />
-          <button id="fdgs_login">login</button>
+    <!-- <h1>Findings.com Extension Options</h1> -->
+    <div class="findings options">
+      <h2>Findings Options</h2>
+      <ul class="optionsList">
+        <li id="fdgs_login_status">
+          <div class="fdgs_logged_in hidden">
+            You are logged into Findings as user <span id="fdgs_username_display"></span>. <button id="fdgs_logout">logout</button>
+          </div>
+          <div class="fdgs_logged_out">
+            <label for="fdgs_username">Login to Findings</label><br />
+            <input type="text" id="fdgs_username" value="" size="30" placeholder="Findings username"> username<br />
+            <input type="password" id="fdgs_password" value="" size="30" placeholder="Findings password"> password<br />
+            <button id="fdgs_login">login</button>
+          </div>
         </li>
-
         <li><input type="checkbox" id="isDev" value="1"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="opt.save()">)</li>
+      </ul>
+    </div>
+
+    <div class="amazon options">
+      <h2>Amazon Options</h2>
+      <ul class="optionsList">
         <li><input type="checkbox" id="doKindleImport" value="1"> Enable Kindle Import</li>
       </ul>
     </div>
+
   </body>
 </html>
