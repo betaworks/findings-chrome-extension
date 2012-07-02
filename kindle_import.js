@@ -262,8 +262,8 @@ var kindle_importer = {
 		FDGS.log("Initiating background Kindle import...", true);
 		this.importKey = this.generateImportKey();
 		FDGS.log("This session's import key is " + this.importKey, true);
-	    this.postURL = "https://" + FDGS.BASE_DOMAIN + "/bookmarklet/kindlesync/" + this.importKey,
-	    this.statusURL =  "https://" + FDGS.BASE_DOMAIN + "/bookmarklet/kindlesync/" + this.importKey + "?callback=?",
+	    this.postURL = "https://" + FDGS.settings.base_domain + "/bookmarklet/kindlesync/" + this.importKey,
+	    this.statusURL =  "https://" + FDGS.settings.base_domain + "/bookmarklet/kindlesync/" + this.importKey + "?callback=?",
 		this.beginImport();
 		return this;
 	}
