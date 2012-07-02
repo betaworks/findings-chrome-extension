@@ -3,24 +3,23 @@
   w.opt = {
     findingsLoggedIn: false,
     amazonLoggedIn: false,
-
-    getEl: function(id) { return document.getElementById(id) },
+    bkg: {},
 
     save: function() {
       var _this = this;
 
-      _this.log("Saving options...");
-      var checkit = this.getEl("isDev");
-      var domain = this.getEl("devDomain");
-      var kindleImport = this.getEl("doKindleImport");
+      log("Saving options...");
 
       var badgeText = "";
 
-      localStorage["isDev"] = checkit.checked;
-      localStorage["devDomain"] = domain.value;
-      localStorage["doKindleImport"] = kindleImport.checked;
+      _this.settings.isDev = toBool($("#isDev").prop("checked"));
+      _this.settings.devDomain = $("#devDomain").val();
+      _this.settings.doKindleImport = toBool($("#doKindleImport").prop("checked"));
 
-      if(eval(localStorage['isDev'])) {
+      log(_this.settings.isDev);
+      log(toBool($("#isDev").prop("checked")));
+
+      if(_this.settings.isDev) {
         badgeText = "DEV!";
       } else {
         badgeText = "";
@@ -28,7 +27,6 @@
 
       chrome.browserAction.setBadgeText({"text": badgeText});
 
-      this.setEnvironment();
       this.setBadgeText();
     },
 
@@ -36,19 +34,11 @@
     restore: function() {
       var _this = this;
 
-      _this.log("Restoring options...");
-      
-      var checkit = this.getEl("isDev");
-      var devDomain = this.getEl("devDomain");
-      var kindleImport = this.getEl("doKindleImport");
+      log("Restoring options...");
 
-      var isDev = eval(localStorage["isDev"]) || false;
-      var domain = localStorage["devDomain"] || "dev.findings.com";
-      var doKindleImport = eval(localStorage["doKindleImport"]) || false;
-
-      devDomain.value = domain;
-      checkit.checked = isDev;
-      kindleImport.checked = doKindleImport;
+      $("#isDev").prop("checked", this.settings.isDev);
+      $("#devDomain").val(this.settings.devDomain);
+      $("#doKindleImport").prop("checked", this.settings.doKindleImport);
 
       //get Findings login status
       _this.getFindingsLoginStatus();
@@ -65,32 +55,13 @@
 
     update: function() {
       //run the functions necessary to set the environment, check login, etc.
-      this.setEnvironment();
       this.setBadgeText();
       this.getFindingsLoginStatus();
     },
 
-    //Since I can't access the FDGS object on the background JS page I have to dupe it. Boo!
-    setEnvironment: function() {
-      var _this = this;
-      if(eval(localStorage['isDev'])) {
-        _this.log("Findings Chrome Extension is now in DEV MODE.")
-        _this.badgeText = "DEV!";
-
-        localStorage['FDGS_BASE_DOMAIN'] = localStorage['devDomain'];
-        localStorage['FDGS_LOGGING_ENABLED'] = true;
-        localStorage['FDGS_DISABLE_CACHING'] = true;
-
-      } else {
-        localStorage['FDGS_BASE_DOMAIN'] =  "findings.com";
-        localStorage['FDGS_LOGGING_ENABLED'] = false;
-        localStorage['FDGS_DISABLE_CACHING'] = false;
-      }
-    },
-
     setBadgeText: function(txt) {
       var _this = this;
-      if(eval(localStorage['isDev'])) {
+      if(this.settings.isDev) {
         this.badgeText = "DEV!";
       } else {
         this.badgeText = "";
@@ -101,20 +72,20 @@
 
     getFindingsLoginStatus: function() {
       var _this = this;
-      var userURL = "https://" + localStorage['FDGS_BASE_DOMAIN'] + "/logged_in";
+      var userURL = "https://" + this.settings.base_domain + "/logged_in";
       $.getJSON(userURL, function(result) {
-        //_this.log(result);
+        //log(result);
         if(result.isLoggedIn) {
             _this.findingsLoggedIn = true;
-            _this.log("User is logged into Findings!");
+            log("User is logged into Findings!");
 
-            var userlink = "<a href='https://" + localStorage['FDGS_BASE_DOMAIN'] + "/" + result.username + "' target='blank'>" + result.username + "</a>";
+            var userlink = "<a href='https://" + _this.settings.base_domain + "/" + result.username + "' target='blank'>" + result.username + "</a>";
             $("#fdgs_username_display").html(userlink);
             $("#fdgs_login_status .fdgs_logged_in").removeClass("hidden").addClass("visible");
             $("#fdgs_login_status .fdgs_logged_out").removeClass("visible").addClass("hidden");
         } else {
             _this.findingsLoggedIn = false;
-            _this.log("User is logged out of Findings!");
+            log("User is logged out of Findings!");
             $("#fdgs_login_status .fdgs_logged_out").removeClass("hidden").addClass("visible");
             $("#fdgs_login_status .fdgs_logged_in").removeClass("visible").addClass("hidden");
 
@@ -125,9 +96,9 @@
     findingsLogin: function() {
       var _this = this;
 
-      _this.log("Logging into Findings...");
+      log("Logging into Findings...");
       var _this = this;
-      var loginURL = "https://" + localStorage['FDGS_BASE_DOMAIN'] + "/authenticate";
+      var loginURL = "https://" + this.settings.base_domain + "/authenticate";
       var username = $("#fdgs_username").val();
       var password = $("#fdgs_password").val();
       var data = {"username": username, "password": password};
@@ -137,9 +108,9 @@
 
     findingsLogout: function() {
       var _this = this;
-      _this.log("Logging out of Findings...");
+      log("Logging out of Findings...");
       var _this = this;
-      var logoutURL = "https://" + localStorage['FDGS_BASE_DOMAIN'] + "/logout";
+      var logoutURL = "https://" + this.settings.base_domain + "/logout";
       $.get(logoutURL, function() {
         _this.getFindingsLoginStatus();
       });
@@ -152,7 +123,7 @@
       var highlightsURL = "https://kindle.amazon.com/your_highlights";
 
       if(arguments.length == 0) {
-        var callback = function() { _this.log("No callback for login status. Nothing to do. (" + _this.amazonLoggedIn + ")");}
+        var callback = function() { log("No callback for login status. Nothing to do. (" + _this.amazonLoggedIn + ")");}
       }
 
       $("#amazon_logged_in").hide();
@@ -162,12 +133,11 @@
         $("#amazon_checking_login").hide();
         var source = $(src);
         if($(source).find("#ap_signin_form").length > 0) {
-          _this.log("User is logged out of Amazon!");
+          log("User is logged out of Amazon!");
           _this.amazonLoggedIn = false;
         } else {
-          _this.log("User is logged into Amazon!");
+          log("User is logged into Amazon!");
           _this.amazonLoggedIn = true;
-;
         }
 
         callback();
@@ -176,9 +146,9 @@
 
     amazonImportOptionDisplay: function() {
       var _this = this;
-      _this.log("showing import options...");
+      log("showing import options...");
 
-      if(eval(localStorage['doKindleImport'])) {
+      if(this.settings.doKindleImport) {
 
         //kindle import is checked
         if(_this.amazonLoggedIn) {
@@ -220,8 +190,18 @@
       }
     },
 
+    getBackgroundPage: function() {
+      this.bkg = chrome.extension.getBackgroundPage();
+      this.settings = this.bkg.FDGS.settings;
+    },
+
     start: function() {
       var _this = this;
+
+      log("Starting options page...");
+
+      _this.getBackgroundPage();
+      
       this.restore();
 
       $(".optionsList li input").click(function() { _this.save(); })
@@ -231,7 +211,7 @@
       $("#fdgs_logout").click(function() { _this.findingsLogout(); });
 
       $("#doKindleImport").click(function(){
-        if($(this).attr("checked")) {
+        if($(this).prop("checked")) {
           _this.getAmazonLoginStatus(function() {
             _this.amazonImportOptionDisplay();
           });
@@ -241,24 +221,32 @@
       });
 
       $("#amazon_import_interval").change(function() { _this.save(); });
+    }
+  }
 
-    },
-
-    log: function(msg, use_ts) {
-        if(localStorage['FDGS_LOGGING_ENABLED']) {
-            if(arguments.length < 2) use_ts = false;
-            if(use_ts) {
-                var date = new Date();
-                ts = (date.getTime() - this.started) / 1000;
-                logtxt = "[" + ts + "] " + msg;
-            } else {
-                logtxt = msg;
-            }
-            
-            if(window.hasOwnProperty("console")) console.log(logtxt);
+  w.log = function(msg, use_ts) {
+    if(chrome.extension.getBackgroundPage().FDGS.settings.logging_enabled) {
+        if(arguments.length < 2) use_ts = false;
+        if(use_ts) {
+            var date = new Date();
+            ts = (date.getTime() - this.started) / 1000;
+            logtxt = "[" + ts + "] " + msg;
+        } else {
+            logtxt = msg;
         }
+        
+        if(window.hasOwnProperty("console")) console.log(logtxt);
     }
   };
+
+  w.toBool = function(str) {
+    if ("false" === str) {
+      return false;
+    } else {
+      return str;
+    }
+  };
+
 })(window);
 
 $(document).ready(function() {

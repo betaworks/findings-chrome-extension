@@ -9,36 +9,39 @@ var FDGS = {};
 		loader_script: "fdgs_loader.js",
 		usedAsins: [],
 		findingsUser: {},
-		BASE_DOMAIN: localStorage['FDGS_BASE_DOMAIN'] || "findings.com",
-		LOGGING_ENABLED: localStorage['FDGS_LOGGING_ENABLED'] || false,
-		DISABLE_CACHING: localStorage['FDGS_DISABLE_CACHING'] || false,
+		settings: w.extension_settings,
+		// base_domain: localStorage['FDGS_base_domain'] || "findings.com",
+		// logging_enabled: localStorage['FDGS_logging_enabled'] || false,
+		// disable_caching: localStorage['FDGS_disable_caching'] || false,
 
 		initButton: function () {
 			var _this = this;
 			chrome.browserAction.onClicked.addListener(function(tab) {
-				if(!localStorage['isDev']) { localStorage['isDev'] = false; }
-				if(!localStorage['devDomain']) { localStorage['devDomain'] = "dev.findings.com"; }
+				//if(!localStorage['isDev']) { localStorage['isDev'] = false; }
+				//if(!localStorage['devDomain']) { localStorage['devDomain'] = "dev.findings.com"; }
 
-				chrome.tabs.executeScript(null, {code: "FDGS_BASE_DOMAIN = '" + _this.BASE_DOMAIN + "'; FDGS_LOGGING_ENABLED = " + _this.LOGGING_ENABLED + "; FDGS_DISABLE_CACHING = " + _this.DISABLE_CACHING + ";"});
+				chrome.tabs.executeScript(null, {code: "FDGS_BASE_DOMAIN = '" + _this.settings.base_domain + "'; FDGS_LOGGING_ENABLED = " + _this.settings.logging_enabled + "; FDGS_DISABLE_CACHING = " + _this.settings.disable_caching + ";"});
 				chrome.tabs.executeScript(null, {file: _this.loader_script});
 			});
 		},
 
 		setEnvironment: function() {
 			var _this = this;
-			if(eval(localStorage['isDev'])) {
+
+			if(_this.settings.isDev) {
 				console.log("Findings Chrome Extension is now in DEV MODE.")
 				_this.badgeText = "DEV!";
 
-				_this.BASE_DOMAIN = localStorage['devDomain'];
-				_this.LOGGING_ENABLED = true;
-				_this.DISABLE_CACHING = true;
+				_this.settings.base_domain = _this.settings.devDomain;
+				// _this.base_domain = localStorage['devDomain'];
+				// _this.logging_enabled = true;
+				// _this.disable_caching = true;
 
 			} else {
 				_this.badgeText = "";
-				_this.BASE_DOMAIN =  "findings.com";
-				_this.LOGGING_ENABLED = false;
-				_this.DISABLE_CACHING = false;
+				// _this.base_domain =  "findings.com";
+				// _this.logging_enabled = false;
+				// _this.disable_caching = false;
 			}
 		},
 
@@ -66,7 +69,8 @@ var FDGS = {};
 		},
 
 		log: function(msg, use_ts) {
-	        if(localStorage['FDGS_LOGGING_ENABLED']) {
+	        // if(localStorage['FDGS_logging_enabled']) {
+	        if(this.settings.logging_enabled) {
 	            if(arguments.length < 2) use_ts = false;
 	            if(use_ts) {
 	                var date = new Date();
@@ -81,6 +85,8 @@ var FDGS = {};
 	    },
 
 		init: function() {
+			this.settings = extension_settings();
+			this.settings.log();
 			this.setEnvironment();
 			this.setBadgeText();
 			this.initButton();
@@ -93,7 +99,7 @@ var FDGS = {};
 })(window);
 
 $(document).ready(function() {
-	FDGS = App.init();
+	window.FDGS = App.init();
 
 	if(FDGS.findingsUser.isLoggedIn) {
 		if(eval(localStorage['doKindleImport'])) {
