@@ -75,6 +75,22 @@ var extension_settings = function() {
 
 		set amazonImportInterval(val) {
 			localStorage['amazonImportInterval'] = val;
+		},
+
+		get lastImportDate() {
+			return localStorage['lastImportDate'] || "never";
+		},
+
+		set lastImportDate(val) {
+			//please don't use this...it's only for completeness.
+			//use updateLastImportDate();
+			localStorage['lastImportDate'] = val;
+		},
+
+		updateLastImportDate: function() {
+			var now = new Date(); 
+			var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+			localStorage['lastImportDate'] = now_utc;
 		}
 	};
 

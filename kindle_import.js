@@ -245,7 +245,8 @@ var kindle_importer = {
 	    _this.currentBook = {"asin": "", "coverImg": "", "processing": false, "init": function(asin) {this.asin = asin; this.coverImg=""; this.processing=false; }};
 	    _this.highlightTotal = 0;
 	    _this.importKey = -1;
-	    FDGS.log("Import process closed.  Over and out.");
+	    FDGS.settings.updateLastImportDate();
+	    FDGS.log("Import process closed.  Over and out. [" + FDGS.settings.lastImportDate + "]");
 	},
 
     //replace < > and & with HTML entities (need to be able to let users highlight HTML in programming references, so I'd rather not strip)

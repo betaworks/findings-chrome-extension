@@ -28,9 +28,6 @@
       }
       chrome.browserAction.setBadgeText({"text": badgeText});
       this.setBadgeText();
-
-      // update the amazon import interval if changed
-      //_this.refreshAmazonImportInterval();
     },
 
     // Restores select box state to saved value from localStorage.
@@ -52,6 +49,8 @@
         //don't show the checking Amazon status
         $("#amazon_checking_login").hide();
       }
+
+      $("#lastImportDate").html(_this.settings.lastImportDate);
     },
 
     update: function() {
@@ -161,7 +160,7 @@
         $("#amazon_checking_login").hide();
         if(startKindleImport) {
           _this.startKindleImport();
-          _this.refreshAmazonImportInterval();
+          //_this.refreshAmazonImportInterval();
         }
       });
     },
@@ -253,27 +252,14 @@
       _this.refreshAmazonImportInterval();
     },
 
-    refreshAmazonImportInterval: function(lastAmazonImportInterval) {
+    refreshAmazonImportInterval: function() {
       var _this = this;
 
       log("Refreshing Kindle import timer...");
       _this.bkg.FDGS.killAmazonImportInterval();
-      _this.bkg.FDGS.createAmazonImportInterval();
-
-      // function cycleImportTimer() {
-      //   _this.bkg.FDGS.killAmazonImportInterval();
-      //   _this.bkg.FDGS.createAmazonImportInterval();
-      // }
-
-      // if(_this.settings.doKindleImport && (_this.settings.amazonImportInterval != lastAmazonImportInterval)) {
-      //   log("Refreshing Kindle import timer with new value...");
-      //   cycleImportTimer();
-      // } else if((_this.settings.amazonImportInterval == lastAmazonImportInterval) && (_this.bkg.FDGS.amazonImportTimer == null)) {
-      //   cycleImportTimer();
-      // } else if(!_this.settings.doKindleImport) { //kindle import is disabled, clear timer
-      //   log("Kindle import is disabled...destroying import interval timer...");
-      //   _this.bkg.FDGS.killAmazonImportInterval();
-      // }
+      if(_this.settings.amazonImportInterval > 0) {
+        _this.bkg.FDGS.createAmazonImportInterval();
+      }
     },
 
     getBackgroundPage: function() {
@@ -299,9 +285,13 @@
 
       $("#doKindleImport").click(function(){
         if($(this).prop("checked")) {
+          _this.settings.amazonImportInterval = 24; //reset to once a day
           _this.getAmazonLoginStatus(true); //true == initiate import if necessary
         } else {
           _this.amazonImportOptionDisplay();
+          //kill the import timer when disabling
+          _this.settings.amazonImportInterval = -1;
+          _this.refreshAmazonImportInterval();
         }
       });
 

@@ -24,6 +24,7 @@ a { color: #548DCB; text-decoration: none; }
 
 .optionsList li div { margin: 10px auto; }
 
+.lastImport { display: block; color: #aaa; font-size: 12px; }
 
 #amazon_import_options #amazon_checking_login {
 	padding-left: 20px;

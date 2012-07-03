@@ -199,14 +199,5 @@ var FDGS = {};
 
 $(document).ready(function() {
 	window.FDGS = App.init();
-
-	// if(FDGS.findingsUser.isLoggedIn) {
-	// 	if(eval(localStorage['doKindleImport'])) {
-	// 		kindle_importer.start();
-	// 	} else {
-	// 		FDGS.log("Kindle import disabled by user.");
-	// 	}
-	// } else {
-	//}
 });
 

@@ -31,7 +31,7 @@
     <div class="amazon options">
       <h2>Amazon Options</h2>
       <ul class="optionsList">
-        <li><input type="checkbox" id="doKindleImport" value="1" checked="false"> Enable Kindle Import</li>
+        <li><input type="checkbox" id="doKindleImport" value="1" checked="false"> Enable Kindle Import<span class="lastImport">Last import: <span id="lastImportDate"></span></span></li>
         <li id="amazon_import_options">
           <div id="amazon_checking_login" class="visible">Checking Amazon login status...</div>
 
@@ -45,8 +45,8 @@
                 <option value="1">Every hour</option>
                 <option value=".017">Every minute</option>
             </select>
-            
-            <select id="amazon_import_interval_disabled" class="hidden"><option value="">Importing must be enabled</option></select> (not implemented)
+
+            <select id="amazon_import_interval_disabled" class="hidden"><option value="">Importing must be enabled</option></select>
 
             <div id="amazon_notifications">
               <input type="checkbox" id="amazon_notifications_enabled" checked="true"> Notify me when my highlights have been imported (not implemented)
