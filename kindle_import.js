@@ -15,7 +15,8 @@ var kindle_importer = {
     statusURL: "",
 	processing: false,
     amazonLoggedIn: false,
-
+    bkg: {},
+    importLooper: {},
 
 	getNextPage: function() {
 		FDGS.log("Getting next page...");
@@ -152,7 +153,7 @@ var kindle_importer = {
     postClipsForBook: function() {
     	var _this = this;
 
-    	FDGS.log(_this.importData);
+    	//FDGS.log(_this.importData);
 
     	$.post(_this.postURL, {"clipdata": JSON.stringify(_this.importData)}, function() {
     		_this.getImportStatus();
@@ -174,7 +175,6 @@ var kindle_importer = {
 	            if(docs.length > 0) {
 	                if(docs[0].count > 0) _this.statusDisplayQueue.highlightTotal = 0; //reset total each time
 
-	                //if($.inArray(_this.currentBook.asin, docs) && $.inArray(_this.currentBook.asin, _this.processed_asins) < 0) {
 	                $.each(docs, function() {
 	                    if($.inArray(this.asin, _this.statusDisplayQueue.displayed_asins) < 0 && $.inArray(this.asin, _this.statusDisplayQueue.upcoming_asins) < 0) {
 	                        var book = {};
@@ -200,8 +200,8 @@ var kindle_importer = {
 	            _this.getNextPage();
 
 	        } else {
-	            FDGS.log("import reported as closed")
-	            _this.processing = false;
+	            FDGS.log("Import " + _this.importKey + " reported as closed.")
+	            _this.closeImport();
 	        }
 	    });
 	    
@@ -214,43 +214,45 @@ var kindle_importer = {
 		//we're now processsing highlights
 		_this.processing = true;
 
-		_this.getAmazonLoggedInStatus(function() {
-			$.get(_this.highlightsURL, function(src) {
-				var source = $(src).filter("#wholePage");
-				var all = $(source).find("#allHighlightedBooks");
-				//_this.nextPageURL = "https://kindle.amazon.com" + $(source).find("#stillLoadingBooks~a").attr("href");
-				_this.content = all;
-				var bookMains = $(_this.content).find(".bookMain");
-				_this.getBooks(bookMains);
-			}, "html");
+		FDGS.getAmazonLoginStatus(function(isLoggedIn) {
+			if(isLoggedIn) {
+				$.get(_this.highlightsURL, function(src) {
+					var source = $(src).filter("#wholePage");
+					var all = $(source).find("#allHighlightedBooks");
+					//_this.nextPageURL = "https://kindle.amazon.com" + $(source).find("#stillLoadingBooks~a").attr("href");
+					_this.content = all;
+					var bookMains = $(_this.content).find(".bookMain");
+					_this.getBooks(bookMains);
+				}, "html");
+			} else {
+				FDGS.log("User is no longer logged into Amazon...aborting import.")
+				_this.closeImport();
+			}
 		});
 	},
 
-	getAmazonLoggedInStatus: function(callback) {
-		//check to see if the user is logged into Amazon
-
-		if(arguments.length == 0) {
-			var callback = function() { FDGS.log("No callback for login status. Nothing to do. (" + _this.amazonLoggedIn + ")");}
-		}
-
+	closeImport: function() {
+		//reset for the next import
 		var _this = this;
 
-		$.get(this.highlightsURL, function(src) {
-			var source = $(src);
-			if($(source).find("#ap_signin_form").length > 0) {
-				_this.amazonLoggedIn = false;
-			} else {
-				_this.amazonLoggedIn = true;
-			}
-			callback();
-		}, "html");
+	    _this.processing = false;
+		_this.content = {};
+		_this.upcomingAsins = [];
+		_this.usedAsins = [];
+		_this.processedAsins = [];
+		_this.statusDisplayQueue = [{"asin": "", "coverImg": "", "total": 0}];
+		_this.importData = [];
+	    _this.currentBook = {"asin": "", "coverImg": "", "processing": false, "init": function(asin) {this.asin = asin; this.coverImg=""; this.processing=false; }};
+	    _this.highlightTotal = 0;
+	    _this.importKey = -1;
+	    FDGS.log("Import process closed.  Over and out.");
 	},
 
     //replace < > and & with HTML entities (need to be able to let users highlight HTML in programming references, so I'd rather not strip)
     htmlZap: function(str) {
         return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     },
-
+ 
 	generateImportKey: function() {
 		var username = FDGS.findingsUser.username || "noname";
 		var d = new Date();

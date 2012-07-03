@@ -67,6 +67,14 @@ var extension_settings = function() {
 
 		set doKindleImport(val) {
 			localStorage['doKindleImport'] = val;
+		},
+
+		get amazonImportInterval() {
+			return localStorage['amazonImportInterval'] || -1;
+		},
+
+		set amazonImportInterval(val) {
+			localStorage['amazonImportInterval'] = val;
 		}
 	};
 

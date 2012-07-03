@@ -10,6 +10,8 @@ var FDGS = {};
 		usedAsins: [],
 		findingsUser: {},
 		settings: w.extension_settings,
+		amazonPinger: null,
+		amazonImportTimer: null,
 
 		initButton: function () {
 			var _this = this;
@@ -67,8 +69,14 @@ var FDGS = {};
 				if(findingsUser.isLoggedIn && amazonIsLoggedIn && _this.settings.doKindleImport) {
 					_this.log("All systems go for Kindle import...")
 					kindle_importer.start(FDGS);
+					if(_this.amazonPinger == null) {
+						_this.createAmazonPinger(); //ping Amazon every 5 min to stay logged in
+					}
 				} else {
 					_this.log("Kindle import disabled. Settings: [Findings Logged In: " + findingsUser.isLoggedIn + " Amazon Logged In: " + amazonIsLoggedIn + " Import Enabled: " + _this.settings.doKindleImport + "]");
+						if(!_this.settings.doKindleImport) {
+							_this.killAmazonPinger(); //stop pinging if they've turned off import
+						}
 				}
 				});
 			});
@@ -86,6 +94,7 @@ var FDGS = {};
 			var returnUser ={"isLoggedIn": false, "username": ""};
 
 			$.getJSON(userURL, function(user) {
+				_this.findingsUser = user;
 		        if(user.isLoggedIn) {
 		            _this.log("User is logged into Findings as user " + user.username);
 		        } else {
@@ -118,8 +127,42 @@ var FDGS = {};
 	      }, "html");
 	    },
 
+	    createAmazonPinger: function() {
+	    	//an attempt to keep the user logged into kindle.amazon.com
+	    	var _this = this;
+	    	var pingInterval = 5*60*1000; //five minutes
+	    	var pingURL = "https://kindle.amazon.com/your_highlights";
+
+	    	_this.amazonPinger = window.setInterval(function() { $.get(pingURL, function() { _this.log("pinged " + pingURL + "..."); }); }, pingInterval);
+	    },
+
+	    killAmazonPinger: function() {
+	    	var _this = this;
+	    	window.clearInterval(_this.amazonPinger);
+	    	_this.amazonPinger = null;
+	    	_this.log("Amazon pinger destroyed.");
+	    },
+
+	    createAmazonImportInterval: function() {
+	    	var _this = this;
+	    	var importInterval = _this.settings.amazonImportInterval*60*60*1000; //in hours
+
+	    	_this.log("Creating Amazon import interval for " + _this.settings.amazonImportInterval + " hours.");
+
+	    	_this.amazonImportInterval = window.setInterval(function() {
+	    		_this.log("Kindle import interval elapsed! (" + _this.settings.amazonImportInterval + " hours) Kicking off Kindle import...")
+	    		_this.startKindleImport();
+	    	}, importInterval);
+	    },
+
+	    killAmazonImportInterval: function() {
+	    	var _this = this;
+	    	window.clearInterval(_this.amazonImportInterval);
+	    	_this.amazonImportInterval = null;
+	    	_this.log("Amazon import interval destroyed.")
+	    },
+
 		log: function(msg, use_ts) {
-	        // if(localStorage['FDGS_logging_enabled']) {
 	        if(this.settings.logging_enabled) {
 	            if(arguments.length < 2) use_ts = false;
 	            if(use_ts) {
@@ -144,6 +187,10 @@ var FDGS = {};
 			_this.setBadgeText();
 			_this.initButton();
 			_this.startKindleImport();
+			if(_this.settings.doKindleImport && _this.settings.amazonImportInterval > 0) {
+				_this.killAmazonImportInterval();
+				_this.createAmazonImportInterval();
+			}
 			return this;
 		}
 	}

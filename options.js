@@ -11,20 +11,27 @@
       log("Saving options...");
 
       var badgeText = "";
+      var lastAmazonImportInterval = _this.settings.amazonImportInterval;
 
       _this.settings.isDev = toBool($("#isDev").prop("checked"));
       _this.settings.devDomain = $("#devDomain").val();
       _this.settings.doKindleImport = toBool($("#doKindleImport").prop("checked"));
+      _this.settings.amazonImportInterval = $("#amazon_import_interval_enabled option:selected").val();
 
       if(_this.settings.isDev) {
         badgeText = "DEV!";
       } else {
         badgeText = "";
       }
-
       chrome.browserAction.setBadgeText({"text": badgeText});
-
       this.setBadgeText();
+
+      // update the amazon import interval if changed
+      if(_this.settings.amazonImportInterval != lastAmazonImportInterval) {
+        _this.bkg.FDGS.killAmazonImportInterval();
+        _this.bkg.FDGS.createAmazonImportInterval();
+      }
+
     },
 
     // Restores select box state to saved value from localStorage.
@@ -41,7 +48,7 @@
       _this.getFindingsLoginStatus();
 
       if(doKindleImport) {
-        _this.getAmazonLoginStatus();
+        _this.getAmazonLoginStatus(false); //false == get status but do not execute import
       } else {
         //don't show the checking Amazon status
         $("#amazon_checking_login").hide();
@@ -135,24 +142,61 @@
 
     },
 
-    getAmazonLoginStatus: function(callback) {
+    getAmazonLoginStatus: function(startKindleImport) {
       //check to see if the user is logged into Amazon
       var _this = this;
+
+      if(arguments.length == 0) {
+        doKindleImport = false;
+      }
+
+      log("Getting login status from background page...");
 
       $("#amazon_logged_in").hide();
       $("#amazon_checking_login").show();
 
       _this.bkg.FDGS.getAmazonLoginStatus(function(isLoggedIn) {
-          log("Logged into Amazon? " + isLoggedIn);
-          _this.amazonLoggedIn = isLoggedIn;
-          _this.amazonImportOptionDisplay();
-          $("#amazon_checking_login").hide();
+        log("Logged into Amazon? " + isLoggedIn);
+        _this.amazonLoggedIn = isLoggedIn;
+        _this.amazonImportOptionDisplay();
+        $("#amazon_checking_login").hide();
+        if(startKindleImport) {
+          _this.startKindleImport();
+        }
       });
     },
 
     amazonImportOptionDisplay: function() {
       var _this = this;
       log("showing import options...");
+
+      //select the appropriate option for import interval regardless of login
+      var amazonImportInterval = _this.settings.amazonImportInterval;
+      var intervalChooser = document.getElementById("amazon_import_interval_enabled");
+
+      switch(amazonImportInterval) {
+        case "-1":
+          intervalChooser.options[0].selected = true;
+          break;
+        case "720":
+          intervalChooser.options[1].selected = true;
+          break;
+        case "168":
+          intervalChooser.options[2].selected = true;
+          break;
+        case "24":
+          intervalChooser.options[3].selected = true;
+          break;
+        case "12":
+          intervalChooser.options[4].selected = true;
+          break;
+        case "1":
+          intervalChooser.options[5].selected = true;
+          break;
+        case ".017":
+          intervalChooser.options[6].selected = true;
+          break;
+      }
 
       if(this.settings.doKindleImport) {
 
@@ -196,6 +240,12 @@
       }
     },
 
+    startKindleImport: function() {
+      var _this = this;
+      log("User has enabled Kindle import!  Initiating...")
+      _this.bkg.FDGS.startKindleImport(_this.bkg.FDGS);
+    },
+
     getBackgroundPage: function() {
       this.bkg = chrome.extension.getBackgroundPage();
       this.settings = this.bkg.FDGS.settings;
@@ -219,13 +269,13 @@
 
       $("#doKindleImport").click(function(){
         if($(this).prop("checked")) {
-          _this.getAmazonLoginStatus();
+          _this.getAmazonLoginStatus(true); //true == initiate import if necessary
         } else {
           _this.amazonImportOptionDisplay();
         }
       });
 
-      $("#amazon_import_interval").change(function() { _this.save(); });
+      $("#amazon_import_interval_enabled").change(function() { _this.save(); });
     }
   }
 
