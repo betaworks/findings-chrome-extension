@@ -5,10 +5,13 @@
     amazonLoggedIn: false,
     bkg: {},
 
-    save: function() {
+    save: function(callback) {
+      log("Saving options...");
       var _this = this;
 
-      log("Saving options...");
+      if(arguments.length == 0) {
+        var callback = function() {};
+      }
 
       var badgeText = "";
       var lastAmazonImportInterval = _this.settings.amazonImportInterval;
@@ -27,11 +30,7 @@
       this.setBadgeText();
 
       // update the amazon import interval if changed
-      if(_this.settings.amazonImportInterval != lastAmazonImportInterval) {
-        _this.bkg.FDGS.killAmazonImportInterval();
-        _this.bkg.FDGS.createAmazonImportInterval();
-      }
-
+      //_this.refreshAmazonImportInterval();
     },
 
     // Restores select box state to saved value from localStorage.
@@ -162,6 +161,7 @@
         $("#amazon_checking_login").hide();
         if(startKindleImport) {
           _this.startKindleImport();
+          _this.refreshAmazonImportInterval();
         }
       });
     },
@@ -202,20 +202,24 @@
 
         //kindle import is checked
         if(_this.amazonLoggedIn) {
-          $("#amazon_logged_out").hide();
-          $("#amazon_logged_in").show();
 
-          //show the import interval options
+          //show the interval options
           $("#amazon_import_interval_disabled").hide();
           $("#amazon_import_interval_enabled").show();
 
+          //show the import options
+          $("#amazon_logged_out").hide();
+          $("#amazon_logged_in").show();
+
         } else {
+          //do not show any import interval options
+          $("#amazon_import_interval_enabled").hide();
+          $("#amazon_import_Interval_disabled").hide();
+
+          //show the login warning
           $("#amazon_logged_in").hide();
           $("#amazon_logged_out").show();
 
-          //show the login warning
-          $("#amazon_logged_out").hide();
-          $("#amazon_logged_in").show();
         }
 
       } else {
@@ -229,6 +233,8 @@
           $("#amazon_import_interval_enabled").hide();
           $("#amazon_import_interval_disabled").show();
         } else {
+
+          //show the login warning
           $("#amazon_logged_in").hide();
           $("#amazon_logged_out").show();
 
@@ -244,6 +250,30 @@
       var _this = this;
       log("User has enabled Kindle import!  Initiating...")
       _this.bkg.FDGS.startKindleImport(_this.bkg.FDGS);
+      _this.refreshAmazonImportInterval();
+    },
+
+    refreshAmazonImportInterval: function(lastAmazonImportInterval) {
+      var _this = this;
+
+      log("Refreshing Kindle import timer...");
+      _this.bkg.FDGS.killAmazonImportInterval();
+      _this.bkg.FDGS.createAmazonImportInterval();
+
+      // function cycleImportTimer() {
+      //   _this.bkg.FDGS.killAmazonImportInterval();
+      //   _this.bkg.FDGS.createAmazonImportInterval();
+      // }
+
+      // if(_this.settings.doKindleImport && (_this.settings.amazonImportInterval != lastAmazonImportInterval)) {
+      //   log("Refreshing Kindle import timer with new value...");
+      //   cycleImportTimer();
+      // } else if((_this.settings.amazonImportInterval == lastAmazonImportInterval) && (_this.bkg.FDGS.amazonImportTimer == null)) {
+      //   cycleImportTimer();
+      // } else if(!_this.settings.doKindleImport) { //kindle import is disabled, clear timer
+      //   log("Kindle import is disabled...destroying import interval timer...");
+      //   _this.bkg.FDGS.killAmazonImportInterval();
+      // }
     },
 
     getBackgroundPage: function() {
@@ -275,7 +305,11 @@
         }
       });
 
-      $("#amazon_import_interval_enabled").change(function() { _this.save(); });
+      $("#amazon_import_interval_enabled").change(function() {
+        _this.save(function() {
+          _this.refreshAmazonImportInterval();
+        });
+      });
     }
   }
 

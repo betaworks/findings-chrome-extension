@@ -149,7 +149,7 @@ var FDGS = {};
 
 	    	_this.log("Creating Amazon import interval for " + _this.settings.amazonImportInterval + " hours.");
 
-	    	_this.amazonImportInterval = window.setInterval(function() {
+	    	_this.amazonImportTimer = window.setInterval(function() {
 	    		_this.log("Kindle import interval elapsed! (" + _this.settings.amazonImportInterval + " hours) Kicking off Kindle import...")
 	    		_this.startKindleImport();
 	    	}, importInterval);
@@ -157,8 +157,8 @@ var FDGS = {};
 
 	    killAmazonImportInterval: function() {
 	    	var _this = this;
-	    	window.clearInterval(_this.amazonImportInterval);
-	    	_this.amazonImportInterval = null;
+	    	window.clearInterval(_this.amazonImportTimer);
+	    	_this.amazonImportTimer = null;
 	    	_this.log("Amazon import interval destroyed.")
 	    },
 
