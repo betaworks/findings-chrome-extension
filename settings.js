@@ -4,6 +4,8 @@ var extension_settings = function() {
 		//don't forget to use this!
 		if ("false" === str) {
 			return false;
+		} else if("true" === str) {
+			return true;
 		} else {
 			return str;
 		}
@@ -13,16 +15,22 @@ var extension_settings = function() {
 		log: function() {
 			console.log("*** EXTENSION SETTINGS ***");
 			console.log("base_domain: " + this.base_domain);
-			console.log("logging_enabled: " + this.logging_enabled);
-			console.log("disabled_caching: " + this.disabled_caching);
 			console.log("isDev: " + this.isDev);
 			console.log("devDomain: " + this.devDomain);
+			console.log("logging_enabled: " + this.logging_enabled);
+			console.log("disabled_caching: " + this.disabled_caching);
 			console.log("doKindleImport: " + this.doKindleImport);
+			console.log("notificationsAmazonEnabledDesktop: " + this.notificationsAmazonEnabledDesktop);
+			console.log("notificationsAmazonEnabledEmail: " + this.notificationsAmazonEnabledEmail);
 			console.log("\n");
 		},
 
 		get base_domain() {
-			return localStorage['FDGS_BASE_DOMAIN'] || "findings.com";
+			if(typeof(localStorage['FDGS_LOGGING_ENABLED']) == "undefined") {
+				return true;
+			} else {
+				return localStorage['FDGS_BASE_DOMAIN'] || "findings.com";
+			}
 		},
 
 		set base_domain(val) {
@@ -30,7 +38,11 @@ var extension_settings = function() {
 		},
 
 		get logging_enabled() {
-			return toBool(localStorage['FDGS_LOGGING_ENABLED']) || false;
+			if(typeof(localStorage['FDGS_LOGGING_ENABLED']) == "undefined") {
+				return true;
+			} else {
+				return toBool(localStorage['FDGS_LOGGING_ENABLED']) || false;
+			}
 		},
 
 		set logging_enabled(val) {
@@ -38,7 +50,11 @@ var extension_settings = function() {
 		},
 
 		get disabled_caching() {
-			return toBool(localStorage['FDGS_DISABLE_CACHING']);
+			if(typeof(localStorage['FDGS_DISABLE_CACHING']) == "undefined") {
+				return false;
+			} else {
+				return toBool(localStorage['FDGS_DISABLE_CACHING']);
+			}
 		},
 
 		set disabled_caching(val) {
@@ -46,7 +62,11 @@ var extension_settings = function() {
 		},
 
 		get isDev() {
-			return toBool(localStorage['isDev']) || false;
+			if(typeof(localStorage['isDev']) == "undefined") {
+				return false;
+			} else {
+				return toBool(localStorage['isDev']);
+			}
 		},
 
 		set isDev(val) {
@@ -54,7 +74,11 @@ var extension_settings = function() {
 		},
 
 		get devDomain() {
-			return localStorage['devDomain'] || "dev.findings.com";
+			if(typeof(localStorage['devDomain']) == "undefined") {
+				return "dev.findings.com";
+			} else {
+				return localStorage['devDomain'];
+			}
 		},
 
 		set devDomain(val) {
@@ -62,7 +86,11 @@ var extension_settings = function() {
 		},
 
 		get doKindleImport() {
-			return toBool(localStorage['doKindleImport']) || false;
+			if(typeof(localStorage['doKindleImport']) == "undefined") {
+				return false;
+			} else {
+				return toBool(localStorage['doKindleImport']);
+			}
 		},
 
 		set doKindleImport(val) {
@@ -70,7 +98,11 @@ var extension_settings = function() {
 		},
 
 		get amazonImportInterval() {
-			return localStorage['amazonImportInterval'] || -1;
+			if(typeof(localStorage['doKindleImport']) == "undefined") {
+				return -1;
+			} else {
+				return localStorage['amazonImportInterval'];
+			}
 		},
 
 		set amazonImportInterval(val) {
@@ -78,7 +110,11 @@ var extension_settings = function() {
 		},
 
 		get lastImportDate() {
-			return localStorage['lastImportDate'] || "never";
+			if(typeof(localStorage['doKindleImport']) == "undefined") {
+				return "never";
+			} else {
+				return localStorage['lastImportDate'];
+			}
 		},
 
 		set lastImportDate(val) {
@@ -91,6 +127,30 @@ var extension_settings = function() {
 			var now = new Date(); 
 			var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 			localStorage['lastImportDate'] = now_utc;
+		},
+
+		get notificationsAmazonEnabledDesktop() {
+			if(typeof(localStorage['notificationsAmazonEnabledDesktop']) == "undefined") {
+				return true;
+			} else {
+				return toBool(localStorage['notificationsAmazonEnabledDesktop']);
+			}
+		},
+
+		set notificationsAmazonEnabledDesktop(val) {
+			localStorage['notificationsAmazonEnabledDesktop'] = val;
+		},
+
+		get notificationsAmazonEnabledEmail() {
+			if(typeof(localStorage['notificationsAmazonEnabledEmail']) == "undefined") {
+				return true;
+			} else {
+				return toBool(localStorage['notificationsAmazonEnabledEmail']);
+			}
+		},
+
+		set notificationsAmazonEnabledEmail(val) {
+			localStorage['notificationsAmazonEnabledEmail'] = val;
 		}
 	};
 

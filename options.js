@@ -16,10 +16,39 @@
       var badgeText = "";
       var lastAmazonImportInterval = _this.settings.amazonImportInterval;
 
+
+      /*************************************************************/
+      /*
+        THIS IS DEV STUFF THAT SHOULD PROBABLY BE REMOVED OR HIDDEN
+        WHEN THE EXTENSION IS RELEASED
+      */
+
       _this.settings.isDev = toBool($("#isDev").prop("checked"));
       _this.settings.devDomain = $("#devDomain").val();
+
+      //automatically set logging and caching to true if dev
+      if(_this.settings.isDev) {
+        _this.settings.logging_enabled = true;
+        _this.settings.disabled_caching = true;
+      } else { //production
+        _this.settings.logging_enabled = false;
+        _this.settings.disabled_caching = false;
+      }
+
+      /* END DEV STUFF */
+      /*************************************************************/
+      
       _this.settings.doKindleImport = toBool($("#doKindleImport").prop("checked"));
+      
       _this.settings.amazonImportInterval = $("#amazon_import_interval_enabled option:selected").val();
+
+      _this.settings.notificationsAmazonEnabledDesktop = $("#amazon_desktop_notifications_enabled").prop("checked");
+      log("desktop notifications? " + $("#amazon_desktop_notifications_enabled").prop("checked"));
+      log("desktop notifications setting: " + _this.settings.notificationsAmazonEnabledDesktop);
+
+      _this.settings.notificationsAmazonEnabledEmail = $("#amazon_email_notifications_enabled").prop("checked");
+      log("email notifications? " + $("#amazon_email_notifications_enabled").prop("checked"));
+      log("email notifications setting: " + _this.settings.notificationsAmazonEnabledEmail);
 
       if(_this.settings.isDev) {
         badgeText = "DEV!";
@@ -36,9 +65,11 @@
 
       log("Restoring options...");
 
-      $("#isDev").prop("checked", this.settings.isDev);
-      $("#devDomain").val(this.settings.devDomain);
-      $("#doKindleImport").prop("checked", this.settings.doKindleImport);
+      $("#isDev").prop("checked", _this.settings.isDev);
+      $("#devDomain").val(_this.settings.devDomain);
+      $("#doKindleImport").prop("checked", _this.settings.doKindleImport);
+      $("#amazon_desktop_notifications_enabled").prop("checked", _this.settings.notificationsAmazonEnabledDesktop);
+      $("#amazon_email_notifications_enabled").prop("checked", _this.settings.notificationsAmazonEnabledEmail);
 
       //get Findings login status
       _this.getFindingsLoginStatus();

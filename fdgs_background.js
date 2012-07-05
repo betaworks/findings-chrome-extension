@@ -12,6 +12,7 @@ var FDGS = {};
 		settings: w.extension_settings,
 		amazonPinger: null,
 		amazonImportTimer: null,
+		amazonLastImportData: null,
 
 		initButton: function () {
 			var _this = this;
@@ -160,6 +161,34 @@ var FDGS = {};
 	    	window.clearInterval(_this.amazonImportTimer);
 	    	_this.amazonImportTimer = null;
 	    	_this.log("Amazon import interval destroyed.")
+	    },
+
+	    defaultNotification: {
+			notification_timeout: 2000,
+			closer: {},
+			bkg: {},
+
+			getBackgroundPage: function() {
+			  this.bkg = chrome.extension.getBackgroundPage();
+			},
+
+			createNotificationCloser: function(win) {
+				//needs the window context for some reason (must be passed into start() within template )
+				var _this = this;
+				_this.closer = win.setTimeout(function() { win.close(); }, _this.notification_timeout);
+			},
+
+			start: function(win) {
+				var _this = this;
+
+				_this.bkg = _this.getBackgroundPage();
+				_this.createNotificationCloser(win);
+			}
+		},
+
+	    showNotification: function(template) {
+			var notification = webkitNotifications.createHTMLNotification(template);
+			notification.show();
 	    },
 
 		log: function(msg, use_ts) {
