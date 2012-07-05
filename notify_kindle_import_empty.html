@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Import success!</title>
+
+		<script>
+			var bkg = chrome.extension.getBackgroundPage();
+			var notice = bkg.FDGS.defaultNotification;
+
+			notice.start(window);
+		</script>
+	</head>
+	<body>
+		No new Amazon Kindle highlights were found for importing into Findings!		
+	</body>
+</html>

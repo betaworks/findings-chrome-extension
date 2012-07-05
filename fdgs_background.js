@@ -164,7 +164,7 @@ var FDGS = {};
 	    },
 
 	    defaultNotification: {
-			notification_timeout: 2000,
+			notification_timeout: 100000,
 			closer: {},
 			bkg: {},
 
@@ -178,11 +178,20 @@ var FDGS = {};
 				_this.closer = win.setTimeout(function() { win.close(); }, _this.notification_timeout);
 			},
 
-			start: function(win) {
+			start: function(win, callback) {
+				if(arguments.length <= 1) {
+					var callback = function() {};
+				}
+
+				if(arguments.length == 0) {
+					var win = window;
+				}
+
 				var _this = this;
 
 				_this.bkg = _this.getBackgroundPage();
 				_this.createNotificationCloser(win);
+				callback();
 			}
 		},
 

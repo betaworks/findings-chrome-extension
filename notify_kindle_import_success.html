@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Import success!</title>
+
+		<style>
+			* { font-family: helvetica, arial, sans serif; font-size: 12px; }
+			#imported { height: 100%; width: 100%; margin: 5px 0 0 0; padding; 0;}
+			#books { list-style-type: none; margin: 0; padding: 0;}
+			#books li { display: inline-block; margin: 0 3px 0 0; }
+			.coverImage { width: 32px; }
+
+		</style>
+
+		<script>
+			var bkg = chrome.extension.getBackgroundPage();
+			var notice = bkg.FDGS.defaultNotification;
+
+			// var highlightTotal = bkg.FDGS.highlightTotal;
+			// var bookTotal = bkg.FDGS.importData.length;
+			// var sourceHTML = sourceHTML = "Findings imported " + highlightTotal + " highlights from " + bookTotal + " Kindle ebooks.";
+			// var imported = document.getElementById("imported");
+
+			// function displayInfo() {
+			// 	imported.innerHTML = sourceHTML;
+			// }
+
+			//success-specific display
+			notice.displayInfo = function() {
+				var _this = this;
+				var amazonLastImportData = bkg.FDGS.amazonLastImportData;
+				var amazonLastImportTotal = bkg.FDGS.amazonLastImportTotal;
+
+				var imported = document.getElementById("imported");
+				var highlight_total = document.getElementById("highlight_total");
+				var book_total = document.getElementById("book_total");
+
+				var highlight_total_html = amazonLastImportTotal;
+				if(amazonLastImportTotal == 1) {
+					highlight_total_html += " highlight";
+				} else {
+					highlight_total_html += " highlights";
+				}
+				highlight_total.innerHTML = amazonLastImportTotal;
+
+				var book_total_html = amazonLastImportData.length;
+				if(amazonLastImportData.length == 1) {
+					book_total_html += " book";
+				} else {
+					book_total_html += " books";
+				}
+				book_total.innerHTML = book_total_html;
+
+				// var highlightTotal = _this.highlightTotal;
+				// var bookTotal = _this.FDGS.importData.length;
+				// var sourceHTML = "Findings imported " + highlightTotal + " highlights from " + bookTotal + " Kindle ebooks.";
+				// var imported = document.getElementById("imported");
+				//imported.innerHTML = sourceHTML;
+
+				// We can't seem to change the size of the window, so I'll just show the total number of highlights.
+
+
+				var sourceHTML = "<ul id='books'>";
+				for(i=0; i<amazonLastImportData.length; i++) {
+					sourceHTML += "<li><img src='" + amazonLastImportData[i].coverImg + "' class='coverImage'></li>";
+				}
+				sourceHTML += "</ul>";
+				imported.innerHTML = sourceHTML;
+			}
+
+			window.onload = function() { notice.start(window, notice.displayInfo); }
+		</script>
+	</head>
+	<body>
+	Findings imported <span id="highlight_total"></span> highlights from <span id="book_total"></span>...
+	<div id="imported"></div>
+	</body>
+</html>

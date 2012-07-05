@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Import success!</title>
+		<script>		
+		var notice = {
+			notification_timeout: 10000,
+			closer: {},
+			bkg: {},
+
+			getBackgroundPage: function() {
+			  this.bkg = chrome.extension.getBackgroundPage();
+			  this.settings = this.bkg.FDGS.settings;
+			},
+
+			createNotificationCloser: function() {
+				var _this = this;
+				_this.closer = window.setTimeout(function() { self.close(); }, _this.notification_timeout);
+			},
+
+			start: function() {
+				this.getBackgroundPage();
+				this.createNotificationCloser();
+			}
+		}
+
+		notice.start();
+		</script>
+	</head>
+	<body>
+		OH NOES! Amazon Kindle import failed!
+	</body>
+</html>

@@ -4,9 +4,9 @@ var kindle_importer = {
 	nextPageData: {"used_asins": [], "upcoming_asins": [], "offset": 0},
 	content: {},
 	upcomingAsins: [],
-	usedAsins: [],
 	processedAsins: [],
-	statusDisplayQueue: [],
+	importedAsins: [],
+	completedImportInfo: [],
 	importData: [],
     currentBook: {"asin": "", "coverImg": "", "processing": false, "init": function(asin) {this.asin = asin; this.coverImg=""; this.processing=false; }},
     highlightTotal: 0,
@@ -180,10 +180,10 @@ var kindle_importer = {
 	        	active = true;
 
 	            if(docs.length > 0) {
-	                if(docs[0].count > 0) _this.statusDisplayQueue.highlightTotal = 0; //reset total each time
+	                if(docs[0].count > 0) _this.completedImportInfo.highlightTotal = 0; //reset total each time
 
 	                $.each(docs, function() {
-	                    if($.inArray(this.asin, _this.statusDisplayQueue.displayed_asins) < 0 && $.inArray(this.asin, _this.statusDisplayQueue.upcoming_asins) < 0) {
+	                    if($.inArray(this.asin, _this.importedAsins) < 0 && $.inArray(this.asin, _this.completedImportInfo.upcoming_asins) < 0) {
 	                        var book = {};
 	                        var coverImg = "http://images.amazon.com/images/P/" + this.asin + ".01.TZZ.jpg";
 	            
@@ -191,8 +191,11 @@ var kindle_importer = {
 	                        book.coverImg = coverImg;
 	                        book.total = this.count;
 
-	                        _this.statusDisplayQueue.unshift(book);
+	                        _this.completedImportInfo.unshift(book);
+	                        _this.importedAsins.unshift(book.asin);
 	                        FDGS.log("added " + book.asin + " to list of books to display");
+	                    } else {
+	                    	FDGS.log("Book " + this.asin + " has been added to completed info. Skipping...");
 	                    }
 	                });
 	            }
@@ -217,6 +220,10 @@ var kindle_importer = {
 
 	beginImport: function() {
 		var _this = this;
+
+		// reset these for results display
+		FDGS.amazonLastImportData = null,
+		FDGS.amazonLastImportTotal = null,
 
 		//we're now processsing highlights
 		_this.processing = true;
@@ -250,13 +257,14 @@ var kindle_importer = {
 		// first send import success notification (if new quotes were imported)
  	    FDGS.settings.updateLastImportDate();
  	    if(desktopNotifyAllowed) {
- 	    	if(_this.statusDisplayQueue.length > 0) {
- 	    		FDGS.amazonLastImportData = _this.statusDisplayQueue;
+ 	    	if(_this.importedAsins.length > 0) {
+ 	    		FDGS.amazonLastImportData = _this.completedImportInfo;
+ 	    		FDGS.amazonLastImportTotal = _this.highlightTotal;
  	    	}
 
- 	    	if(_this.statusDisplayQueue.length == 0) {
+ 	    	if(_this.importedAsins.length == 0) {
 	 	    	FDGS.showNotification(_this.notification_templates.importEmpty);
- 	    	} else if (_this.statusDisplayQueue.length > 0) {
+ 	    	} else if (_this.completedImportInfo.length > 0) {
 	 	    	FDGS.showNotification(_this.notification_templates.importSuccess);
  	    	}
  	    }
@@ -271,16 +279,15 @@ var kindle_importer = {
 	    _this.processing = false;
 		_this.content = {};
 		_this.upcomingAsins = [];
-		_this.usedAsins = [];
+		_this.importedAsins = [];
 		_this.processedAsins = [];
-		_this.statusDisplayQueue = [];
+		_this.completedImportInfo = [];
 		_this.importData = [];
 	    _this.currentBook = {"asin": "", "coverImg": "", "processing": false, "init": function(asin) {this.asin = asin; this.coverImg=""; this.processing=false; }};
 	    _this.highlightTotal = 0;
 	    _this.importKey = -1;
 
 		// reset the last import data
-		FDGS.amazonLastImportData = null,
 	    FDGS.log("Import process closed.  Over and out. [" + FDGS.settings.lastImportDate + "]");
 	},
 
