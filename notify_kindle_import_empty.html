@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Import success!</title>
-
+		<link rel="stylesheet" href="notifications.css" type="text/css">
 		<script>
 			var bkg = chrome.extension.getBackgroundPage();
 			var notice = bkg.FDGS.defaultNotification;
@@ -11,6 +11,6 @@
 		</script>
 	</head>
 	<body>
-		No new Amazon Kindle highlights were found for importing into Findings!		
+		<div id="message">No new Amazon Kindle highlights were found.</div>
 	</body>
 </html>

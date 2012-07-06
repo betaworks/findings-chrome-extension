@@ -3,14 +3,7 @@
 	<head>
 		<title>Import success!</title>
 
-		<style>
-			* { font-family: helvetica, arial, sans serif; font-size: 12px; }
-			#imported { height: 100%; width: 100%; margin: 5px 0 0 0; padding; 0;}
-			#books { list-style-type: none; margin: 0; padding: 0;}
-			#books li { display: inline-block; margin: 0 3px 0 0; }
-			.coverImage { width: 32px; }
-
-		</style>
+		<link rel="stylesheet" href="notifications.css" type="text/css">
 
 		<script>
 			var bkg = chrome.extension.getBackgroundPage();
@@ -57,7 +50,7 @@
 		</script>
 	</head>
 	<body>
-	Findings imported <span id="highlight_total"></span> highlights from <span id="book_total"></span>...
+	<div id="message" class="small">Findings imported <span id="highlight_total"></span> highlights in <span id="book_total"></span></div>
 	<div id="imported"></div>
 	</body>
 </html>

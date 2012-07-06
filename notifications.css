@@ -1,0 +1,27 @@
+* { font-family: helvetica, arial, sans serif; font-size: 12px; }
+
+a { color: #548DCB; }
+
+#message {
+	background: transparent url('findings-icon-32x32.gif') no-repeat left top;
+	padding-left: 37px;
+	margin-bottom: 10px;
+	min-height: 32px;
+}
+
+#message.small {
+	background: transparent url('findings-icon-16x16.gif') no-repeat left top;
+	min-height: 16px;
+	padding-left: 21px;
+}
+
+#message.big {
+	background: transparent url('findings-icon-86x86.gif') no-repeat left top;
+	min-height: 86px;
+	padding-left: 91px;
+}
+
+#imported { height: 100%; width: 100%; margin: 5px 0 0 0; padding; 0;}
+#books { list-style-type: none; margin: 0; padding: 0;}
+#books li { display: inline-block; margin: 0 3px 0 0; }
+.coverImage { width: 32px; }
