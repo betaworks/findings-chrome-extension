@@ -18,7 +18,7 @@ var extension_settings = function() {
 			console.log("isDev: " + this.isDev);
 			console.log("devDomain: " + this.devDomain);
 			console.log("logging_enabled: " + this.logging_enabled);
-			console.log("disabled_caching: " + this.disabled_caching);
+			console.log("disable_caching: " + this.disable_caching);
 			console.log("doKindleImport: " + this.doKindleImport);
 			console.log("notificationsAmazonEnabledDesktop: " + this.notificationsAmazonEnabledDesktop);
 			console.log("notificationsAmazonEnabledEmail: " + this.notificationsAmazonEnabledEmail);
@@ -26,39 +26,39 @@ var extension_settings = function() {
 		},
 
 		get base_domain() {
-			if(typeof(localStorage['FDGS_LOGGING_ENABLED']) == "undefined") {
+			if(typeof(localStorage['base_domain']) == "undefined") {
 				return "findings.com";
 			} else {
-				return localStorage['FDGS_BASE_DOMAIN'];
+				return localStorage['base_domain'];
 			}
 		},
 
 		set base_domain(val) {
-			localStorage['FDGS_BASE_DOMAIN'] = val;
+			localStorage['base_domain'] = val;
 		},
 
 		get logging_enabled() {
-			if(typeof(localStorage['FDGS_LOGGING_ENABLED']) == "undefined") {
+			if(typeof(localStorage['logging_enabled']) == "undefined") {
 				return true;
 			} else {
-				return toBool(localStorage['FDGS_LOGGING_ENABLED']); //switch to false when live!
+				return toBool(localStorage['logging_enabled']); //switch to false when live!
 			}
 		},
 
 		set logging_enabled(val) {
-			localStorage['FDGS_LOGGING_ENABLED'] = val;
+			localStorage['logging_enabled'] = val;
 		},
 
-		get disabled_caching() {
-			if(typeof(localStorage['FDGS_DISABLE_CACHING']) == "undefined") {
+		get disable_caching() {
+			if(typeof(localStorage['disable_caching']) == "undefined") {
 				return false;
 			} else {
-				return toBool(localStorage['FDGS_DISABLE_CACHING']);
+				return toBool(localStorage['disable_caching']);
 			}
 		},
 
-		set disabled_caching(val) {
-			localStorage['FDGS_DISABLE_CACHING'] = val;
+		set disable_caching(val) {
+			localStorage['disable_caching'] = val;
 		},
 
 		get badgeText() {

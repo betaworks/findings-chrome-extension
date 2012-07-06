@@ -31,14 +31,14 @@
       //automatically set logging and caching to true if dev
       if(_this.settings.isDev) {
         _this.settings.logging_enabled = true;
-        _this.settings.disabled_caching = true;
+        _this.settings.disable_caching = true;
       } else { //production
 
         /***********************************************************
         ************* CHANGE THESE BEFORE YOU GO LIVE!!!! **********
         /**********************************************************/
         _this.settings.logging_enabled = true;
-        _this.settings.disabled_caching = true;
+        _this.settings.disable_caching = true;
         // _this.settings.logging_enabled = false;
         // _this.settings.disabled_caching = false;
         /***********************************************************
