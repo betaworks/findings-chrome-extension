@@ -31,11 +31,12 @@ var FDGS = {};
 			var _this = this;
 
 			if(_this.settings.isDev) {
-				_this.log("Findings Chrome Extension is now in DEV MODE.")
+				_this.log("Findings Chrome Extension is now in DEV MODE.");
 				_this.settings.badgeText = "DEV!";
 
 				_this.settings.base_domain = _this.settings.devDomain;
 			} else {
+				_this.log("Findings Chrome Extension is now in PRODUCTION MODE.");
 				_this.settings.badgeText = "";
 			}
 			_this.setBadgeText(_this.settings.badgeText);
@@ -43,7 +44,7 @@ var FDGS = {};
 			//useDomain is a global value for dynamically choosing which domain to use (dev or production)
 			_this.useDomain = _this.settings.base_domain;
 			if(_this.settings.isDev) {
-				_this.settings.base_domain = _this.settings.devDomain;
+				_this.useDomain = _this.settings.devDomain;
 			}
 		},
 

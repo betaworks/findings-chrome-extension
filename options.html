@@ -33,7 +33,7 @@
       <ul class="optionsList">
         <li><input type="checkbox" id="doKindleImport" value="1" checked="false"> Enable Kindle Import<span class="lastImport">Last import: <span id="lastImportDate"></span></span></li>
         <li id="amazon_import_options">
-          <div id="amazon_checking_login" class="visible">Checking Amazon login status...</div>
+          <div id="amazon_checking_login" class="visible">Checking Amazon &amp; Findings login status...</div>
 
           <div id="amazon_logged_in" class="hidden">
             Import my highlights <select id="amazon_import_interval_enabled">
@@ -56,8 +56,11 @@
           </div>
 
           <div id="amazon_logged_out" class="hidden">
-            <span class="warning">You are currently logged out of Amazon.</span>In order to 
-            In order to auto-import your Kindle highlights, you must first <a href="https://kindle.amazon.com/your_highlights" target="_blank">login to kindle.amazon.com</a>
+            <span class="warning">You are currently logged out of Amazon.</span> In order to auto-import your Kindle highlights, you must first <a href="https://kindle.amazon.com/your_highlights" target="_blank">login to kindle.amazon.com</a>
+          </div>
+
+          <div id="findings_logged_out" class="hidden">
+            <span class="warning">You are currently logged out of Findings.</span>In order to auto-import your Kindle highlights, you must first login above.</a>
           </div>
 
         </li>

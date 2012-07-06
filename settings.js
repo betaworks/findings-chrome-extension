@@ -122,7 +122,7 @@ var extension_settings = function() {
 		},
 
 		get lastImportDate() {
-			if(typeof(localStorage['doKindleImport']) == "undefined") {
+			if(typeof(localStorage['lastImportDate']) == "undefined") {
 				return "never";
 			} else {
 				return localStorage['lastImportDate'];

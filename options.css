@@ -34,3 +34,6 @@ a { color: #548DCB; text-decoration: none; }
 #amazon_import_options .amazon_import_interval_disabled { color: #555; }
 #amazon_import_options .amazon_import_interval_enabled.hidden { display: none; }
 #amazon_import_options .amazon_import_interval_disabled.hidden { display: none; }
+
+#amazon_logged_out { display: none; }
+#findings_logged_out { display: none; }
