@@ -18,16 +18,26 @@
 				_this.closer = window.setTimeout(function() { self.close(); }, _this.notification_timeout);
 			},
 
+			clicks: function() {
+				var _this = this;
+				var optionButton = document.getElementById("optionButton");
+				optionButton.addEventListener("click", function() {
+					_this.bkg.FDGS.openPage("options.html");
+					self.close();
+				}, false);
+			},
+
 			start: function() {
 				this.getBackgroundPage();
+				this.clicks();
 				this.createNotificationCloser();
 			}
 		}
 
-		notice.start();
+		window.onload = function() { notice.start(); };
 		</script>
 	</head>
 	<body>
-		OH NOES! Amazon Kindle import failed!
+		Please <a href="#" id="optionButton">login to Findings</a> to beging importing your Kindle highlights.
 	</body>
 </html>

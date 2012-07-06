@@ -21,8 +21,8 @@ var kindle_importer = {
     	"importSuccess": "notify_kindle_import_success.html",
     	"importFailed": "notify_kindle_import_fail.html",
     	"importEmpty": "notify_kindle_import_empty.html",
-    	"importUnavailableAmazonLogin": "notify_amazon_not_logged_in.html",
-    	"importUnavailableFindingsLogin": "notify_findings_not_logged_in.html"
+    	"amazonNotLoggedIn": "notify_kindle_import_failed_amazon_login.html",
+    	"findingsNotLoggedIn": "notify_kindle_import_failed_findings_login.html"
     },
 
 	getNextPage: function() {
@@ -222,41 +222,69 @@ var kindle_importer = {
 		var _this = this;
 
 		// reset these for results display
-		FDGS.amazonLastImportData = null,
-		FDGS.amazonLastImportTotal = null,
+		FDGS.amazonLastImportData = null;
+		FDGS.amazonLastImportTotal = null;
+
+		//login statuses
+		var desktopNotifyAllowed = FDGS.settings.notificationsAmazonEnabledDesktop;
+		var emailNotifyAllowed = FDGS.settings.notificationsAmazonEnabledEmail;
+
+		var isLoggedInAmazon = false;
+		var isLoggedInFindings = false;
+
 
 		//we're now processsing highlights
 		_this.processing = true;
 
-		FDGS.getAmazonLoginStatus(function(isLoggedIn) {
-			if(isLoggedIn) {
-				$.get(_this.highlightsURL, function(src) {
-					var source = $(src).filter("#wholePage");
-					var all = $(source).find("#allHighlightedBooks");
-					//_this.nextPageURL = "https://kindle.amazon.com" + $(source).find("#stillLoadingBooks~a").attr("href");
-					_this.content = all;
-					var bookMains = $(_this.content).find(".bookMain");
-					_this.getBooks(bookMains);
-				}, "html");
-			} else {
-				FDGS.log("User is no longer logged into Amazon...aborting import.")
-				_this.closeImport();
+		//This should be rewritten to use jQuery promises!
+		FDGS.getAmazonLoginStatus(function(isLoggedInAmazon) {
+			if(!isLoggedInAmazon) {
+
+				FDGS.log("User is no longer logged into Amazon...aborting import.");
+				if(desktopNotifyAllowed) {
+					FDGS.showNotification(_this.notification_templates.amazonNotLoggedIn);
+				}
+				_this.closeImport(false); //cancel import
+				return false; //break out of this callback
+
+			} else { // Amazon login OK, now check for Findings login
+
+				FDGS.getFindingsLoginStatus(function(isLoggedInFindings) {
+
+					if(!isLoggedInFindings) {
+						FDGS.log("User is no longer logged into Findings...aborting import.");
+						if(desktopNotifyAllowed) {
+							FDGS.showNotification(_this.notification_templates.findingsNotLoggedIn);
+						}
+						_this.closeImport(false); //
+					} else { // Findings login OK, too...initiate import!
+						$.get(_this.highlightsURL, function(src) {
+							var source = $(src).filter("#wholePage");
+							var all = $(source).find("#allHighlightedBooks");
+							_this.content = all;
+							var bookMains = $(_this.content).find(".bookMain");
+							_this.getBooks(bookMains);
+						}, "html");
+					}
+				});
 			}
 		});
 	},
 
-	closeImport: function() {
+	closeImport: function(notify) {
 		// close out import and reset object for the next import
 		var _this = this;
-		var desktopNotifyAllowed = FDGS.settings.notificationsAmazonEnabledDesktop;
-		FDGS.log("desktop notifications allowed? " + desktopNotifyAllowed);
 
+		if(arguments.length == 0) {
+			var notify = true; //default notifications to true
+		}
+
+		var desktopNotifyAllowed = FDGS.settings.notificationsAmazonEnabledDesktop;
 		var emailNotifyAllowed = FDGS.settings.notificationsAmazonEnabledEmail;
-		FDGS.log("email notifications allowed? " + emailNotifyAllowed);
 
 		// first send import success notification (if new quotes were imported)
  	    FDGS.settings.updateLastImportDate();
- 	    if(desktopNotifyAllowed) {
+ 	    if(notify && desktopNotifyAllowed) {
  	    	if(_this.importedAsins.length > 0) {
  	    		FDGS.amazonLastImportData = _this.completedImportInfo;
  	    		FDGS.amazonLastImportTotal = _this.highlightTotal;
@@ -271,7 +299,7 @@ var kindle_importer = {
 
  	    // the email notification may be something that should happen on the server
  	    // but I'll put it in here for now.
- 	    if(emailNotifyAllowed) {
+ 	    if(notify && emailNotifyAllowed) {
  	    	//send the email notification
  	    }
 

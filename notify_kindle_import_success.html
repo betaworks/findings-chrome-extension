@@ -16,15 +16,6 @@
 			var bkg = chrome.extension.getBackgroundPage();
 			var notice = bkg.FDGS.defaultNotification;
 
-			// var highlightTotal = bkg.FDGS.highlightTotal;
-			// var bookTotal = bkg.FDGS.importData.length;
-			// var sourceHTML = sourceHTML = "Findings imported " + highlightTotal + " highlights from " + bookTotal + " Kindle ebooks.";
-			// var imported = document.getElementById("imported");
-
-			// function displayInfo() {
-			// 	imported.innerHTML = sourceHTML;
-			// }
-
 			//success-specific display
 			notice.displayInfo = function() {
 				var _this = this;
@@ -51,18 +42,12 @@
 				}
 				book_total.innerHTML = book_total_html;
 
-				// var highlightTotal = _this.highlightTotal;
-				// var bookTotal = _this.FDGS.importData.length;
-				// var sourceHTML = "Findings imported " + highlightTotal + " highlights from " + bookTotal + " Kindle ebooks.";
-				// var imported = document.getElementById("imported");
-				//imported.innerHTML = sourceHTML;
-
-				// We can't seem to change the size of the window, so I'll just show the total number of highlights.
-
-
 				var sourceHTML = "<ul id='books'>";
 				for(i=0; i<amazonLastImportData.length; i++) {
 					sourceHTML += "<li><img src='" + amazonLastImportData[i].coverImg + "' class='coverImage'></li>";
+					if( i > 10) { //too many to display!
+						break;
+					}
 				}
 				sourceHTML += "</ul>";
 				imported.innerHTML = sourceHTML;

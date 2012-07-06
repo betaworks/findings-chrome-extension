@@ -17,10 +17,11 @@ var FDGS = {};
 		initButton: function () {
 			var _this = this;
 			chrome.browserAction.onClicked.addListener(function(tab) {
-				//if(!localStorage['isDev']) { localStorage['isDev'] = false; }
-				//if(!localStorage['devDomain']) { localStorage['devDomain'] = "dev.findings.com"; }
+				var setConstants = "(setConstants = function() {FDGS_BASE_DOMAIN = '" + _this.settings.base_domain + "'; FDGS_LOGGING_ENABLED = " + _this.settings.logging_enabled + "; FDGS_DISABLE_CACHING = " + _this.settings.disable_caching + ";})()";
 
-				chrome.tabs.executeScript(null, {code: "FDGS_BASE_DOMAIN = '" + _this.settings.base_domain + "'; FDGS_LOGGING_ENABLED = " + _this.settings.logging_enabled + "; FDGS_DISABLE_CACHING = " + _this.settings.disable_caching + ";"});
+				_this.log(setConstants);
+
+				chrome.tabs.executeScript(null, {code: setConstants});
 				chrome.tabs.executeScript(null, {file: _this.loader_script});
 			});
 		},
@@ -29,19 +30,12 @@ var FDGS = {};
 			var _this = this;
 
 			if(_this.settings.isDev) {
-				console.log("Findings Chrome Extension is now in DEV MODE.")
+				_this.log("Findings Chrome Extension is now in DEV MODE.")
 				_this.badgeText = "DEV!";
 
 				_this.settings.base_domain = _this.settings.devDomain;
-				// _this.base_domain = localStorage['devDomain'];
-				// _this.logging_enabled = true;
-				// _this.disable_caching = true;
-
 			} else {
 				_this.badgeText = "";
-				// _this.base_domain =  "findings.com";
-				// _this.logging_enabled = false;
-				// _this.disable_caching = false;
 			}
 		},
 
@@ -59,28 +53,45 @@ var FDGS = {};
 		startKindleImport: function(FDGS) {
 			var _this = this;
 			var findingsUser = {};
-			var amazonIsLoggedIn = false;
+			var desktopNotifyAllowed = _this.settings.notificationsAmazonEnabledDesktop;
 
-			_this.getFindingsLoginStatus(function(user) {
-				findingsUser = user;
+			if(_this.settings.doKindleImport) {
 
-				_this.getAmazonLoginStatus(function(isLoggedIn) {
-					amazonIsLoggedIn = isLoggedIn;
+				_this.getAmazonLoginStatus(function(isLoggedInAmazon) {
+					if(!isLoggedInAmazon) {
 
-				if(findingsUser.isLoggedIn && amazonIsLoggedIn && _this.settings.doKindleImport) {
-					_this.log("All systems go for Kindle import...")
-					kindle_importer.start(FDGS);
-					if(_this.amazonPinger == null) {
-						_this.createAmazonPinger(); //ping Amazon every 5 min to stay logged in
-					}
-				} else {
-					_this.log("Kindle import disabled. Settings: [Findings Logged In: " + findingsUser.isLoggedIn + " Amazon Logged In: " + amazonIsLoggedIn + " Import Enabled: " + _this.settings.doKindleImport + "]");
-						if(!_this.settings.doKindleImport) {
-							_this.killAmazonPinger(); //stop pinging if they've turned off import
+						_this.log("User is not logged into Amazon...aborting import.");
+						if(desktopNotifyAllowed) {
+							_this.showNotification("notify_kindle_import_failed_amazon_login.html");
 						}
-				}
+						return false; //break out of this callback
+
+					} else { // Amazon login OK, now check for Findings login
+
+						_this.getFindingsLoginStatus(function(findingsUser) {
+							if(!findingsUser.isLoggedIn) {
+								_this.log("User is not logged into Findings...aborting import.");
+								if(desktopNotifyAllowed) {
+									_this.showNotification("notify_kindle_import_failed_findings_login.html");
+								}
+							} else { // Findings login OK, too...initiate import!
+								_this.log("All systems go for Kindle import...")
+								kindle_importer.start(FDGS);
+								if(_this.amazonPinger == null) {
+									_this.createAmazonPinger(); //ping Amazon every 5 min to stay logged in
+								}
+							}
+						});
+					}
 				});
-			});
+
+
+			} else {
+
+				_this.log("User has disabled Kindle highlight importing.");
+				_this.killAmazonPinger(); //stop pinging if they've turned off import
+
+			}
 		},
 
 		getFindingsLoginStatus: function(callback) {
@@ -88,7 +99,7 @@ var FDGS = {};
 			var _this = this;
 
 			if(arguments.length == 0) {
-				var callback = function() { FDGS.log("No callback for Findings login status. Nothing to do."); };
+				var callback = function() { _this.log("No callback for Findings login status. Nothing to do."); };
 			}
 
 			var userURL = "https://" + this.settings.base_domain + "/logged_in";
@@ -117,10 +128,10 @@ var FDGS = {};
 	      $.get(highlightsURL, function(src) {
 	        var source = $(src);
 	        if($(source).find("#ap_signin_form").length > 0) {
-	          FDGS.log("User is logged out of Amazon!");
+	          _this.log("User is logged out of Amazon!");
 	          _this.amazonLoggedIn = false;
 	        } else {
-	          FDGS.log("User is logged into Amazon!");
+	          _this.log("User is logged into Amazon!");
 	          _this.amazonLoggedIn = true;
 	        }
 
@@ -164,7 +175,7 @@ var FDGS = {};
 	    },
 
 	    defaultNotification: {
-			notification_timeout: 100000,
+			notification_timeout: 10000,
 			closer: {},
 			bkg: {},
 
@@ -199,6 +210,15 @@ var FDGS = {};
 			var notification = webkitNotifications.createHTMLNotification(template);
 			notification.show();
 	    },
+
+        openPage: function (pg) {
+        	var _this = this;
+        	//we don't have a "/chrome" dir setting
+        	//var localPage = _this.chrome_dir + pg;
+            chrome.tabs.create({
+                url: chrome.extension.getURL(pg)
+            })
+        },
 
 		log: function(msg, use_ts) {
 	        if(this.settings.logging_enabled) {

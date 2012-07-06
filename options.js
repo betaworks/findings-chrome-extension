@@ -6,7 +6,8 @@
     bkg: {},
 
     save: function(callback) {
-      log("Saving options...");
+      var _this = this;
+      _this.log("Saving options...");
       var _this = this;
 
       if(arguments.length == 0) {
@@ -43,12 +44,8 @@
       _this.settings.amazonImportInterval = $("#amazon_import_interval_enabled option:selected").val();
 
       _this.settings.notificationsAmazonEnabledDesktop = $("#amazon_desktop_notifications_enabled").prop("checked");
-      log("desktop notifications? " + $("#amazon_desktop_notifications_enabled").prop("checked"));
-      log("desktop notifications setting: " + _this.settings.notificationsAmazonEnabledDesktop);
 
       _this.settings.notificationsAmazonEnabledEmail = $("#amazon_email_notifications_enabled").prop("checked");
-      log("email notifications? " + $("#amazon_email_notifications_enabled").prop("checked"));
-      log("email notifications setting: " + _this.settings.notificationsAmazonEnabledEmail);
 
       if(_this.settings.isDev) {
         badgeText = "DEV!";
@@ -56,14 +53,16 @@
         badgeText = "";
       }
       chrome.browserAction.setBadgeText({"text": badgeText});
-      this.setBadgeText();
+      _this.setBadgeText();
+
+      callback();
     },
 
     // Restores select box state to saved value from localStorage.
     restore: function() {
       var _this = this;
 
-      log("Restoring options...");
+      _this.log("Restoring options...");
 
       $("#isDev").prop("checked", _this.settings.isDev);
       $("#devDomain").val(_this.settings.devDomain);
@@ -101,45 +100,26 @@
       chrome.browserAction.setBadgeText({"text": _this.badgeText});
     },
 
-    // getFindingsLoginStatus: function() {
-    //   var _this = this;
-    //   var userURL = "https://" + this.settings.base_domain + "/logged_in";
-    //   $.getJSON(userURL, function(result) {
-    //     //log(result);
-    //     if(result.isLoggedIn) {
-    //         _this.findingsLoggedIn = true;
-    //         log("User is logged into Findings as user " + result.username);
-
-    //         _this.bkg.FDGS.findingsUser = result;
-
-    //         var userlink = "<a href='https://" + _this.settings.base_domain + "/" + result.username + "' target='blank'>" + result.username + "</a>";
-    //         $("#fdgs_username_display").html(userlink);
-    //         $("#fdgs_login_status .fdgs_logged_out").hide();
-    //         $("#fdgs_login_status .fdgs_logged_in").show();
-    //     } else {
-    //         _this.findingsLoggedIn = false;
-    //         log("User is logged out of Findings!");
-    //         $("#fdgs_login_status .fdgs_logged_in").hide();
-    //         $("#fdgs_login_status .fdgs_logged_out").show();
-    //     }
-    //   });
-    // },
-
     getFindingsLoginStatus: function() {
       var _this = this;
+
+      var useDomain = _this.settings.base_domain;
+      if(_this.settings.isDev) {
+        useDomain = _this.settings.devDomain;
+      }
 
       _this.bkg.FDGS.getFindingsLoginStatus(function(user) {
         if(user.isLoggedIn) {
             _this.findingsLoggedIn = true;
-            log("User is logged into Findings as user " + user.username);
+            _this.log("User is logged into " + useDomain + " as user " + user.username);
 
-            var userlink = "<a href='https://" + _this.settings.base_domain + "/" + user.username + "' target='blank'>" + user.username + "</a>";
+            var userlink = "<a href='https://" + useDomain + "/" + user.username + "' target='blank'>" + user.username + "</a>";
             $("#fdgs_username_display").html(userlink);
             $("#fdgs_login_status .fdgs_logged_out").hide();
             $("#fdgs_login_status .fdgs_logged_in").show();
         } else {
             _this.findingsLoggedIn = false;
-            log("User is logged out of Findings!");
+            _this.log("User is logged out of Findings!");
             $("#fdgs_login_status .fdgs_logged_in").hide();
             $("#fdgs_login_status .fdgs_logged_out").show();
         }
@@ -149,9 +129,14 @@
     findingsLogin: function() {
       var _this = this;
 
-      log("Logging into Findings...");
+      var useDomain = _this.settings.base_domain;
+      if(_this.settings.isDev) {
+        useDomain = _this.settings.devDomain;
+      }
+
+      _this.log("Logging into " + useDomain + "...");
       var _this = this;
-      var loginURL = "https://" + this.settings.base_domain + "/authenticate";
+      var loginURL = "https://" + useDomain + "/authenticate";
       var username = $("#fdgs_username").val();
       var password = $("#fdgs_password").val();
       var data = {"username": username, "password": password};
@@ -161,9 +146,9 @@
 
     findingsLogout: function() {
       var _this = this;
-      log("Logging out of Findings...");
+      _this.log("Logging out of Findings...");
       var _this = this;
-      var logoutURL = "https://" + this.settings.base_domain + "/logout";
+      var logoutURL = "https://" + useDomain + "/logout";
       $.get(logoutURL, function() {
         _this.bkg.FDGS.findingsUser = {};
         _this.getFindingsLoginStatus();
@@ -179,13 +164,13 @@
         doKindleImport = false;
       }
 
-      log("Getting login status from background page...");
+      _this.log("Getting login status from background page...");
 
       $("#amazon_logged_in").hide();
       $("#amazon_checking_login").show();
 
       _this.bkg.FDGS.getAmazonLoginStatus(function(isLoggedIn) {
-        log("Logged into Amazon? " + isLoggedIn);
+        _this.log("Logged into Amazon? " + isLoggedIn);
         _this.amazonLoggedIn = isLoggedIn;
         _this.amazonImportOptionDisplay();
         $("#amazon_checking_login").hide();
@@ -198,7 +183,7 @@
 
     amazonImportOptionDisplay: function() {
       var _this = this;
-      log("showing import options...");
+      _this.log("showing import options...");
 
       //select the appropriate option for import interval regardless of login
       var amazonImportInterval = _this.settings.amazonImportInterval;
@@ -278,7 +263,7 @@
 
     startKindleImport: function() {
       var _this = this;
-      log("User has enabled Kindle import!  Initiating...")
+      _this.log("User has enabled Kindle import!  Initiating...")
       _this.bkg.FDGS.startKindleImport(_this.bkg.FDGS);
       _this.refreshAmazonImportInterval();
     },
@@ -286,7 +271,7 @@
     refreshAmazonImportInterval: function() {
       var _this = this;
 
-      log("Refreshing Kindle import timer...");
+      _this.log("Refreshing Kindle import timer...");
       _this.bkg.FDGS.killAmazonImportInterval();
       if(_this.settings.amazonImportInterval > 0) {
         _this.bkg.FDGS.createAmazonImportInterval();
@@ -296,19 +281,35 @@
     getBackgroundPage: function() {
       this.bkg = chrome.extension.getBackgroundPage();
       this.settings = this.bkg.FDGS.settings;
-      //log(this.bkg.FDGS);
+      //_this.log(this.bkg.FDGS);
+    },
+
+    log: function(msg, use_ts) {
+      var _this = this;
+      if(chrome.extension.getBackgroundPage().FDGS.settings.logging_enabled) {
+          if(arguments.length < 2) use_ts = false;
+          if(use_ts) {
+              var date = new Date();
+              ts = (date.getTime() - this.started) / 1000;
+              logtxt = "[" + ts + "] " + msg;
+          } else {
+              logtxt = msg;
+          }
+          
+          if(window.hasOwnProperty("console")) console.log(logtxt);
+      }
     },
 
     start: function() {
       var _this = this;
 
-      log("Starting options page...");
+      _this.log("Starting options page...");
 
       _this.getBackgroundPage();
       
       this.restore();
 
-      $(".optionsList li input").click(function() { _this.save(); })
+      $(".optionsList li input").bind("click keyupfunction blur", function() { _this.save(); })
 
       $("#fdgs_login").click(function() { _this.findingsLogin(); })
 
@@ -334,20 +335,6 @@
     }
   }
 
-  w.log = function(msg, use_ts) {
-    if(chrome.extension.getBackgroundPage().FDGS.settings.logging_enabled) {
-        if(arguments.length < 2) use_ts = false;
-        if(use_ts) {
-            var date = new Date();
-            ts = (date.getTime() - this.started) / 1000;
-            logtxt = "[" + ts + "] " + msg;
-        } else {
-            logtxt = msg;
-        }
-        
-        if(window.hasOwnProperty("console")) console.log(logtxt);
-    }
-  };
 
   w.toBool = function(str) {
     if ("false" === str) {
