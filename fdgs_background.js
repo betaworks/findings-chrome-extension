@@ -13,6 +13,7 @@ var FDGS = {};
 		amazonPinger: null,
 		amazonImportTimer: null,
 		amazonLastImportData: null,
+		useDomain: "findings.com",
 
 		initButton: function () {
 			var _this = this;
@@ -31,23 +32,24 @@ var FDGS = {};
 
 			if(_this.settings.isDev) {
 				_this.log("Findings Chrome Extension is now in DEV MODE.")
-				_this.badgeText = "DEV!";
+				_this.settings.badgeText = "DEV!";
 
 				_this.settings.base_domain = _this.settings.devDomain;
 			} else {
-				_this.badgeText = "";
+				_this.settings.badgeText = "";
+			}
+			_this.setBadgeText(_this.settings.badgeText);
+
+			//useDomain is a global value for dynamically choosing which domain to use (dev or production)
+			_this.useDomain = _this.settings.base_domain;
+			if(_this.settings.isDev) {
+				_this.settings.base_domain = _this.settings.devDomain;
 			}
 		},
 
 		setBadgeText: function(txt) {
 			var _this = this;
-			if(eval(localStorage['isDev'])) {
-				this.badgeText = "DEV!";
-			} else {
-				this.badgeText = "";
-			}
-
-			chrome.browserAction.setBadgeText({"text": _this.badgeText});
+			chrome.browserAction.setBadgeText({"text": txt});
 		},
 
 		startKindleImport: function(FDGS) {
@@ -102,16 +104,17 @@ var FDGS = {};
 				var callback = function() { _this.log("No callback for Findings login status. Nothing to do."); };
 			}
 
-			var userURL = "https://" + this.settings.base_domain + "/logged_in";
+			var userURL = "https://" + _this.useDomain + "/logged_in";
 			var returnUser ={"isLoggedIn": false, "username": ""};
 
 			$.getJSON(userURL, function(user) {
-				_this.findingsUser = user;
 		        if(user.isLoggedIn) {
-		            _this.log("User is logged into Findings as user " + user.username);
+		            _this.log("User is logged into " + _this.useDomain + " as user " + user.username);
 		        } else {
-		            _this.log("User is logged out of Findings!");
+		            _this.log("User is logged out of " + _this.useDomain + "!");
 		        }
+		        user.link = "<a href='https://" + _this.useDomain + "/" + user.username + "' target='blank'>" + user.username + "</a>";
+				_this.findingsUser = user;
 		        callback(user);
 			});
 		},
@@ -242,7 +245,6 @@ var FDGS = {};
 			_this.settings.log();
 
 			_this.setEnvironment();
-			_this.setBadgeText();
 			_this.initButton();
 			_this.startKindleImport();
 			if(_this.settings.doKindleImport && _this.settings.amazonImportInterval > 0) {

@@ -27,9 +27,9 @@ var extension_settings = function() {
 
 		get base_domain() {
 			if(typeof(localStorage['FDGS_LOGGING_ENABLED']) == "undefined") {
-				return true;
+				return "findings.com";
 			} else {
-				return localStorage['FDGS_BASE_DOMAIN'] || "findings.com";
+				return localStorage['FDGS_BASE_DOMAIN'];
 			}
 		},
 
@@ -41,7 +41,7 @@ var extension_settings = function() {
 			if(typeof(localStorage['FDGS_LOGGING_ENABLED']) == "undefined") {
 				return true;
 			} else {
-				return toBool(localStorage['FDGS_LOGGING_ENABLED']) || false;
+				return toBool(localStorage['FDGS_LOGGING_ENABLED']); //switch to false when live!
 			}
 		},
 
@@ -59,6 +59,18 @@ var extension_settings = function() {
 
 		set disabled_caching(val) {
 			localStorage['FDGS_DISABLE_CACHING'] = val;
+		},
+
+		get badgeText() {
+			if(typeof(localStorage['badgeText']) == "undefined") {
+				return "";
+			} else {
+				return localStorage['badgeText'];
+			}
+		},
+
+		set badgeText(val) {
+			localStorage['badgeText'] = val;
 		},
 
 		get isDev() {

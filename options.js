@@ -3,6 +3,7 @@
   w.opt = {
     findingsLoggedIn: false,
     amazonLoggedIn: false,
+    useDomain: "findings.com",
     bkg: {},
 
     save: function(callback) {
@@ -47,13 +48,15 @@
 
       _this.settings.notificationsAmazonEnabledEmail = $("#amazon_email_notifications_enabled").prop("checked");
 
-      if(_this.settings.isDev) {
-        badgeText = "DEV!";
-      } else {
-        badgeText = "";
-      }
-      chrome.browserAction.setBadgeText({"text": badgeText});
-      _this.setBadgeText();
+      // if(_this.settings.isDev) {
+      //   badgeText = "DEV!";
+      // } else {
+      //   badgeText = "";
+      // }
+      // chrome.browserAction.setBadgeText({"text": badgeText});
+      // _this.setBadgeText();
+
+      _this.bkg.FDGS.setEnvironment();
 
       callback();
     },
@@ -70,8 +73,10 @@
       $("#amazon_desktop_notifications_enabled").prop("checked", _this.settings.notificationsAmazonEnabledDesktop);
       $("#amazon_email_notifications_enabled").prop("checked", _this.settings.notificationsAmazonEnabledEmail);
 
-      //get Findings login status
-      _this.getFindingsLoginStatus();
+      _this.useDomain = _this.settings.base_domain;
+      if(_this.settings.isDev) {
+        _this.useDomain = _this.settings.devDomain;
+      }
 
       if(doKindleImport) {
         _this.getAmazonLoginStatus(false); //false == get status but do not execute import
@@ -81,45 +86,33 @@
       }
 
       $("#lastImportDate").html(_this.settings.lastImportDate);
+
+      //get Findings login status
+      _this.getFindingsLoginStatus();
     },
 
     update: function() {
       //run the functions necessary to set the environment, check login, etc.
-      this.setBadgeText();
+      this.bkg.FDGS.setEnvironment();
       this.getFindingsLoginStatus();
-    },
-
-    setBadgeText: function(txt) {
-      var _this = this;
-      if(this.settings.isDev) {
-        this.badgeText = "DEV!";
-      } else {
-        this.badgeText = "";
-      }
-
-      chrome.browserAction.setBadgeText({"text": _this.badgeText});
     },
 
     getFindingsLoginStatus: function() {
       var _this = this;
 
-      var useDomain = _this.settings.base_domain;
-      if(_this.settings.isDev) {
-        useDomain = _this.settings.devDomain;
-      }
+      _this.log("Checking for login on " + _this.useDomain);
 
       _this.bkg.FDGS.getFindingsLoginStatus(function(user) {
         if(user.isLoggedIn) {
             _this.findingsLoggedIn = true;
-            _this.log("User is logged into " + useDomain + " as user " + user.username);
+            //_this.log("User is logged into " + _this.useDomain + " as user " + user.username);
 
-            var userlink = "<a href='https://" + useDomain + "/" + user.username + "' target='blank'>" + user.username + "</a>";
-            $("#fdgs_username_display").html(userlink);
+            $("#fdgs_username_display").html(user.link);
             $("#fdgs_login_status .fdgs_logged_out").hide();
             $("#fdgs_login_status .fdgs_logged_in").show();
         } else {
             _this.findingsLoggedIn = false;
-            _this.log("User is logged out of Findings!");
+            _this.log("User is logged out of " + _this.useDomain + "!");
             $("#fdgs_login_status .fdgs_logged_in").hide();
             $("#fdgs_login_status .fdgs_logged_out").show();
         }
@@ -129,14 +122,9 @@
     findingsLogin: function() {
       var _this = this;
 
-      var useDomain = _this.settings.base_domain;
-      if(_this.settings.isDev) {
-        useDomain = _this.settings.devDomain;
-      }
-
-      _this.log("Logging into " + useDomain + "...");
+      _this.log("Logging into " + _this.useDomain + "...");
       var _this = this;
-      var loginURL = "https://" + useDomain + "/authenticate";
+      var loginURL = "https://" + _this.useDomain + "/authenticate";
       var username = $("#fdgs_username").val();
       var password = $("#fdgs_password").val();
       var data = {"username": username, "password": password};
@@ -148,7 +136,7 @@
       var _this = this;
       _this.log("Logging out of Findings...");
       var _this = this;
-      var logoutURL = "https://" + useDomain + "/logout";
+      var logoutURL = "https://" + _this.useDomain + "/logout";
       $.get(logoutURL, function() {
         _this.bkg.FDGS.findingsUser = {};
         _this.getFindingsLoginStatus();
