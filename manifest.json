@@ -1,6 +1,6 @@
 {
   "name": "Findings",
-  "version": "0.15",
+  "version": "0.16",
   "manifest version": 2,
   "description": "The Findings Chrome extension",
   "background": {
