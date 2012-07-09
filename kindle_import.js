@@ -315,7 +315,7 @@ var kindle_importer = {
 	    _this.highlightTotal = 0;
 	    _this.importKey = -1;
 
-		chrome.browserAction.setIcon({"path": "findings-icon-16x16.gif"});
+		chrome.browserAction.setIcon({"path": "icon-16x16.png"});
 
 		// reset the last import data
 	    FDGS.log("Import process closed.  Over and out. [" + FDGS.settings.lastImportDate + "]");

@@ -83,7 +83,7 @@ var FDGS = {};
 								if(_this.amazonPinger == null) {
 									_this.createAmazonPinger(); //ping Amazon every 5 min to stay logged in
 								}
-								chrome.browserAction.setIcon({"path": "findings-icon-16x16-working.gif"});
+								chrome.browserAction.setIcon({"path": "icon-16x16-working.png"});
 							}
 						});
 					}
@@ -244,7 +244,7 @@ var FDGS = {};
 			var _this = this;
 
 			//just in case it got stuck...
-			chrome.browserAction.setIcon({"path": "findings-icon-16x16.gif"});
+			chrome.browserAction.setIcon({"path": "icon-16x16.png"});
 
 			//get the app settings and output to console
 			_this.settings = extension_settings();
