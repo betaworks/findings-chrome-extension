@@ -1,6 +1,7 @@
 (function(w) {
   // Saves options to localStorage.
   w.opt = {
+    clickEgg: 0,
     findingsLoggedIn: false,
     amazonLoggedIn: false,
     useDomain: "findings.com",
@@ -84,26 +85,36 @@
         _this.getAmazonLoginStatus(false); //false == get status but do not execute import
       } else {
         //don't show the checking Amazon status
+        $("#amazon_logged_in").hide();
+        $("#amazon_logged_out").hide();
+        $("#findings_logged_out").hide();
         $("#amazon_checking_login").hide();
       }
 
       $("#lastImportDate").html(_this.settings.lastImportDate);
 
       //get Findings login status
-      _this.getFindingsLoginStatus();
+      _this.getFindingsLoginStatus(function() {
+        //_this.amazonImportOptionDisplay();
+      });
     },
 
     update: function() {
       //run the functions necessary to set the environment, check login, etc.
       this.bkg.FDGS.setEnvironment();
-      this.getFindingsLoginStatus();
+      _this.getFindingsLoginStatus(function() {
+        _this.amazonImportOptionDisplay();
+      });
     },
 
-    getFindingsLoginStatus: function() {
+    getFindingsLoginStatus: function(callback) {
       var _this = this;
 
-      _this.log("Checking for login on " + _this.useDomain);
+      if(arguments.length == 0) {
+        var callback = function() {};
+      }
 
+      //_this.log("Checking for login on " + _this.useDomain);
       _this.bkg.FDGS.getFindingsLoginStatus(function(user) {
         if(user.isLoggedIn) {
             _this.findingsLoggedIn = true;
@@ -116,11 +127,9 @@
             $("#fdgs_login_status .fdgs_logged_in").hide();
             $("#fdgs_login_status .fdgs_logged_out").show();
         }
-        
-        if(_this.amazonLoggedIn) {
-          _this.amazonImportOptionDisplay();
-        }
+        _this.log("Logged into " + _this.useDomain + "? " + _this.findingsLoggedIn);
 
+        callback();
       });
     },
 
@@ -134,7 +143,11 @@
       var password = $("#fdgs_password").val();
       var data = {"username": username, "password": password};
 
-      $.getJSON(loginURL, data, function() { _this.getFindingsLoginStatus(); });
+      $.getJSON(loginURL, data, function() { _this.getFindingsLoginStatus(function() {
+        _this.getFindingsLoginStatus(function() {
+          _this.amazonImportOptionDisplay();
+        });
+      }); });
     },
 
     findingsLogout: function() {
@@ -144,9 +157,17 @@
       var logoutURL = "https://" + _this.useDomain + "/logout";
       $.get(logoutURL, function() {
         _this.bkg.FDGS.findingsUser = {};
-        _this.getFindingsLoginStatus();
+        _this.getFindingsLoginStatus(function() {
+          _this.amazonImportOptionDisplay();
+        });
       }); 
+    },
 
+    displayLoginCheckSpinner: function() {
+      $("#amazon_logged_in").hide();
+      $("#amazon_logged_out").hide();
+      $("#findings_logged_out").hide();
+      $("#amazon_checking_login").show();
     },
 
     getAmazonLoginStatus: function(startKindleImport) {
@@ -159,16 +180,13 @@
 
       _this.log("Getting login status from background page...");
 
-      $("#amazon_logged_in").hide();
-      $("#amazon_logged_out").hide();
-      $("#findings_logged_out").hide();
-      $("#amazon_checking_login").show();
+      _this.displayLoginCheckSpinner();
 
       _this.bkg.FDGS.getAmazonLoginStatus(function(isLoggedIn) {
         _this.log("Logged into Amazon? " + isLoggedIn);
         _this.amazonLoggedIn = isLoggedIn;
-        _this.amazonImportOptionDisplay();
         $("#amazon_checking_login").hide();
+        _this.amazonImportOptionDisplay();
         if(startKindleImport) {
           _this.startKindleImport();
         }
@@ -210,30 +228,17 @@
 
         if(_this.amazonLoggedIn) { //logged into Amazon
 
-          //check for Findings login
-          if(!_this.findingsLoggedIn) {
-            //show the Findings login warning only
+          if(!_this.findingsLoggedIn) { //not logged into Findings
             $("#findings_logged_out").show();
             $("#amazon_logged_out").hide();
             $("#amazon_logged_in").hide();
           } else {
-            //show the interval options
-            $("#amazon_import_interval_disabled").hide();
-            $("#amazon_import_interval_enabled").show();
-
-            //Hide the logged out messages and show the import options container
             $("#findings_logged_out").hide();
             $("#amazon_logged_out").hide();
             $("#amazon_logged_in").show();            
           }
 
         } else { //not logged into Amazon
-
-          //do not show any import interval options
-          $("#amazon_import_interval_enabled").hide();
-          $("#amazon_import_Interval_disabled").hide();
-
-          //show the login warning
           $("#findings_logged_out").hide();
           $("#amazon_logged_in").hide();
           $("#amazon_logged_out").show();
@@ -241,29 +246,9 @@
         }
 
       } else { //kindle import is disabled
-
-        if(_this.amazonLoggedIn) { //logged into amazon
-          //hide the Amazon login message
-          $("#amazon_logged_out").hide();
-          //show the interval option div
-          $("#amazon_logged_in").show();
-
-          //show the disabled import interval options
-          $("#amazon_import_interval_enabled").hide();
-          $("#amazon_import_interval_disabled").show();
-
-        } else { //not logged into Amazon
-
-          //show the login warning
           $("#findings_logged_out").hide();
           $("#amazon_logged_in").hide();
-          $("#amazon_logged_out").show();
-
-          //do not show any import interval options
-          $("#amazon_import_interval_enabled").hide();
-          $("#amazon_import_Interval_disabled").hide();
-        }
-
+          $("#amazon_logged_out").hide();
       }
     },
 
@@ -313,13 +298,15 @@
 
       _this.getBackgroundPage();
       
-      this.restore();
+      _this.restore();
 
       $(".optionsList li input").bind("click keyupfunction blur", function() { _this.save(); })
 
       $("#fdgs_login").click(function() { _this.findingsLogin(); })
 
       $("#fdgs_logout").click(function() { _this.findingsLogout(); });
+
+      $("#refresh_options").click(function() { window.location = window.location; })
 
       $("#doKindleImport").click(function(){
         if($(this).prop("checked")) {
@@ -337,6 +324,17 @@
         _this.save(function() {
           _this.refreshAmazonImportInterval();
         });
+      });
+
+      $("#header").click(function() {
+        var $devopt = $("#devopt");
+        if(_this.clickEgg == 2) {
+          _this.clickEgg = 0;
+          $devopt.show();
+        } else {
+          $devopt.hide();
+          _this.clickEgg ++;
+        }
       });
     }
   }

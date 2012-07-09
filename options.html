@@ -9,7 +9,8 @@
   <script type="text/javascript" src="options.js"></script>
 
   <body>
-    <!-- <h1>Findings.com Extension Options</h1> -->
+    <div id="header"><h1>Chrome Extension Options</h1></div>
+
     <div class="findings options">
       <h2>Findings Options</h2>
       <ul class="optionsList">
@@ -24,16 +25,22 @@
             <button id="fdgs_login">login</button>
           </div>
         </li>
-        <li><input type="checkbox" id="isDev" value="1" checked="false"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="opt.save()">)</li>
+        <li id="devopt"><input type="checkbox" id="isDev" value="1" checked="false"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="opt.save()">)</li>
       </ul>
     </div>
 
     <div class="amazon options">
       <h2>Amazon Options</h2>
       <ul class="optionsList">
-        <li><input type="checkbox" id="doKindleImport" value="1" checked="false"> Enable Kindle Import<span class="lastImport">Last import: <span id="lastImportDate"></span></span></li>
+        <li><input type="checkbox" id="doKindleImport" value="1" checked="false"> Enable Kindle Import <span id="amazon_checking_login" class="visible">Checking login status...</span>
+        <div id="lastImport">Last import: <span id="lastImportDate"></span></div></li>
         <li id="amazon_import_options">
-          <div id="amazon_checking_login" class="visible">Checking Amazon &amp; Findings login status...</div>
+          
+
+
+          <div id="findings_logged_out" class="hidden">
+            <span class="warning">You are currently logged out of Findings.</span>In order to auto-import your Kindle highlights, you must first login above.</a>
+          </div>
 
           <div id="amazon_logged_in" class="hidden">
             Import my highlights <select id="amazon_import_interval_enabled">
@@ -45,23 +52,17 @@
                 <option value="1">Every hour</option>
                 <option value=".017">Every minute</option>
             </select>
-
-            <select id="amazon_import_interval_disabled" class="hidden"><option value="">Importing must be enabled</option></select>
-
-            <div id="amazon_notifications">
-              <ul>
-                <li><input type="checkbox" id="amazon_desktop_notifications_enabled" checked="true"> Notify me when my highlights have been imported</li>
-                <li><input type="checkbox" id="amazon_email_notifications_enabled" checked="true"> Email me when my highlights have been imported (not implemented)</li>
-            </div>
+            <ul>
+              <li><input type="checkbox" id="amazon_desktop_notifications_enabled" checked="true"> Notify me when my highlights have been imported</li>
+              <li><input type="checkbox" id="amazon_email_notifications_enabled" checked="true"> Email me when my highlights have been imported (not implemented)</li>
+            </ul>
           </div>
 
           <div id="amazon_logged_out" class="hidden">
             <span class="warning">You are currently logged out of Amazon.</span> In order to auto-import your Kindle highlights, you must first <a href="https://kindle.amazon.com/your_highlights" target="_blank">login to kindle.amazon.com</a>
+            <button id="refresh_options">Refresh options once logged in</button>
           </div>
 
-          <div id="findings_logged_out" class="hidden">
-            <span class="warning">You are currently logged out of Findings.</span>In order to auto-import your Kindle highlights, you must first login above.</a>
-          </div>
 
         </li>
       </ul>

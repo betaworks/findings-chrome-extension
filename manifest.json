@@ -7,7 +7,7 @@
   	"page": "fdgs_background.html"
   },
   "browser_action": {
-  	"default_icon": "icon.png",
+  	"default_icon": "findings-icon-16x16.gif",
   	"default_title": "Findings.com"
   },
   "options_page": "options.html",

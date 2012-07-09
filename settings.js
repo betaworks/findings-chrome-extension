@@ -25,6 +25,18 @@ var extension_settings = function() {
 			console.log("\n");
 		},
 
+		get first_run() {
+			if(typeof(localStorage['first_run']) == "undefined") {
+				return true
+			} else {
+				return toBool(localStorage['first_run']);
+			}
+		},
+
+		set first_run(val) {
+			localStorage['first_run'] = val;
+		},
+
 		get base_domain() {
 			if(typeof(localStorage['base_domain']) == "undefined") {
 				return "findings.com";

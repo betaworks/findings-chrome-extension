@@ -83,6 +83,7 @@ var FDGS = {};
 								if(_this.amazonPinger == null) {
 									_this.createAmazonPinger(); //ping Amazon every 5 min to stay logged in
 								}
+								chrome.browserAction.setIcon({"path": "findings-icon-16x16-working.gif"});
 							}
 						});
 					}
@@ -242,8 +243,20 @@ var FDGS = {};
 		init: function() {
 			var _this = this;
 
+			//just in case it got stuck...
+			chrome.browserAction.setIcon({"path": "findings-icon-16x16.gif"});
+
+			//get the app settings and output to console
 			_this.settings = extension_settings();
-			_this.settings.log();
+			if(this.settings.isDev) {
+				_this.settings.log();
+			}
+
+			if(_this.settings.first_run) {
+				_this.log("First time running the extension! Open the options page...");
+				_this.openPage("options.html");
+
+			}
 
 			_this.setEnvironment();
 			_this.initButton();
