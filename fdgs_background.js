@@ -255,7 +255,7 @@ var FDGS = {};
 			if(_this.settings.first_run) {
 				_this.log("First time running the extension! Open the options page...");
 				_this.openPage("options.html");
-
+				_this.settings.first_run = false;
 			}
 
 			_this.setEnvironment();

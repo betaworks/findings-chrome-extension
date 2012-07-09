@@ -326,7 +326,7 @@
         });
       });
 
-      $("#header").click(function() {
+      $(".findings.options h2").click(function() {
         var $devopt = $("#devopt");
         if(_this.clickEgg == 2) {
           _this.clickEgg = 0;
