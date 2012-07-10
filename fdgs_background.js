@@ -162,23 +162,21 @@ var FDGS = {};
 
 	    createAmazonImportInterval: function() {
 	    	var _this = this;
-	    	var importInterval = _this.settings.amazonImportInterval*60*60*1000; //set in hours...convert to millis
-	    	var lastImportDate;
-	    	_this.log(_this.settings.lastImportDate);
-
-	    	if(_this.settings.lastImportDate != "never") {
-	    		// _this.log(_this.settings.lastImportDate);
-	    		// _this.log(new Date(_this.settings.lastImportDate).getTime());
-		    	lastImportDate = new Date(_this.settings.lastImportDate);	
-	    	} else {
-	    		lastImportDate = new Date(0);
-	    	}
-
 
 	    	_this.log("Creating Amazon import interval for " + _this.settings.amazonImportInterval + " hours.");
 
 	    	//check every minute if the import interval has elapsed and if so, do it!
 	    	_this.amazonImportTimer = window.setInterval(function() {
+		    	var importInterval = _this.settings.amazonImportInterval*60*60*1000; //set in hours...convert to millis
+		    	var lastImportDate;
+		    	_this.log(_this.settings.lastImportDate);
+
+		    	if(_this.settings.lastImportDate != "never") {
+			    	lastImportDate = new Date(_this.settings.lastImportDate);	
+		    	} else {
+		    		lastImportDate = new Date(0);
+		    	}
+
 		    	var now = new Date();
 	    		_this.log("Checking whether import interval has elapsed...");
 		    	_this.log("last import: " + lastImportDate + "(" + lastImportDate.getTime() + ")");
