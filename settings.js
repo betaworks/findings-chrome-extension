@@ -111,7 +111,7 @@ var extension_settings = function() {
 
 		get doKindleImport() {
 			if(typeof(localStorage['doKindleImport']) == "undefined") {
-				return false;
+				return true;
 			} else {
 				return toBool(localStorage['doKindleImport']);
 			}
@@ -123,7 +123,7 @@ var extension_settings = function() {
 
 		get amazonImportInterval() {
 			if(typeof(localStorage['doKindleImport']) == "undefined") {
-				return -1;
+				return 24;
 			} else {
 				return localStorage['amazonImportInterval'];
 			}
@@ -149,7 +149,7 @@ var extension_settings = function() {
 
 		updateLastImportDate: function() {
 			var now = new Date(); 
-			var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+			var now_utc = new Date(now.getFullYear(), now.getMonth(), now.getDate(),  now.getHours(), now.getMinutes(), now.getSeconds());
 			localStorage['lastImportDate'] = now_utc;
 		},
 
