@@ -91,7 +91,31 @@
         $("#amazon_checking_login").hide();
       }
 
-      $("#lastImportDate").html(_this.settings.lastImportDate);
+      var lastImportDate, importDateText;
+
+      if(_this.settings.lastImportDate != "never") {
+        lastImportDate = new Date(_this.settings.lastImportDate);
+
+        var friendlyTime;
+        if(lastImportDate.getHours() > 12) {
+          friendlyTime = lastImportDate.getHours()-12;
+        } else {
+          friendlyTime = lastImportDate.getHours();
+        }
+        friendlyTime += ":" + lastImportDate.getMinutes();
+        if(lastImportDate.getHours() > 12) {
+          friendlyTime += "pm";
+        } else {
+          friendlyTime +="am";
+        }
+
+        importDateText = lastImportDate.toLocaleDateString() + " at " + friendlyTime;
+        
+      } else {
+        importDateText = _this.settings.lastImportDate;
+      }
+      
+      $("#lastImportDate").html(importDateText);
 
       //get Findings login status
       _this.getFindingsLoginStatus(function() {

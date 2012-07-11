@@ -169,7 +169,6 @@ var FDGS = {};
 	    	_this.amazonImportTimer = window.setInterval(function() {
 		    	var importInterval = _this.settings.amazonImportInterval*60*60*1000; //set in hours...convert to millis
 		    	var lastImportDate;
-		    	_this.log(_this.settings.lastImportDate);
 
 		    	if(_this.settings.lastImportDate != "never") {
 			    	lastImportDate = new Date(_this.settings.lastImportDate);	
