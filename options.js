@@ -278,7 +278,7 @@
 
     startKindleImport: function() {
       var _this = this;
-      _this.log("User has enabled Kindle import!  Initiating...")
+      _this.log("Initiating Kindle import...")
       _this.bkg.FDGS.startKindleImport(_this.bkg.FDGS);
       _this.refreshAmazonImportInterval();
     },
@@ -342,6 +342,10 @@
           _this.settings.amazonImportInterval = -1;
           _this.refreshAmazonImportInterval();
         }
+      });
+
+      $("#import_now").click(function() {
+        _this.startKindleImport();
       });
 
       $("#amazon_import_interval_enabled").change(function() {
