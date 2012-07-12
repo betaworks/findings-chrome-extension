@@ -25,8 +25,8 @@
 				} else {
 					highlight_total_html += " highlights";
 				}
-				highlight_total.innerHTML = amazonLastImportTotal;
-
+				highlight_total.innerHTML = highlight_total_html;
+				
 				var book_total_html = amazonLastImportData.length;
 				if(amazonLastImportData.length == 1) {
 					book_total_html += " book";
@@ -50,7 +50,7 @@
 		</script>
 	</head>
 	<body>
-	<div id="message" class="small">Findings imported <span id="highlight_total"></span> highlights in <span id="book_total"></span></div>
+	<div id="message" class="small">Findings imported <span id="highlight_total"></span> in <span id="book_total"></span></div>
 	<div id="imported"></div>
 	</body>
 </html>
