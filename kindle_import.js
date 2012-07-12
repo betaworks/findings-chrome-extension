@@ -290,7 +290,7 @@ var kindle_importer = {
  	    		FDGS.amazonLastImportTotal = _this.highlightTotal;
  	    	}
 
- 	    	if(_this.importedAsins.length == 0) {
+ 	    	if(_this.importedAsins.length == 0 && FDGS.settings.isDev) {
 	 	    	FDGS.showNotification(_this.notification_templates.importEmpty);
  	    	} else if (_this.completedImportInfo.length > 0) {
 	 	    	FDGS.showNotification(_this.notification_templates.importSuccess);

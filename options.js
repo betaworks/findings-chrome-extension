@@ -38,14 +38,13 @@
         /***********************************************************
         ************* CHANGE THESE BEFORE YOU GO LIVE!!!! **********
         /**********************************************************/
-        _this.settings.logging_enabled = true;
-        _this.settings.disable_caching = true;
+        _this.settings.logging_enabled = false;
+        _this.settings.disable_caching = false;
         // _this.settings.logging_enabled = false;
         // _this.settings.disabled_caching = false;
         /***********************************************************
         ************* CHANGE THESE BEFORE YOU GO LIVE!!!! **********
-        /**********************************************************/
-
+        /**********************************************************/        
       }
 
       /* END DEV STUFF */
@@ -58,6 +57,8 @@
       _this.settings.notificationsAmazonEnabledDesktop = $("#amazon_desktop_notifications_enabled").prop("checked");
 
       _this.settings.notificationsAmazonEnabledEmail = $("#amazon_email_notifications_enabled").prop("checked");
+
+      _this.settings.amazonImportInterval = $("#amazon_import_interval_enabled option:selected").val();
 
       _this.bkg.FDGS.setEnvironment();
 
@@ -73,12 +74,19 @@
       $("#isDev").prop("checked", _this.settings.isDev);
       $("#devDomain").val(_this.settings.devDomain);
       $("#doKindleImport").prop("checked", _this.settings.doKindleImport);
+
       $("#amazon_desktop_notifications_enabled").prop("checked", _this.settings.notificationsAmazonEnabledDesktop);
       $("#amazon_email_notifications_enabled").prop("checked", _this.settings.notificationsAmazonEnabledEmail);
 
       _this.useDomain = _this.settings.base_domain;
       if(_this.settings.isDev) {
+        _this.log("showing dev options...")
+        $(".devopt").show();
         _this.useDomain = _this.settings.devDomain;
+      } else {
+        _this.log("hiding dev options...")
+        $(".devopt").hide();
+        $(".devimportopt").remove();
       }
 
       if(doKindleImport) {
@@ -222,30 +230,12 @@
 
       //select the appropriate option for import interval regardless of login
       var amazonImportInterval = _this.settings.amazonImportInterval;
-      var intervalChooser = document.getElementById("amazon_import_interval_enabled");
+      var $amazon_import_interval_enabled = $("#amazon_import_interval_enabled");
 
-      switch(amazonImportInterval) {
-        case "-1":
-          intervalChooser.options[0].selected = true;
-          break;
-        case "720":
-          intervalChooser.options[1].selected = true;
-          break;
-        case "168":
-          intervalChooser.options[2].selected = true;
-          break;
-        case "24":
-          intervalChooser.options[3].selected = true;
-          break;
-        case "12":
-          intervalChooser.options[4].selected = true;
-          break;
-        case "1":
-          intervalChooser.options[5].selected = true;
-          break;
-        case ".017":
-          intervalChooser.options[6].selected = true;
-          break;
+      $amazon_import_interval_enabled.val(_this.settings.amazonImportInterval);
+      //if coming out of dev mode and the hourly and minute intervals no longer exist...
+      if($("#amazon_import_interval_enabled option:selected").val() != amazonImportInterval) {
+        $amazon_import_interval_enabled.val(24);
       }
 
       if(this.settings.doKindleImport) { //kindle import is enabled
@@ -355,7 +345,7 @@
       });
 
       $(".findings.options h2").click(function() {
-        var $devopt = $("#devopt");
+        var $devopt = $(".devopt");
         if(_this.clickEgg == 2) {
           _this.clickEgg = 0;
           $devopt.show();

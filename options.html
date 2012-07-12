@@ -25,7 +25,7 @@
             <button id="fdgs_login">login</button>
           </div>
         </li>
-        <li id="devopt"><input type="checkbox" id="isDev" value="1" checked="false"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="opt.save()">)</li>
+        <li class="devopt"><input type="checkbox" id="isDev" value="1" checked="false"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="opt.save()">)</li>
       </ul>
     </div>
 
@@ -44,13 +44,12 @@
 
           <div id="amazon_logged_in" class="hidden">
             Import my highlights <select id="amazon_import_interval_enabled">
-                <option value="-1">Never</option>
                 <option value="720">Once a month</option>
                 <option value="168">Once a week</option>
                 <option value="24" selected>Once a day</option>
                 <option value="12">Twice a day</option>
-                <option value="1">Every hour</option>
-                <option value=".017">Every minute</option>
+                <option value="1" class="devimportopt">Every hour</option>
+                <option value=".017" class="devimportopt">Every minute</option>
             </select>
             <button id="import_now">import now</button>
             
