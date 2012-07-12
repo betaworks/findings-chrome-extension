@@ -300,7 +300,15 @@ var kindle_importer = {
  	    // the email notification may be something that should happen on the server
  	    // but I'll put it in here for now.
  	    if(notify && emailNotifyAllowed) {
- 	    	//send the email notification
+ 	    	if(_this.importedAsins.length > 0) { //only send the email if highlights were found
+	 	    	$.getJSON(_this.importNotificationEmailURL, function(result) {
+	 	    		if(result.success) {
+	 	    			FDGS.log("Import notification email sent!");
+	 	    		} else {
+	 	    			FDGS.log("Notification email send FAILED.");
+	 	    		}
+	 	    	});
+ 	    	}
  	    }
 
 		// now reset the object 
@@ -339,6 +347,7 @@ var kindle_importer = {
 		FDGS.log("This session's import key is " + this.importKey, true);
 	    this.postURL = "https://" + FDGS.settings.base_domain + "/bookmarklet/kindlesync/" + this.importKey,
 	    this.statusURL =  "https://" + FDGS.settings.base_domain + "/bookmarklet/kindlesync/" + this.importKey + "?callback=?",
+		this.importNotificationEmailURL = "https://" + FDGS.settings.base_domain + "/email/" + FDGS.findingsUser.username + "/notify/import?import_key=" +this.importKey;
 		this.beginImport();
 		return this;
 	}
