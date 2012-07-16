@@ -1,12 +1,18 @@
 {
   "name": "Findings",
-  "version": "0.23",
+  "version": "0.24",
   "manifest version": 2,
   "icons": {
     "128": "icon-128x128.png",
     "48": "icon-48x48.png",
     "16": "icon-16x16.png"
   },
+  "content_scripts": [
+    {
+      "matches": ["http://*.findings.com/*", "https://*.findings.com/*", "http://findings.com/*", "https://findings.com/*"],
+      "js": ["detectinator.js"]
+    }
+  ],
   "description": "Discover the highlights",
   "background": {
   	"page": "fdgs_background.html"

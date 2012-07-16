@@ -257,8 +257,21 @@ var FDGS = {};
 	        }
 	    },
 
+		extensionPromoElementListener: function() {
+			var _this = this;
+			chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+				if(request.msg == "installed") {
+					_this.log("Extension installed DIV injected into page!");
+				}
+			});
+
+		},    
+
 		init: function() {
 			var _this = this;
+
+			_this.log("writing promo element...");
+			_this.extensionPromoElementListener();
 
 			//just in case it got stuck...
 			chrome.browserAction.setIcon({"path": "icon-16x16.png"});
