@@ -22,6 +22,8 @@ var extension_settings = function() {
 			console.log("doKindleImport: " + this.doKindleImport);
 			console.log("notificationsAmazonEnabledDesktop: " + this.notificationsAmazonEnabledDesktop);
 			console.log("notificationsAmazonEnabledEmail: " + this.notificationsAmazonEnabledEmail);
+			console.log("importAttemptFailedAmazonLogin:" + this.importAttemptFailedAmazonLogin);
+			console.log("importAttemptFailedFindingsLogin:" + this.importAttemptFailedFindingsLogin);
 			console.log("\n");
 		},
 
@@ -175,7 +177,10 @@ var extension_settings = function() {
 
 		set notificationsAmazonEnabledEmail(val) {
 			localStorage['notificationsAmazonEnabledEmail'] = val;
-		}
+		},
+
+		importAttemptFailedAmazonLogin: 0,
+		importAttemptFailedFindingsLogin: 0,
 	};
 
 	return settings;

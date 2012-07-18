@@ -3,8 +3,8 @@ body {
 }
 
 a { color: #548DCB; text-decoration: none; }
-.hidden { display: none; }
-.visible { display: block; }
+.hidden { opacity: 1; }
+.visible { opacity: 0; }
 .warning { display: block; color: red; font-size: 18px; }
 
 #header {
@@ -58,6 +58,21 @@ a { color: #548DCB; text-decoration: none; }
 	padding-left: 18px;
 	background:  url('spinner_small.gif') no-repeat 0px 0px;
 }
+
+#login_msg {
+	display: inline-block;
+	margin-left: 10px;
+	font-size: 10px;
+	line-height: normal;
+	transition: opacity 1s ease-out;
+	-webkit-transition: opacity 1s ease-out;
+}
+
+#login_msg.working {
+	background:  url('spinner_small.gif') no-repeat 0px 0px;
+}
+
+
 #amazon_import_options #amazon_logged_in select { display: inline-block; }
 #amazon_logged_out { display: none; }
 #findings_logged_out { display: none; }

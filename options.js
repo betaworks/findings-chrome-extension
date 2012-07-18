@@ -174,11 +174,23 @@
       var username = $("#fdgs_username").val();
       var password = $("#fdgs_password").val();
       var data = {"username": username, "password": password};
+      var $login_msg = $("#login_msg");
 
-      $.getJSON(loginURL, data, function() { _this.getFindingsLoginStatus(function() {
-        _this.getFindingsLoginStatus(function() {
-          _this.amazonImportOptionDisplay();
-        });
+      $login_msg.addClass("working");
+
+      $.getJSON(loginURL, data, function(result) { _this.getFindingsLoginStatus(function() {
+        $login_msg.removeClass("working");
+        if(result.username == "") {
+          _this.log("Incorrect Findings username or password!");
+          $("#fdgs_username").select();
+          $login_msg.addClass("warning").html("Incorrect username or password.").fadeOut(3000, function() {
+            $(this).html("").removeClass("warning").css("display", "inline-block");
+          });
+        } else {
+          _this.getFindingsLoginStatus(function() {
+            _this.amazonImportOptionDisplay();
+          });
+        }
       }); });
     },
 
@@ -207,7 +219,7 @@
       var _this = this;
 
       if(arguments.length == 0) {
-        doKindleImport = false;
+        var startKindleImport = false;
       }
 
       _this.log("Getting login status from background page...");
@@ -316,13 +328,33 @@
 
       $(".optionsList li input").bind("click keyupfunction blur", function() { _this.save(); })
 
+      $("#isDev").click(function() {
+        if($(this).prop("checked")) {
+          window.location = window.location;
+        }
+      });
+
       $("#fdgs_login").click(function() { _this.findingsLogin(); })
+
+      $("#fdgs_username, #fdgs_password").keydown(function(evt){
+        var key = (event.keyCode ? event.keyCode : event.which);
+        if(key === 13) {
+          evt.preventDefault();
+          _this.findingsLogin();
+        } else {
+          return evt.key;
+        }
+      });
 
       $("#fdgs_logout").click(function() { _this.findingsLogout(); });
 
       $("#refresh_options").click(function() { window.location = window.location; })
 
       $("#doKindleImport").click(function(){
+        // reset counts for failed import attempts
+        _this.settings.importAttemptFailedAmazonLogin = 0;
+        _this.settings.importAttemptFailedFindingsLogin = 0;
+
         if($(this).prop("checked")) {
           _this.settings.amazonImportInterval = 24; //reset to once a day
           _this.getAmazonLoginStatus(true); //true == initiate import if necessary
@@ -331,6 +363,8 @@
           //kill the import timer when disabling
           _this.settings.amazonImportInterval = -1;
           _this.refreshAmazonImportInterval();
+          _this.bkg.FDGS.killAmazonPinger(); //stop pinging since they've turned off import
+
         }
       });
 

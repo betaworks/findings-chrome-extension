@@ -55,7 +55,6 @@ var FDGS = {};
 
 		startKindleImport: function(FDGS) {
 			var _this = this;
-			var findingsUser = {};
 			var desktopNotifyAllowed = _this.settings.notificationsAmazonEnabledDesktop;
 
 			if(_this.settings.doKindleImport) {
@@ -64,20 +63,24 @@ var FDGS = {};
 					if(!isLoggedInAmazon) {
 
 						_this.log("User is not logged into Amazon...aborting import.");
-						if(desktopNotifyAllowed) {
+						if(desktopNotifyAllowed && _this.settings.importAttemptFailedAmazonLogin == 1) {
 							_this.showNotification("notify_kindle_import_failed_amazon_login.html");
 						}
+						_this.settings.importAttemptFailedAmazonLogin++;
 						return false; //break out of this callback
 
 					} else { // Amazon login OK, now check for Findings login
+						_this.settings.importAttemptFailedAmazonLogin = 0; //reset count for failed Amazon login attempts
 
 						_this.getFindingsLoginStatus(function(findingsUser) {
 							if(!findingsUser.isLoggedIn) {
+								_this.settings.importAttemptFailedFindingsLogin++;
 								_this.log("User is not logged into Findings...aborting import.");
-								if(desktopNotifyAllowed) {
+								if(desktopNotifyAllowed && _this.settings.importAttemptFailedFindingsLogin == 1) {
 									_this.showNotification("notify_kindle_import_failed_findings_login.html");
 								}
 							} else { // Findings login OK, too...initiate import!
+								_this.settings.importAttemptFailedFindingsLogin = 0; //reset count for failed Findings login attempts
 								_this.log("All systems go for Kindle import...")
 								kindle_importer.start(FDGS);
 								if(_this.amazonPinger == null) {
@@ -87,14 +90,19 @@ var FDGS = {};
 							}
 						});
 					}
+
+					// If we get too many import attempts we might want to nudge the 
+					// user by sending a reminder email.
+					if(_this.settings.importAttemptFailedAmazonLogin >= 7 || _this.settings.importAttemptFailedFindingsLogin >= 7) {
+						_this.log("Detected lots of failed import attempts...")
+					}
 				});
 
-
 			} else {
-
 				_this.log("User has disabled Kindle highlight importing.");
+				_this.settings.importAttemptFailedAmazonLogin = 0;
+				_this.settings.importAttemptFailedFindingsLogin = 0; //reset count for failed 
 				_this.killAmazonPinger(); //stop pinging if they've turned off import
-
 			}
 		},
 
@@ -270,10 +278,10 @@ var FDGS = {};
 		init: function() {
 			var _this = this;
 
-			_this.log("writing promo element...");
+			// Prevent Findings.com from showing the extension promo...
 			_this.extensionPromoElementListener();
 
-			//just in case it got stuck...
+			//Just in case the logo got stuck in "working" mode...
 			chrome.browserAction.setIcon({"path": "icon-16x16.png"});
 
 			//get the app settings and output to console
@@ -282,15 +290,21 @@ var FDGS = {};
 				_this.settings.log();
 			}
 
+			//If running the first time, open the options page...
 			if(_this.settings.first_run) {
 				_this.log("First time running the extension! Open the options page...");
 				_this.openPage("options.html");
 				_this.settings.first_run = false;
 			}
 
+			//Transfer existing settings to the application
 			_this.setEnvironment();
+
+			// Initialize the Extension button to open the bookmarklet
 			_this.initButton();
-			//_this.startKindleImport();
+
+
+			// Initiate background importing...
 			if(_this.settings.doKindleImport && _this.settings.amazonImportInterval > 0) {
 				_this.killAmazonImportInterval();
 				_this.createAmazonImportInterval();

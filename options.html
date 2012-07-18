@@ -22,7 +22,7 @@
             <label for="fdgs_username">Login to Findings</label><br />
             <input type="text" id="fdgs_username" value="" size="30" placeholder="Findings username"> username<br />
             <input type="password" id="fdgs_password" value="" size="30" placeholder="Findings password"> password<br />
-            <button id="fdgs_login">login</button>
+            <button id="fdgs_login">login</button><span id="login_msg"></span>
           </div>
         </li>
         <li class="devopt"><input type="checkbox" id="isDev" value="1" checked="false"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="opt.save()">)</li>
@@ -35,9 +35,6 @@
         <li><input type="checkbox" id="doKindleImport" value="1" checked="true"> Enable Kindle Import <span id="amazon_checking_login" class="visible">Checking login status...</span>
         <div id="lastImport">Last import: <span id="lastImportDate"></span></div></li>
         <li id="amazon_import_options">
-          
-
-
           <div id="findings_logged_out" class="hidden">
             <span class="warning">You are currently logged out of Findings.</span>In order to auto-import your Kindle highlights, you must first login above.</a>
           </div>
