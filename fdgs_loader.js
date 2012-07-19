@@ -36,9 +36,10 @@
 			FDGS.log("loading " + scriptURL);
 
 			e.setAttribute('type','text/javascript');
+			e.setAttribute('id', 'fdgs_chrome_extension');
 
 			e.setAttribute('src', scriptURL);
-			document.body.appendChild(e);	
+			document.body.appendChild(e);
 		},
 
 	    getLocalPage: function (page) {
@@ -52,8 +53,7 @@
         },
 
 		start: function() {
-			FDGS.log(FDGS_BASE_DOMAIN)
-			FDGS.log("Opening sidebar...");
+			FDGS.log("Opening sidebar via Chrome extension...");
 			var me = this;
 			me.loader();
 		}
