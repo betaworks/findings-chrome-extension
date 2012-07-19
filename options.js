@@ -217,6 +217,7 @@
     getAmazonLoginStatus: function(startKindleImport) {
       //check to see if the user is logged into Amazon
       var _this = this;
+      var updateAmazonImportOptionDisplay = true;
 
       if(arguments.length == 0) {
         var startKindleImport = false;
@@ -226,7 +227,15 @@
 
       _this.displayLoginCheckSpinner();
 
+      var stupidChromeBugTimer = window.setTimeout(function() { if(updateAmazonImportOptionDisplay) { _this.log('Background Amazon login failed to execute, displaying options anyway.'); _this.amazonImportOptionDisplay(); }}, 5000);
+
       _this.bkg.FDGS.getAmazonLoginStatus(function(isLoggedIn) {
+        
+        // Sometimes Chrome gets stuck and won't call/return data so the stupidChromeBugTimer will
+        // update the import options display in 5 seconds if we don't hear back.
+        updateAmazonImportOptionDisplay = false;
+        window.clearTimeout(stupidChromeBugTimer);
+
         _this.log("Logged into Amazon? " + isLoggedIn);
         _this.amazonLoggedIn = isLoggedIn;
         $("#amazon_checking_login").hide();
