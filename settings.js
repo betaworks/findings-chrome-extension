@@ -101,7 +101,7 @@ var extension_settings = function() {
 
 		get devDomain() {
 			if(typeof(localStorage['devDomain']) == "undefined") {
-				return "dev.findings.com";
+				return "dev.new.findings.com";
 			} else {
 				return localStorage['devDomain'];
 			}

@@ -7,8 +7,8 @@ var FDGS = {};
 		started: date.getTime(),
 		badgeText: "",
 		loader_script: "fdgs_loader.js",
-		usedAsins: [],
-		findingsUser: {},
+		//usedAsins: [],
+		findingsUser: {authenticate: false, username: "", id: -1},
 		settings: w.extension_settings,
 		amazonPinger: null,
 		amazonImportTimer: null,
@@ -18,7 +18,8 @@ var FDGS = {};
 		initButton: function () {
 			var _this = this;
 			chrome.browserAction.onClicked.addListener(function(tab) {
-				var setConstants = "(setConstants = function() {FDGS_BASE_DOMAIN = '" + _this.settings.base_domain + "'; FDGS_LOGGING_ENABLED = " + _this.settings.logging_enabled + "; FDGS_DISABLE_CACHING = " + _this.settings.disable_caching + ";})()";
+				_this.log("CLICK!");
+				var setConstants = "(setConstants = function() { FDGS_BASE_DOMAIN = '" + _this.settings.base_domain + "'; window.fdgs_base = '" + _this.settings.base_domain + "'; FDGS_LOGGING_ENABLED = " + _this.settings.logging_enabled + "; FDGS_DISABLE_CACHING = " + _this.settings.disable_caching + ";})()";
 
 				_this.log(setConstants);
 
@@ -73,7 +74,7 @@ var FDGS = {};
 						_this.settings.importAttemptFailedAmazonLogin = 0; //reset count for failed Amazon login attempts
 
 						_this.getFindingsLoginStatus(function(findingsUser) {
-							if(!findingsUser.isLoggedIn) {
+							if(!findingsUser.authenticated) {
 								_this.settings.importAttemptFailedFindingsLogin++;
 								_this.log("User is not logged into Findings...aborting import.");
 								if(desktopNotifyAllowed && _this.settings.importAttemptFailedFindingsLogin == 1) {
@@ -82,7 +83,7 @@ var FDGS = {};
 							} else { // Findings login OK, too...initiate import!
 								_this.settings.importAttemptFailedFindingsLogin = 0; //reset count for failed Findings login attempts
 								_this.log("All systems go for Kindle import...")
-								kindle_importer.start(FDGS);
+								KindleImporter.start();
 								if(_this.amazonPinger == null) {
 									_this.createAmazonPinger(); //ping Amazon every 5 min to stay logged in
 								}
@@ -114,16 +115,16 @@ var FDGS = {};
 				var callback = function() { _this.log("No callback for Findings login status. Nothing to do."); };
 			}
 
-			var userURL = "https://" + _this.useDomain + "/logged_in";
-			var returnUser ={"isLoggedIn": false, "username": ""};
+			var userURL = "https://" + _this.useDomain + "/user/is_logged_in/";
+			var returnUser ={"authenticated": false, "username": "", "id": ""};
 
 			$.getJSON(userURL, function(user) {
-		        if(user.isLoggedIn) {
+		        if(user.authenticated) {
 		            _this.log("User is logged into " + _this.useDomain + " as user " + user.username);
 		        } else {
 		            _this.log("User is logged out of " + _this.useDomain + "!");
 		        }
-		        user.link = "<a href='https://" + _this.useDomain + "/" + user.username + "' target='blank'>" + user.username + "</a>";
+		        user.link = "<a href='https://" + _this.useDomain + "/" + user.username + "/' target='blank'>" + user.username + "</a>";
 				_this.findingsUser = user;
 		        callback(user);
 			});
@@ -304,12 +305,15 @@ var FDGS = {};
 			_this.initButton();
 
 
+			//create Kindle Importer
+			_this.KindleImporter = KindleImporter.init(_this);
+
 			// Initiate background importing...
 			if(_this.settings.doKindleImport && _this.settings.amazonImportInterval > 0) {
 				_this.killAmazonImportInterval();
 				_this.createAmazonImportInterval();
 			}
-			return this;
+			return _this;
 		}
 	}
 
