@@ -1,14 +1,16 @@
 (function(w) {
     w.KindleImporter = {
         FDGS: {},
+        import_start_time: 0,
+        failed: [],
         upcoming_asins: [],
         used_asins: [],
         offset: null,
         sync_queue: 0,
         highlight_total: 0,
         post_url: "",
-        completedImportInfo: [],
-
+        completed_imports: [],
+        notification_email_url: "",
         next_book_url: "https://kindle.amazon.com/your_highlights/next_book",
         notification_templates: {
             "importSuccess": "notify_kindle_import_success.html",
@@ -87,6 +89,7 @@
                 dataType: 'json',
                 url: _this.post_url,
                 data: post_data,
+                timeout: 120000,
                 success: function(data) {
                     if (!data.success || _this.sync_queue <= 0){
                         _this.log("No new clips for ASIN " + post_data.asin + ". Closing import...");
@@ -94,6 +97,15 @@
                     } else {
                         _this.saveProgress(data);
                         _this.get_next_book();
+                    }
+                },
+                statusCode: {
+                    404: function() {
+                        _this.FDGS.log("Import timed out for ASIN " + post_data.asin + ".");
+                        _this.failed.push(post_data);
+                        //skip it and move on...
+                        _this.get_next_book();
+
                     }
                 }
             });
@@ -110,12 +122,77 @@
             book.total = data.result.new;
             _this.highlight_total += book.total; //used for desktop notification
 
-            _this.completedImportInfo.unshift(book);
-            _this.log(_this.completedImportInfo);
+            _this.completed_imports.unshift(book);
+        },
+
+        closeImport: function(notify) {
+            // close out import and reset object for the next import
+            if(arguments.length == 0) {
+                var notify = true; //default notifications to true
+            }
+
+            var _this = this;
+
+            var desktopNotifyAllowed = _this.FDGS.settings.notificationsAmazonEnabledDesktop;
+            var emailNotifyAllowed = _this.FDGS.settings.notificationsAmazonEnabledEmail;
+
+            // first send import success notification (if new quotes were imported)
+            _this.FDGS.settings.updateLastImportDate();
+            if(notify && desktopNotifyAllowed) {
+                if(_this.completed_imports.length > 0) {
+                    _this.FDGS.amazonLastImportData = _this.completed_imports;
+                    _this.FDGS.amazonLastImportTotal = _this.highlightTotal;
+                }
+
+                if(_this.completed_imports.length == 0 && _this.FDGS.settings.isDev) {
+                    _this.FDGS.showNotification(_this.notification_templates.importEmpty);
+                } else if (_this.completed_imports.length > 0) {
+                    _this.FDGS.showNotification(_this.notification_templates.importSuccess);
+                }
+            } else {
+                _this.FDGS.log("Desktop notification disabled...skipping.")
+            }
+
+            if(notify && emailNotifyAllowed) {
+                if(_this.completed_imports.length > 0) { //only send the email if highlights were found
+                    var data = {"ts": _this.import_start_time}
+                    $.getJSON(_this.notification_email_url, data, function(result) {
+                        if(result.success) {
+                            _this.FDGS.log("Import notification email sent!");
+                        } else {
+                            _this.FDGS.log("Notification email send FAILED.");
+                        }
+                    });
+                }
+            } else {
+                _this.FDGS.log("Email notification disabled...skipping.")
+            }
+
+            if(_this.failed.length > 0) {
+                _this.FDGS.log(_this.failed.length + " ASINs failed to import.");
+            }
+
+            // now reset the object 
+            _this.upcoming_asins = [];
+            _this.used_asins = [];
+            _this.offset = null;
+            _this.sync_queue = 0;
+            _this.highlight_total = 0;
+            _this.completed_imports = [];
+            _this.import_start_time = 0;
+            _this.failed = [];
+
+
+            chrome.browserAction.setIcon({"path": "icon-16x16.png"});
+
+            // reset the last import data
+            _this.FDGS.log("Import process closed.  Over and out. [" + _this.FDGS.settings.lastImportDate + "]");
         },
 
         beginImport: function() {
             var _this = this;
+            var date = new Date();
+
             // reset these for results display
             _this.FDGS.amazonLastImportData = null;
             _this.FDGS.amazonLastImportTotal = null;
@@ -152,53 +229,13 @@
                             }
                             _this.closeImport(false); //
                         } else { // Findings login OK, too...initiate import!
+                            _this.import_start_time = date.getTime();
                             _this.get_next_book();
+                            _this.FDGS.log("***** Amazon import initiated at " + _this.import_start_time + "! *****");
                         }
                     });
                 }
             });
-        },
-
-        closeImport: function(notify) {
-            // close out import and reset object for the next import
-            if(arguments.length == 0) {
-                var notify = true; //default notifications to true
-            }
-
-            var _this = this;
-
-            var desktopNotifyAllowed = _this.FDGS.settings.notificationsAmazonEnabledDesktop;
-            var emailNotifyAllowed = _this.FDGS.settings.notificationsAmazonEnabledEmail;
-
-            // first send import success notification (if new quotes were imported)
-            _this.FDGS.settings.updateLastImportDate();
-            if(notify && desktopNotifyAllowed && !_this.FDGS.nofication_is_displayed) {
-                if(_this.completedImportInfo.length > 0) {
-                    _this.FDGS.amazonLastImportData = _this.completedImportInfo;
-                    _this.FDGS.amazonLastImportTotal = _this.highlightTotal;
-                }
-
-                if(_this.completedImportInfo.length == 0 && _this.FDGS.settings.isDev) {
-                    _this.FDGS.showNotification(_this.notification_templates.importEmpty);
-                } else if (_this.completedImportInfo.length > 0) {
-                    _this.FDGS.showNotification(_this.notification_templates.importSuccess);
-                }
-                _this.FDGS.notification_is_displayed = true;
-            }
-
-
-            // now reset the object 
-            _this.upcoming_asins = [];
-            _this.used_asins = [];
-            _this.offset = null;
-            _this.sync_queue = 0;
-            _this.highlight_total = 0;
-            _this.completedImportInfo = [];
-
-            chrome.browserAction.setIcon({"path": "icon-16x16.png"});
-
-            // reset the last import data
-            _this.FDGS.log("Import process closed.  Over and out. [" + _this.FDGS.settings.lastImportDate + "]");
         },
 
         log: function(thing) {
@@ -214,6 +251,7 @@
             this.FDGS = FDGS;
             console.log("intitializing Kindle importer...");
             this.post_url = "https://" + this.FDGS.useDomain + "/clips/enterbatch/";
+            this.notification_email_url = "https://" + this.FDGS.useDomain + "/email/notify/last_import/";
             return this;
         }
     }

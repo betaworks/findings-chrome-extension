@@ -18,7 +18,6 @@ var FDGS = {};
 		initButton: function () {
 			var _this = this;
 			chrome.browserAction.onClicked.addListener(function(tab) {
-				_this.log("CLICK!");
 				var setConstants = "(setConstants = function() { FDGS_BASE_DOMAIN = '" + _this.settings.base_domain + "'; window.fdgs_base = '" + _this.settings.base_domain + "'; FDGS_LOGGING_ENABLED = " + _this.settings.logging_enabled + "; FDGS_DISABLE_CACHING = " + _this.settings.disable_caching + ";})()";
 
 				_this.log(setConstants);
