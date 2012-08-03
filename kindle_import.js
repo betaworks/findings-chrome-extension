@@ -253,7 +253,7 @@
             this.FDGS = FDGS;
             console.log("intitializing Kindle importer...");
             this.post_url = "https://" + this.FDGS.useDomain + "/clips/enterbatch/";
-            this.notification_email_url = "https://" + this.FDGS.useDomain + "/email/notify/last_import/";
+            this.notification_email_url = "https://" + this.FDGS.useDomain + "/email/notify/lastimport/";
             return this;
         }
     }
