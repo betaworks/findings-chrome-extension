@@ -66,6 +66,13 @@ a { color: #548DCB; text-decoration: none; }
 	background:  url('spinner_small.gif') no-repeat 0px 0px;
 }
 
+.import_now {
+	color: #009bcf;
+	margin-left: 10px;
+	padding-left: 18px;
+	background:  url('spinner_small.gif') no-repeat 0px 0px;
+}
+
 #login_msg {
 	display: inline-block;
 	margin-left: 10px;

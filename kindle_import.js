@@ -81,8 +81,8 @@
                 'title' : title,
                 'clips' : JSON.stringify(clips)
             }
-
-            //_this.FDGS.log(post_data);
+            
+            _this.log("Posting " + clips.length + " clips from \"" + post_data.title + "\" (" + post_data.asin + ")...");
 
             $.ajax({
                 type: 'POST',
@@ -92,7 +92,7 @@
                 timeout: 120000,
                 success: function(data) {
                     if (!data.success || _this.sync_queue <= 0){
-                        _this.log("No new clips for ASIN " + post_data.asin + ". Closing import...");
+                        _this.log("No new clips for \"" + post_data.title + "\". (" + post_data.asin +") Closing import...");
                         _this.closeImport();
                     } else {
                         _this.saveProgress(data);
@@ -101,7 +101,7 @@
                 },
                 statusCode: {
                     404: function() {
-                        _this.FDGS.log("Import timed out for ASIN " + post_data.asin + ".");
+                        _this.FDGS.log("Import timed out for \"" + post_data.title + "\" (" + post_data.asin + ").");
                         _this.failed.push(post_data);
                         //skip it and move on...
                         _this.get_next_book();
@@ -186,7 +186,8 @@
             chrome.browserAction.setIcon({"path": "icon-16x16.png"});
 
             // reset the last import data
-            _this.FDGS.log("Import process closed.  Over and out. [" + _this.FDGS.settings.lastImportDate + "]");
+            _this.FDGS.amazonCurrentlyImporting = false;
+            _this.FDGS.log("***** Amazon import complete.  Over and out. [" + _this.FDGS.settings.lastImportDate + "] *****");
         },
 
         beginImport: function() {
@@ -230,8 +231,9 @@
                             _this.closeImport(false); //
                         } else { // Findings login OK, too...initiate import!
                             _this.import_start_time = date.getTime();
+                            _this.FDGS.amazonCurrentlyImporting = true;
                             _this.get_next_book();
-                            _this.FDGS.log("***** Amazon import initiated at " + _this.import_start_time + "! *****");
+                            _this.FDGS.log("\n\n***** Amazon import initiated at " + _this.import_start_time + "! *****");
                         }
                     });
                 }

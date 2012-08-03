@@ -13,7 +13,7 @@ var extension_settings = function() {
 
 	var settings = {
 		log: function() {
-			console.log("*** EXTENSION SETTINGS ***");
+			console.log("\n*** EXTENSION SETTINGS ***");
 			console.log("base_domain: " + this.base_domain);
 			console.log("isDev: " + this.isDev);
 			console.log("devDomain: " + this.devDomain);
@@ -24,7 +24,7 @@ var extension_settings = function() {
 			console.log("notificationsAmazonEnabledEmail: " + this.notificationsAmazonEnabledEmail);
 			console.log("importAttemptFailedAmazonLogin:" + this.importAttemptFailedAmazonLogin);
 			console.log("importAttemptFailedFindingsLogin:" + this.importAttemptFailedFindingsLogin);
-			console.log("\n");
+			console.log("\n\n");
 		},
 
 		get first_run() {

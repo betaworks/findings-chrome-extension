@@ -13,6 +13,7 @@ var FDGS = {};
 		amazonPinger: null,
 		amazonImportTimer: null,
 		amazonLastImportData: null,
+		amazonCurrentlyImporting: false,
 		useDomain: "findings.com",
 
 		initButton: function () {
@@ -31,12 +32,12 @@ var FDGS = {};
 			var _this = this;
 
 			if(_this.settings.isDev) {
-				_this.log("Findings Chrome Extension is now in DEV MODE.");
+				_this.log("Findings Chrome Extension is in DEV MODE.");
 				_this.settings.badgeText = "DEV!";
 
 				_this.settings.base_domain = _this.settings.devDomain;
 			} else {
-				_this.log("Findings Chrome Extension is now in PRODUCTION MODE.");
+				_this.log("Findings Chrome Extension is in PRODUCTION MODE.");
 				_this.settings.badgeText = "";
 			}
 			_this.setBadgeText(_this.settings.badgeText);
@@ -45,6 +46,7 @@ var FDGS = {};
 			_this.useDomain = _this.settings.base_domain;
 			if(_this.settings.isDev) {
 				_this.useDomain = _this.settings.devDomain;
+				_this.settings.log();
 			}
 		},
 
@@ -185,14 +187,17 @@ var FDGS = {};
 		    	}
 
 		    	var now = new Date();
-	    		_this.log("Checking whether import interval has elapsed...");
-		    	_this.log("last import: " + lastImportDate + "(" + lastImportDate.getTime() + ")");
-		    	_this.log("now: " + now + "(" + now.getTime() + ")");
-			    var timediff = now.getTime() - lastImportDate.getTime();
 
-			    if(now.getTime() - lastImportDate.getTime() >= importInterval) {
-		    		_this.log("Kindle import interval elapsed! (" + _this.settings.amazonImportInterval + " hours) Kicking off Kindle import...")
-		    		_this.startKindleImport();
+		    	if(!_this.amazonCurrentlyImporting) {
+		    		_this.log("Checking whether import interval has elapsed...");
+			    	_this.log("last import: " + lastImportDate + "(" + lastImportDate.getTime() + ")");
+			    	_this.log("now: " + now + "(" + now.getTime() + ")");
+				    var timediff = now.getTime() - lastImportDate.getTime();
+
+				    if(now.getTime() - lastImportDate.getTime() >= importInterval) {
+			    		_this.log("Kindle import interval elapsed! (" + _this.settings.amazonImportInterval + " hours) Kicking off Kindle import...")
+			    		_this.startKindleImport();
+			    	}		    		
 		    	}
 	    	}, 60000);
 	    },
@@ -286,9 +291,6 @@ var FDGS = {};
 
 			//get the app settings and output to console
 			_this.settings = extension_settings();
-			if(this.settings.isDev) {
-				_this.settings.log();
-			}
 
 			//If running the first time, open the options page...
 			if(_this.settings.first_run) {

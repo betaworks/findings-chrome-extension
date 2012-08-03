@@ -189,7 +189,6 @@
         if(isLoggedInAmazon) { //logged into Amazon
 
           var findingsUser = _this.bkg.FDGS.findingsUser;
-          _this.log(findingsUser);
 
           if(!findingsUser.authenticated) { //not logged into Findings
             $("#findings_logged_out").show();
@@ -233,10 +232,23 @@
       }
     },
 
+    removeImportingMessage: function() {
+      var _this = window.opt; //since it's coming from a timeout the context is window not this
+      window.removeit = window.setInterval(function() {
+        if(_this.bkg.FDGS.amazonCurrentlyImporting === false) {
+          $(".import_now").html("Complete!").css("background-image", "none").fadeOut(2000);
+          window.clearTimeout(window.removeit);
+        }
+      }, 1000);
+    },
+
+    showImportingMessage: function() {
+      $("#import_now").after("<span class='import_now'>Importing!</span>");
+    },
+
     getBackgroundPage: function() {
       this.bkg = chrome.extension.getBackgroundPage();
       this.settings = this.bkg.FDGS.settings;
-      //_this.log(this.bkg.FDGS);
     },
 
     log: function(msg, use_ts) {
@@ -257,12 +269,18 @@
 
     start: function() {
       var _this = this;
+      var delay;
 
       _this.log("Starting options page...");
 
       _this.getBackgroundPage();
       
       _this.restore();
+
+      if(_this.bkg.FDGS.amazonCurrentlyImporting) {
+        _this.showImportingMessage();
+        delay = window.setTimeout(_this.removeImportingMessage, 2000);
+      }
 
       window.addEventListener("message", function(e){
         var action = e.data.action;
@@ -278,25 +296,15 @@
       }, false);
 
 
-      $(".optionsList li input").bind("click keyupfunction blur", function() { _this.save(); })
+      $(".optionsList li input").bind("click keyupfunction blur", function() {
+        _this.save();
+      })
 
       $("#isDev").click(function() {
         if($(this).prop("checked")) {
           window.location = window.location;
         }
       });
-
-      //$("#fdgs_login").click(function() { _this.findingsLogin(); })
-
-      // $("#fdgs_username, #fdgs_password").keydown(function(evt){
-      //   var key = (event.keyCode ? event.keyCode : event.which);
-      //   if(key === 13) {
-      //     evt.preventDefault();
-      //     _this.findingsLogin();
-      //   } else {
-      //     return evt.key;
-      //   }
-      // });
 
       $("#fdgs_logout").click(function() { _this.findingsLogout(); });
 
@@ -321,7 +329,13 @@
       });
 
       $("#import_now").click(function() {
-        _this.startKindleImport();
+        if(!_this.bkg.FDGS.amazonCurrentlyImporting) {
+          _this.startKindleImport();
+          _this.showImportingMessage();
+          // Unfortunately I have to delay the creation of this interval by a couple of seconds
+          // because the value that is being inspected is set in KindleImporter object in fdgs_background.js
+          delay = window.setTimeout(_this.removeImportingMessage, 2000);
+        }
       });
 
       $("#amazon_import_interval_enabled").change(function() {
