@@ -101,8 +101,14 @@
                 },
                 statusCode: {
                     404: function() {
-                        _this.FDGS.log("Import timed out for \"" + post_data.title + "\" (" + post_data.asin + ").");
-                        _this.failed.push(post_data);
+                        var alertURL = "https://" + _this.FDGS.useDomain + "/service/alert/";
+                        var msg = "Import timed out for \"" + post_data.title + "\" (" + post_data.asin + ").";
+                        var data = {"message": msg};
+                        $.getJSON(alertURL, data, function(success) {
+                            _this.FDGS.log(msg);
+                            _this.failed.push(post_data);
+                        });
+
                         //skip it and move on...
                         _this.get_next_book();
 
@@ -134,7 +140,6 @@
             var _this = this;
 
             var desktopNotifyAllowed = _this.FDGS.settings.notificationsAmazonEnabledDesktop;
-            var emailNotifyAllowed = _this.FDGS.settings.notificationsAmazonEnabledEmail;
 
             // first send import success notification (if new quotes were imported)
             _this.FDGS.settings.updateLastImportDate();
@@ -153,19 +158,16 @@
                 _this.FDGS.log("Desktop notification disabled...skipping.")
             }
 
-            if(notify && emailNotifyAllowed) {
-                if(_this.completed_imports.length > 0) { //only send the email if highlights were found
-                    var data = {"ts": _this.import_start_time}
-                    $.getJSON(_this.notification_email_url, data, function(result) {
-                        if(result.success) {
-                            _this.FDGS.log("Import notification email sent!");
-                        } else {
-                            _this.FDGS.log("Notification email send FAILED.");
-                        }
-                    });
-                }
-            } else {
-                _this.FDGS.log("Email notification disabled...skipping.")
+            //Hit the email notification URL (will skip it server-side if user has it disabled)
+            if(_this.completed_imports.length > 0) { //only send the email if highlights were found
+                var data = {"since": _this.import_start_time}
+                $.getJSON(_this.notification_email_url, data, function(result) {
+                    if(result.success) {
+                        _this.FDGS.log("Import notification email sent!");
+                    } else {
+                        _this.FDGS.log("Notification email send FAILED.");
+                    }
+                });
             }
 
             if(_this.failed.length > 0) {
@@ -200,7 +202,6 @@
 
             //login statuses
             var desktopNotifyAllowed = _this.FDGS.settings.notificationsAmazonEnabledDesktop;
-            var emailNotifyAllowed = _this.FDGS.settings.notificationsAmazonEnabledEmail;
 
             var isLoggedInAmazon = false;
             var isLoggedInFindings = false;
@@ -230,7 +231,7 @@
                             }
                             _this.closeImport(false); //
                         } else { // Findings login OK, too...initiate import!
-                            _this.import_start_time = date.getTime();
+                            _this.import_start_time = Math.round((new Date()).getTime() / 1000);
                             _this.FDGS.amazonCurrentlyImporting = true;
                             _this.get_next_book();
                             _this.FDGS.log("\n\n***** Amazon import initiated at " + _this.import_start_time + "! *****");

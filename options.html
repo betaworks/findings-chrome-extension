@@ -11,18 +11,22 @@
   <body>
     <div id="header"><h1>Chrome Extension Options</h1></div>
 
-    <div class="findings options">
+    <div class="options findings">
       <h2>Findings Options</h2>
       <ul class="optionsList">
+        <li class="devopt"><input type="checkbox" id="isDev" value="1" checked="false"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="opt.save()">)</li>
+
         <li id="fdgs_login_status">
           <iframe id="loginframe" src=""></iframe>
         </li>
-        <li class="devopt"><input type="checkbox" id="isDev" value="1" checked="false"> Put me in dev mode (points to <input type="text" id="devDomain" name="devDomain" value="" size="30" onKeyUp="opt.save()">)</li>
+        <li id="fdgs_settings">
+          <iframe id="settingsframe" src=""></iframe>
+        </li>
       </ul>
     </div>
 
-    <div class="amazon options">
-      <h2>Amazon Options</h2>
+    <div class="options amazon">
+      <h2>Amazon Background Import</h2>
       <ul class="optionsList">
         <li><input type="checkbox" id="doKindleImport" value="1" checked="true"> Enable Kindle Import <span id="amazon_checking_login">Checking login status...</span>
         <div id="lastImport">Last import: <span id="lastImportDate"></span></div></li>
@@ -41,19 +45,14 @@
                 <option value=".017" class="devimportopt">Every minute</option>
             </select>
             <button id="import_now">import now</button>
-            
-            <ul>
-              <li><input type="checkbox" id="amazon_desktop_notifications_enabled" checked=""> Notify me when my highlights have been imported</li>
-              <li><input type="checkbox" id="amazon_email_notifications_enabled" checked=""> Email me when my highlights have been imported</li>
-            </ul>
+
+            <div><input type="checkbox" id="amazon_desktop_notifications_enabled" checked=""> Notify me when my highlights have been imported</div>
           </div>
 
           <div id="amazon_logged_out" class="hidden">
             <span class="warning">You are currently logged out of Amazon.</span> In order to auto-import your Kindle highlights, you must first <a href="https://kindle.amazon.com/your_highlights" target="_blank">login to kindle.amazon.com</a>
             <button id="refresh_options">Refresh options once logged in</button>
           </div>
-
-
         </li>
       </ul>
     </div>

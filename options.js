@@ -54,8 +54,6 @@
 
       _this.settings.notificationsAmazonEnabledDesktop = $("#amazon_desktop_notifications_enabled").prop("checked");
 
-      _this.settings.notificationsAmazonEnabledEmail = $("#amazon_email_notifications_enabled").prop("checked");
-
       _this.settings.amazonImportInterval = $("#amazon_import_interval_enabled option:selected").val();
 
       _this.bkg.FDGS.setEnvironment();
@@ -121,7 +119,7 @@
       $("#lastImportDate").html(importDateText);
 
       //load the login form
-      document.getElementById("loginframe").src = "https://" + _this.useDomain + "/user/login/iframe/";      
+      $("#loginframe").prop("src", "https://" + _this.useDomain + "/user/login/iframe/");
     },
 
     update: function() {
@@ -283,13 +281,26 @@
       }
 
       window.addEventListener("message", function(e){
+        //_this.log("Message received!");
+        //_this.log(e.data);
+
         var action = e.data.action;
+
         switch(action) {
-          case "updateImportOptions":
-            _this.displayLoginCheckSpinner();
-            //refresh the Amazon import options (due to a login or logout event)
+          case "findingsLoginChanged":
+          _this.log("Findings login change detected!");
+            //login or logout happened...let's get and set user data
+            //and show/hide the user settings iframe
+            var $settings = $("#settingsframe");
             _this.bkg.FDGS.getFindingsLoginStatus(function() {
-              _this.getAmazonLoginStatus(false);
+              if(_this.bkg.FDGS.findingsUser.authenticated) {
+                //reload the notifications settings form
+                $(".options.findings").addClass("logged_in");
+                $settings.prop("src", "https://" + _this.useDomain + "/user/preferences/iframe/").show();
+              } else {
+                $settings.hide();
+                $(".options.findings").removeClass("logged_in")
+              }
             });
             break;
         }
@@ -305,8 +316,6 @@
           window.location = window.location;
         }
       });
-
-      $("#fdgs_logout").click(function() { _this.findingsLogout(); });
 
       $("#refresh_options").click(function() { window.location = window.location; })
 
@@ -332,8 +341,8 @@
         if(!_this.bkg.FDGS.amazonCurrentlyImporting) {
           _this.startKindleImport();
           _this.showImportingMessage();
-          // Unfortunately I have to delay the creation of this interval by a couple of seconds
-          // because the value that is being inspected is set in KindleImporter object in fdgs_background.js
+          // Delay the creation of this interval by a couple of seconds
+          // to keep it from being removed instantly
           delay = window.setTimeout(_this.removeImportingMessage, 2000);
         }
       });

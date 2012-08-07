@@ -8,7 +8,7 @@ var FDGS = {};
 		badgeText: "",
 		loader_script: "fdgs_loader.js",
 		//usedAsins: [],
-		findingsUser: {authenticate: false, username: "", id: -1},
+		findingsUser: {authenticated: false, username: "", id: -1},
 		settings: w.extension_settings,
 		amazonPinger: null,
 		amazonImportTimer: null,
@@ -117,7 +117,6 @@ var FDGS = {};
 			}
 
 			var userURL = "https://" + _this.useDomain + "/user/is_logged_in/";
-			var returnUser ={"authenticated": false, "username": "", "id": ""};
 
 			$.getJSON(userURL, function(user) {
 		        if(user.authenticated) {
