@@ -91,7 +91,23 @@
         $("#findings_logged_out").hide();
         $("#amazon_checking_login").hide();
       }
+      
+      $("#lastImportDate").html(_this.getLastImportDate());
 
+      //load the login form
+      $("#loginframe").prop("src", "https://" + _this.useDomain + "/user/login/iframe/");
+    },
+
+    update: function() {
+      //run the functions necessary to set the environment, check login, etc.
+      this.bkg.FDGS.setEnvironment();
+      _this.getFindingsLoginStatus(function() {
+        _this.amazonImportOptionDisplay();
+      });
+    },
+
+    getLastImportDate: function() {
+      var _this = this;
       var lastImportDate, importDateText;
 
       if(_this.settings.lastImportDate != "never") {
@@ -115,19 +131,8 @@
       } else {
         importDateText = _this.settings.lastImportDate;
       }
-      
-      $("#lastImportDate").html(importDateText);
 
-      //load the login form
-      $("#loginframe").prop("src", "https://" + _this.useDomain + "/user/login/iframe/");
-    },
-
-    update: function() {
-      //run the functions necessary to set the environment, check login, etc.
-      this.bkg.FDGS.setEnvironment();
-      _this.getFindingsLoginStatus(function() {
-        _this.amazonImportOptionDisplay();
-      });
+      return importDateText;
     },
 
     displayLoginCheckSpinner: function() {
@@ -235,6 +240,7 @@
       window.removeit = window.setInterval(function() {
         if(_this.bkg.FDGS.amazonCurrentlyImporting === false) {
           $(".import_now").html("Complete!").css("background-image", "none").fadeOut(2000);
+          $("#lastImportDate").html(_this.getLastImportDate());
           window.clearTimeout(window.removeit);
         }
       }, 1000);
@@ -297,6 +303,9 @@
                 //reload the notifications settings form
                 $(".options.findings").addClass("logged_in");
                 $settings.prop("src", "https://" + _this.useDomain + "/user/preferences/iframe/").show();
+
+                //reset the navigation pane to default ("account")
+                window.setTimeout(function() {$settings[0].contentWindow.postMessage({"action": "start"}, '*');}, 500);
               } else {
                 $settings.hide();
                 $(".options.findings").removeClass("logged_in")
