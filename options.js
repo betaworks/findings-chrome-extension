@@ -246,6 +246,21 @@
       }, 1000);
     },
 
+    createServiceConnectTimer: function(service) {
+      var _this = this;
+      window.serviceConnectTimer = window.setInterval(function() {
+        console.log("Checking for connection to " + service + "...");
+        var url = "https://" + _this.settings.base_domain + "/social/check/" + service;
+        var settingsframe = $("#settingsframe")[0];
+        $.getJSON(url, function(result) {
+          if(result.connected) {
+            window.clearInterval(window.serviceConnectTimer);
+            settingsframe.contentWindow.postMessage({"action": "connectComplete", "service": service}, '*');
+          }
+        });
+      }, 1000);
+    },
+
     showImportingMessage: function() {
       $("#import_now").after("<span class='import_now'>Importing!</span>");
     },
@@ -287,7 +302,7 @@
       }
 
       window.addEventListener("message", function(e){
-        //_this.log("Message received!");
+        //_this.log("Message received in extension options!");
         //_this.log(e.data);
 
         var action = e.data.action;
@@ -312,6 +327,14 @@
               }
             });
             break;
+
+            case "socialConnect":
+              var service = e.data.service;
+              var url = "https://" + _this.useDomain + "/social/connect/" + service;
+              _this.log("Connecting to " + service + "...");
+              popWin(url, 600, 600);
+              _this.createServiceConnectTimer(service);
+              break;
         }
       }, false);
 
@@ -375,6 +398,11 @@
     }
   }
 
+  w.popWin = function(url, h, w) {
+    newwindow=window.open(url,'name','height='+h+',width='+w);
+    if (window.focus) {newwindow.focus()}
+    return false;
+  }
 
   w.toBool = function(str) {
     if ("false" === str) {
