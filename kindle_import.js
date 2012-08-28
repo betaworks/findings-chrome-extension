@@ -101,7 +101,7 @@
                 },
                 statusCode: {
                     404: function() {
-                        var alertURL = "https://" + _this.FDGS.useDomain + "/service/alert/";
+                        var alertURL = "http://" + _this.FDGS.useDomain + "/service/alert/";
                         var msg = "Import timed out for \"" + post_data.title + "\" (" + post_data.asin + ").";
                         var data = {"message": msg};
                         $.getJSON(alertURL, data, function(success) {
@@ -253,8 +253,8 @@
         init: function(FDGS) {
             this.FDGS = FDGS;
             console.log("intitializing Kindle importer...");
-            this.post_url = "https://" + this.FDGS.useDomain + "/clips/enterbatch/";
-            this.notification_email_url = "https://" + this.FDGS.useDomain + "/email/notify/lastimport/";
+            this.post_url = "http://" + this.FDGS.useDomain + "/clips/enterbatch/";
+            this.notification_email_url = "http://" + this.FDGS.useDomain + "/email/notify/lastimport/";
             return this;
         }
     }
