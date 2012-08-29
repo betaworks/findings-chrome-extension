@@ -3,7 +3,8 @@
         <title>Findings Extension Options</title>
         <link rel="stylesheet" href="options.css" type="text/css">
         <script src="jquery-1.7.2.min.js"></script>
-        <script type="text/javascript" src="options.js"></script>
+        <script src="config.js"></script>
+        <script src="options.js"></script>
     </head>
     <body>
         <div id="content">
@@ -11,13 +12,13 @@
             <div id='options'>
                 <span>Import my Kindle highlights</span>
                 <select id="amazon_import_interval">
-                    <option value="720">Once a month</option>
-                    <option value="168">Once a week</option>
-                    <option value="24" selected>Once a day</option>
-                    <option value="12">Twice a day</option>
+                    <option value="2419200000">Once a month</option>
+                    <option value="604800000">Once a week</option>
+                    <option value="86400000" selected>Once a day</option>
+                    <option value="43200000">Twice a day</option>
                     <option value="-1">Never</option>
-                    <option value="1" class="devimportopt">Every hour</option>
-                    <option value=".017" class="devimportopt">Every minute</option>
+                    <option value="60000">Every Minute</option>
+                    <option value="1000">Every Second</option>
                 </select>
                 <button id="import_now">import now</button>
                 <div>

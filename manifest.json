@@ -1,31 +1,36 @@
 {
-  "name": "Findings",
-  "version": "0.29",
-  "manifest version": 2,
-  "icons": {
-    "128": "icon-128x128.png",
-    "48": "icon-48x48.png",
-    "16": "icon-16x16.png"
-  },
-  "content_scripts": [
-    {
-      "matches": ["http://*.findings.com/*", "https://*.findings.com/*", "http://findings.com/*", "https://findings.com/*"],
-      "js": ["detectinator.js"]
-    }
-  ],
-  "description": "Discover the highlights",
-  "background": {
-  	"page": "fdgs_background.html"
-  },
-  "browser_action": {
-  	"default_icon": "icon-16x16.png",
-  	"default_title": "Findings.com"
-  },
-  "options_page": "options.html",
-  "permissions": [
-  	"tabs",
-    "notifications",
-  	"http://*/*",
-  	"https://*/*"
-  ]
+    "name": "Findings",
+    "version": "0.29",
+    "manifest_version": 2,
+    "icons": {
+        "128": "icon-128x128.png",
+        "48": "icon-48x48.png",
+        "16": "icon-16x16.png"
+    },
+    "content_scripts": [
+        {
+        "matches": ["http://*.findings.com/*", "https://*.findings.com/*", "http://findings.com/*", "https://findings.com/*"],
+        "js": ["detectinator.js"]
+        }
+    ],
+    "description": "Discover the highlights",
+    "background": {
+        "page": "fdgs_background.html"
+    },
+    "browser_action": {
+        "default_icon": "icon-48x48.png",
+        "default_title": "Findings.com"
+    },
+    "options_page": "options.html",
+    "web_accessible_resources": [
+        "icon-16x16.png",
+        "icon-48x48.png",
+        "icon-128x128.png"
+    ],
+    "permissions": [
+        "tabs",
+        "notifications",
+        "http://*/*",
+        "https://*/*"
+    ]
 }
