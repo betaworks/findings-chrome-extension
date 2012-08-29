@@ -17,4 +17,9 @@ $(document).ready(function() {
     $("#import_now").click(function() {
         config.lastAmazonSyncDate = null;
     });
+
+    $("#quick_clip_key").change(function(e) {
+        console.log(e);
+        //config.quickClipKey = ;
+    });
 });

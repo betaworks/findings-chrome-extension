@@ -1,3 +1,4 @@
+var LSK_QUICK_CLIP_KEY = 'quick_clip_key';
 var LSK_FIRST_RUN = 'first_run';
 var LSK_AMAZON_IMPORT_INTERVAL = 'amazonImportInterval';
 var LSK_AMAZON_LAST_IMPORT = 'amazonLastImport';
@@ -10,7 +11,20 @@ var config = {
         return 'http://dev.new.findings.com';
     },
 
-    // Desktop notifications
+    // Quick Clip
+    get quickClipKey(){
+        if (typeof(localStorage[LSK_QUICK_CLIP_KEY]) === 'undefined'){
+            localStorage[LSK_QUICK_CLIP_KEY] = 'T';
+        }
+
+        return localStorage[LSK_QUICK_CLIP_KEY];
+    },
+
+    set quickClipKey(key){
+        localStorage[LSK_QUICK_CLIP_KEY] = key;
+    },
+
+    // First run
     get extensionFirstRun(){
         if (typeof(localStorage[LSK_FIRST_RUN]) === 'undefined'){
             localStorage[LSK_FIRST_RUN] = 'true';

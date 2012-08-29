@@ -1,3 +1,36 @@
+chrome.extension.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        if (request.url && request.title && request.content){
+            console.log("BG:", request.url);
+            console.log("BG:", request.title);
+            console.log("BG:", request.content);
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: config.findingsBaseURL + '/clips/enterclip/',
+                data: request,
+                success: handleResponse,
+                error: handleError
+            });
+        }
+    }
+);
+
+var handleResponse = function(data){
+    var notification = null;
+    if (data.success){
+        notification = showNotification('Posted Clip to Findings', data.clip_content);
+    } else {
+        notification = showNotification('Clip was not Posted', data.message);
+    }
+    function closeNotice(){
+        notification.cancel();
+    }
+    setTimeout(closeNotice, 2000);
+}
+
+var handleError = function(a){ console.log("error:", a); }
+
 // Add the bookmarklet to the current page. This is all we need to do to get
 // the clipping functionality working.
 chrome.browserAction.onClicked.addListener(function(tab) {
@@ -30,7 +63,7 @@ function doAmazonSync(){
     if (until <= 0 && !KindleSync.isRunning){
         KindleSync.sync();
     } else {
-        console.log('Millis until next sync:', until);
+        //console.log('Millis until next sync:', until);
     }
 }
 

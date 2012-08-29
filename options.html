@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Findings Extension Options</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="options.css" type="text/css">
         <script src="jquery-1.7.2.min.js"></script>
         <script src="config.js"></script>
@@ -8,22 +9,36 @@
     </head>
     <body>
         <div id="content">
-            <h2>Findings for Google Chrome</h2>
+            <span class='heading'><img class='logo' src='icon-48x48.png'/> Findings for Google Chrome</span>
             <div id='options'>
-                <span>Import my Kindle highlights</span>
-                <select id="amazon_import_interval">
-                    <option value="2419200000">Once a month</option>
-                    <option value="604800000">Once a week</option>
-                    <option value="86400000" selected>Once a day</option>
-                    <option value="43200000">Twice a day</option>
-                    <option value="-1">Never</option>
-                    <option value="60000">Every Minute</option>
-                    <option value="1000">Every Second</option>
-                </select>
-                <button id="import_now">import now</button>
-                <div>
-                    <input type="checkbox" id="amazon_desktop_notifications_enabled" checked="">
-                        Show a desktop notiification when my highlights have been imported
+                <div class='options_group'>
+                    <h3>Amazon Kindle Import</h3>
+                    <div class='instruction'>Control how often your kindle highlights are imported to Findings.</div>
+                    <div class='option'>
+                        &raquo; <span>Import my Kindle highlights</span>
+                        <select id="amazon_import_interval">
+                            <option value="2419200000">Once a month</option>
+                            <option value="604800000">Once a week</option>
+                            <option value="86400000" selected>Once a day</option>
+                            <option value="43200000">Twice a day</option>
+                            <option value="-1">Never</option>
+                            <option value="60000">Every Minute</option>
+                            <option value="1000">Every Second</option>
+                        </select>
+                    </div>
+                    <div class='option'>
+                        &raquo; <input type="checkbox" id="amazon_desktop_notifications_enabled" checked="">
+                            Show a desktop notiification
+                    </div>
+                    <div class='option' style='text-align: right;'>
+                        <button id="import_now">Import now</button>
+                    </div>
+                </div>
+                <div class='options_group'>
+                    <h3>Keyboard Shortcuts</h3>
+                    <div class='instruction'>Use a key combination to quickly clip text to findings.</div>
+                    <div class='option'>
+                        &raquo; <span>Quick clip key</span> <input id='quick_clip_key' maxlength='1'/>
                     </div>
                 </div>
             </div>

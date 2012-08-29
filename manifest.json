@@ -11,6 +11,10 @@
         {
         "matches": ["http://*.findings.com/*", "https://*.findings.com/*", "http://findings.com/*", "https://findings.com/*"],
         "js": ["detectinator.js"]
+        },
+        {
+        "matches": ["http://*/*", "https://*/*"],
+        "js": ["config.js", "quick_clip.js"]
         }
     ],
     "description": "Discover the highlights",

@@ -1,130 +1,60 @@
 body {
-	font-family: Helvetica, Arial, sans serif; margin: 0; padding: 0;
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
     background: #000;
 }
 
-a { color: #548DCB; text-decoration: none; }
-.hidden { opacity: 1; }
-.visible { opacity: 0; }
-.warning { display: block; color: red; font-size: 18px; }
-
-#content {
-    background: url('white_scratch.png');
-    max-width: 650px;
-    margin: 0 auto;
-    padding: 1.5em;
-    margin-top: 30px;
-}
-h2{
-    text-align: center;
-    margin: 0px auto;
-}
 #options {
     max-width: 450px;
     margin: 0 auto;
     padding: 1.5em;
 }
-#header {
-	position: absolute;
-	top: 0px;
-	width: 100%;
-	height: 40px;
-	padding: 5px;
-	color: black;
-	line-height: 40px;
-	font-size: 24px;
-	font-weight: lighter;
-	background: white url('header_logo.png') no-repeat 5px; 50%;
+
+#content {
+    background: url('white_scratch.png');
+    max-width: 575px;
+    margin: 0 auto;
+    padding: 1.5em;
+    margin-top: 30px;
 }
 
-#header h1 {
-	position: relative;
-	display: block;
-	width: 300px;
-	font-weight: 100;
-	line-height: 40px;
-	font-size: 24px;
-	margin: 0px auto 0px auto;
+img.logo{
+    vertical-align: middle;
 }
 
-
-.options {
-	position: relative;
-	margin: 60px auto;
-	padding: 20px;
-	width: 800px;
-	border: 1px solid #DDD;
+.heading{
+    font-size: 30px;
+    font-weight: bolder;
 }
 
-.devopt {
-	background-color: yellow;
+h3{
+    margin: 0px 0px 0px 0px;
 }
 
-.options.findings {
-	height: 300px;
+.option{
+    margin: 0px 0px 10px 0px;
 }
 
-.options.findings.logged_in {
-	height: 650px;
+.options_group{
+    background: rgba(215, 215, 215, 0.15);
+    padding: 5px 20px;
+    margin-bottom: 10px;
 }
 
-#loginframe {
-	display: block;
-	height: 100px;
-	width: 100%;
-	border: 0;
+.instruction{
+    font-size: 0.8em;
+    color: #777;
+    margin-bottom: 10px;
 }
 
-#settingsframe {
-	display: block;
-	height: 600px;
-	width: 100%;
-	border: 0;
+#import_now {
+    background: none repeat scroll 0 0 #2A90BF;
+    border: medium none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    color: white;
+    cursor: pointer;
+    font-size: 0.8em;
+    padding: 0.6em;
+    text-transform: uppercase;
 }
-
-.optionsList {
-	display: block;
-	margin: auto;
-	list-style: none;
-}
-
-.optionsList li { display: block; margin: 20px auto; }
-
-.optionsList li div { margin: 10px auto; }
-
-#lastImport { margin: 0; color: #aaa; font-size: 12px; }
-
-#amazon_checking_login {
-	display: inline-block;
-	font-size: 12px;
-	color: #555;
-	margin-left: 10px;
-	padding-left: 18px;
-	background:  url('spinner_small.gif') no-repeat 0px 0px;
-}
-
-.import_now {
-	color: #009bcf;
-	margin-left: 10px;
-	padding-left: 18px;
-	background:  url('spinner_small.gif') no-repeat 0px 0px;
-}
-
-#login_msg {
-	display: inline-block;
-	margin-left: 10px;
-	font-size: 10px;
-	line-height: normal;
-	transition: opacity 1s ease-out;
-	-webkit-transition: opacity 1s ease-out;
-}
-
-#login_msg.working {
-	background:  url('spinner_small.gif') no-repeat 0px 0px;
-}
-
-
-#amazon_import_options #amazon_logged_in select { display: inline-block; }
-#amazon_logged_out { display: none; }
-#devopt { display: none;}
-#refresh_options { display: block; margin: 10px 0 0 0;}
