@@ -1,31 +1,32 @@
 chrome.extension.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.url && request.title && request.content){
-            console.log("BG:", request.url);
-            console.log("BG:", request.title);
-            console.log("BG:", request.content);
+            var notification = showNotification('Posting Clip to Findings...');
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
                 url: config.findingsBaseURL + '/clips/enterclip/',
                 data: request,
-                success: handleResponse,
-                error: handleError
+                success: function(data){ handleResponse(data, notification)},
+                error: function(jqXHR){ handleError(data, notification)}
             });
         }
     }
 );
 
-var handleResponse = function(data){
-    var notification = null;
+var handleResponse = function(data, clippingNotification){
+    clippingNotification.close();
     if (data.success){
-        notification = showNotification('Posted Clip to Findings', data.clip_content);
+        showNotification('Posted Clip to Findings', data.clip_content, 5000);
     } else {
-        notification = showNotification('Clip was not Posted', data.message);
+        showNotification('Clip was not Posted', data.message, 5000);
     }
 }
 
-var handleError = function(a){ console.log("error:", a); }
+var handleError = function(jqXHR, clippingNotification){
+    clipping_notification.close();
+    notification = showNotification('Clip was not Posted', 'There was an error tyring to reach the findings service. Please make sure you are logged in.', 5000);
+}
 
 // Add the bookmarklet to the current page. This is all we need to do to get
 // the clipping functionality working.

@@ -15,19 +15,17 @@
                     <h3>Amazon Kindle Import</h3>
                     <div class='instruction'>Control how often your kindle highlights are imported to Findings.</div>
                     <div class='option'>
-                        &raquo; <span>Import my Kindle highlights</span>
+                        <span class='option_item'>Import my Kindle highlights</span>
                         <select id="amazon_import_interval">
                             <option value="2419200000">Once a month</option>
                             <option value="604800000">Once a week</option>
                             <option value="86400000" selected>Once a day</option>
                             <option value="43200000">Twice a day</option>
                             <option value="-1">Never</option>
-                            <option value="60000">Every Minute</option>
-                            <option value="1000">Every Second</option>
                         </select>
                     </div>
                     <div class='option'>
-                        &raquo; <input type="checkbox" id="amazon_desktop_notifications_enabled" checked="">
+                        <span class='option_item'></span><input type="checkbox" id="amazon_desktop_notifications_enabled" checked="">
                             Show a desktop notiification
                     </div>
                     <div class='option' style='text-align: right;'>
@@ -36,9 +34,9 @@
                 </div>
                 <div class='options_group'>
                     <h3>Keyboard Shortcuts</h3>
-                    <div class='instruction'>Use a key combination to quickly clip text to findings.</div>
+                    <div class='instruction'>Use a key combination to quickly clip text to Findings.</div>
                     <div class='option'>
-                        &raquo; <span>Quick clip key</span> <input id='quick_clip_key' maxlength='1'/>
+                        <span class='option_item'>Quick clip key</span> <input id='quick_clip_key' maxlength='1' readonly='readonly'/>
                     </div>
                 </div>
             </div>

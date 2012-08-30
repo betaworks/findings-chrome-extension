@@ -14,7 +14,7 @@ var config = {
     // Quick Clip
     get quickClipKey(){
         if (typeof(localStorage[LSK_QUICK_CLIP_KEY]) === 'undefined'){
-            localStorage[LSK_QUICK_CLIP_KEY] = 'T';
+            localStorage[LSK_QUICK_CLIP_KEY] = 'C';
         }
 
         return localStorage[LSK_QUICK_CLIP_KEY];
