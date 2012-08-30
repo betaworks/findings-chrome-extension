@@ -61,11 +61,11 @@ var config = {
         // Adjust the interval - Corey was using hours in the options, we've moved to using
         // milliseconds, so this will verify that we don't run amok when this version of the
         // extension is loaded.
-        if (interval < 1000){
+        if (interval > 0 && interval < 1000){
             localStorage[LSK_AMAZON_IMPORT_INTERVAL] = '43200000';
         }
 
-        return interval === NaN ? '86400000' : interval;
+        return isNaN(interval) ? '86400000' : interval;
     },
 
     set amazonSyncInterval(value){

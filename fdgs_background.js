@@ -23,10 +23,6 @@ var handleResponse = function(data){
     } else {
         notification = showNotification('Clip was not Posted', data.message);
     }
-    function closeNotice(){
-        notification.cancel();
-    }
-    setTimeout(closeNotice, 2000);
 }
 
 var handleError = function(a){ console.log("error:", a); }
@@ -47,11 +43,20 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 
 // Some helper functions
-function showNotification(title, body) {
+function showNotification(title, body, ttl) {
     if (config.desktopNotificationsEnabled){
-        var n = webkitNotifications.createNotification('icon-48x48.png', title || "", body || "");
-        n.show();
-        return n
+        var notification = webkitNotifications.createNotification('icon-48x48.png', title || "", body || "");
+        notification.show();
+
+        function closeNotice(){
+            notification.cancel();
+        }
+
+        if (typeof(ttl) !== 'undefined'){
+            setTimeout(closeNotice, ttl);
+        }
+
+        return notification
     }
 }
 
@@ -60,16 +65,14 @@ function doAmazonSync(){
     var now = new Date().getTime();
     var diff = now - config.lastAmazonSyncDate.getTime();
     var until = config.amazonSyncInterval - diff;
-    if (until <= 0 && !KindleSync.isRunning){
+    if (config.amazonSyncInterval > 0 && until <= 0 && !KindleSync.isRunning){
         KindleSync.sync();
-    } else {
-        //console.log('Millis until next sync:', until);
     }
 }
 
 function onDomReady(){
     // Start the sync
-    setInterval(doAmazonSync, 5000);
+    setInterval(doAmazonSync, 60000);
 
     if(config.extensionFirstRun) {
         chrome.tabs.create({ url: chrome.extension.getURL('options.html') })

@@ -1,5 +1,5 @@
-function showKindleNotification(body){
-    return showNotification('Findings Kindle Sync', body);
+function showKindleNotification(body, ttl){
+    return showNotification('Findings Kindle Highlights Importer', body, ttl);
 }
 
 var KindleSync = (function() {
@@ -13,6 +13,7 @@ var KindleSync = (function() {
     var notification_email_url = config.findingsBaseURL + "/email/notify/lastimport/";
     var next_book_url = "https://kindle.amazon.com/your_highlights/next_book";
     var amazon_signin_title = "Amazon.com Sign In";
+    var notificationTTL = 8000;
 
     var module = {};
     module.isRunning = false;
@@ -35,13 +36,12 @@ var KindleSync = (function() {
             success: function(data) {
                 var title = $(data).filter('title').text().trim()
                 if (title === amazon_signin_title){
-                    // Handle Amazon Sign-in
-                    var n = showKindleNotification('You must log in at kindle.amazon.com to sync your highlights');
+                    var n = showKindleNotification('You must log in at kindle.amazon.com to sync your highlights', notificationTTL);
                     var launchLoginPage = function(){
                         chrome.tabs.create({url: 'https://kindle.amazon.com/your_highlights/'})
                     }
                     n.onclick = launchLoginPage;
-                    //n.onclose = launchLoginPage;
+                    completeSync(false);
                 } else {
                     processKindleData(data);
                 }
@@ -52,7 +52,7 @@ var KindleSync = (function() {
     function processKindleData(src){
         if (src === ""){
             console.log('No more kindle data to sync');
-            closeImport();
+            completeSync();
             return;
         }
 
@@ -106,43 +106,53 @@ var KindleSync = (function() {
                 } else {
                     // No new highlights, so we've reached a book that's already been
                     // sync'd. We can stop here.
-                    closeImport();
+                    completeSync();
                 }
             },
             statusCode: {
                 401: function() {
-                    var n = showKindleNotification("You must log into findings to sync your kindle hightlights");
+                    var n = showKindleNotification("You must log into findings to sync your kindle hightlights", notificationTTL);
                     n.onclick = function(){
                         chrome.tabs.create({url: config.findingsBaseURL})
                         n.close();
                     }
-                    closeImport();
+                    completeSync(false);
                 }
             },
-            error: function(a, b, c){
-                var n = showKindleNotification("There was an error syncing your kindle hightlights to findings. Please make sure you are logged in.");
+            error: function(jqXHR){
+                if (jqXHR.status === 401){
+                    return;
+                }
+                var n = showKindleNotification("There was an error syncing your kindle hightlights to findings. Please make sure you are logged in.", notificationTTL);
                 n.onclick = function(){
                     chrome.tabs.create({url: config.findingsBaseURL})
                     n.close();
                 }
-                closeImport();
+                completeSync(false);
             }
         });
     }
 
-    function closeImport() {
-        config.lastAmazonSyncDate = new Date();
-
-        if (highlight_total > 0) {
-            showKindleNotification('Imported ' + highlight_total + ' highlights from ' + books_with_highlights + ' books');
-            $.get(
-                notification_email_url,
-                { 'since' : Math.floor(sync_start_time.getTime() / 1000) }
-            )
-        }
-
+    function completeSync(success) {
         module.isRunning = false;
-        console.log("***** Amazon import complete.  Over and out. [" + config.lastAmazonSyncDate + "] *****");
+
+        if (success === false) {
+            config.lastAmazonSyncDate = null;
+            console.log("***** Amazon import FAILED.  Over and out. [" + config.lastAmazonSyncDate + "] *****");
+
+        } else {
+            config.lastAmazonSyncDate = new Date();
+
+            if (highlight_total > 0) {
+                showKindleNotification('Imported ' + highlight_total + ' highlights from ' + books_with_highlights + ' books', notificationTTL);
+                $.get(
+                    notification_email_url,
+                    { 'since' : Math.floor(sync_start_time.getTime() / 1000) }
+                )
+            }
+
+            console.log("***** Amazon import complete.  Over and out. [" + config.lastAmazonSyncDate + "] *****");
+        }
     }
 
     module.sync = function() {
