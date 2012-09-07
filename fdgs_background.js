@@ -19,13 +19,13 @@ var handleResponse = function(data, clippingNotification){
     if (data.success){
         showNotification('Posted Clip to Findings', data.clip_content, 5000);
     } else {
-        showNotification('Clip was not Posted', data.message, 5000);
+        showNotification('Clip was not posted', data.message, 5000);
     }
 }
 
 var handleError = function(jqXHR, clippingNotification){
     clipping_notification.close();
-    notification = showNotification('Clip was not Posted', 'There was an error tyring to reach the findings service. Please make sure you are logged in.', 5000);
+    notification = showNotification('Clip was not posted', 'There was an error tyring to reach the findings service. Please make sure you are logged in.', 5000);
 }
 
 // Add the bookmarklet to the current page. This is all we need to do to get
@@ -34,7 +34,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     var injectBookmarklet = "";
     injectBookmarklet += "var e=document.createElement('script');";
     injectBookmarklet += "e.setAttribute('id', 'fdgs_chrome_extension');";
-    injectBookmarklet += "e.setAttribute('src', '" + config.findingsBaseURL + "/extension/loader');";
+    injectBookmarklet += "e.setAttribute('src', '" + config.findingsBaseURL + "/assets/js/bookmarklet.js');";
     injectBookmarklet += "document.body.appendChild(e);";
 
     chrome.tabs.executeScript(null, {

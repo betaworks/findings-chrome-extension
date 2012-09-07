@@ -8,7 +8,7 @@ var config = {
 
     // Base URL for findings
     get findingsBaseURL(){
-        return 'http://dev.new.findings.com';
+        return 'https://findings.com';
     },
 
     // Quick Clip
