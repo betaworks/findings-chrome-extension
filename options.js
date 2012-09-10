@@ -12,7 +12,7 @@ $(document).ready(function() {
     });
 
     $("#import_now").click(function() {
-        config.lastAmazonSyncDate = null;
+        KindleSync.sync();
     });
 
     /* -- Handle this later - it will require message passing

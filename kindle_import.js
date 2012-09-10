@@ -137,7 +137,7 @@ var KindleSync = (function() {
         module.isRunning = false;
 
         if (success === false) {
-            config.lastAmazonSyncDate = null;
+            config.lastAmazonSyncDate = new Date();
             console.log("***** Amazon import FAILED.  Over and out. [" + config.lastAmazonSyncDate + "] *****");
 
         } else {
