@@ -62,10 +62,16 @@ var KindleSync = (function() {
         var title = $(book).find('.title a')[0];
         title = $(title).text();
 
-        var id = $(book).attr('id').split('_');
-        var asin = id[0];
-        offset = id[1];
-        used_asins.push(asin);
+        var id;
+        try{
+            id = $(book).attr('id').split('_');
+            var asin = id[0];
+            offset = id[1];
+            used_asins.push(asin);
+        } catch (err) {
+            console.log("Amazon sync error:", err);
+            completeSync(false);
+        }
 
         var upcoming = $(book).find('.upcoming')[0];
         upcoming_asins = $(upcoming).text().split(',');
@@ -138,6 +144,7 @@ var KindleSync = (function() {
 
         if (success === false) {
             config.lastAmazonSyncDate = new Date();
+            showKindleNotification('There was an error importing your kindle highlights.', notificationTTL);
             console.log("***** Amazon import FAILED.  Over and out. [" + config.lastAmazonSyncDate + "] *****");
 
         } else {

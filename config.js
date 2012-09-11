@@ -53,7 +53,7 @@ var config = {
     // Amazon Sync Interval
     get amazonSyncInterval(){
         if (typeof(localStorage[LSK_AMAZON_IMPORT_INTERVAL]) === 'undefined'){
-            localStorage[LSK_AMAZON_IMPORT_INTERVAL] = '86400000';
+            localStorage[LSK_AMAZON_IMPORT_INTERVAL] = '-1';
         }
 
         var interval = parseInt(localStorage[LSK_AMAZON_IMPORT_INTERVAL]);
