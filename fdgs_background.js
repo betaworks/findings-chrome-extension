@@ -44,17 +44,20 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 // The rest of this is all about amazon auto importing.
 function doAmazonSync(){
+    /*
     var now = new Date().getTime();
     var diff = now - config.lastAmazonSyncDate.getTime();
     var until = config.amazonSyncInterval - diff;
     if (config.amazonSyncInterval > 0 && until <= 0 && !KindleSync.isRunning){
         KindleSync.sync();
     }
+    */
 }
 
 function onDomReady(){
     // Start the sync
-    setInterval(doAmazonSync, 60000);
+    // *** DISABLE SYNC FOR NOW ***
+    // setInterval(doAmazonSync, 60000);
 
     if(config.extensionFirstRun) {
         chrome.tabs.create({ url: chrome.extension.getURL('options.html') })
