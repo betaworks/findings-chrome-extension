@@ -1,4 +1,5 @@
 // Listen for the quick clip keypress
+/*
 document.addEventListener('keypress', function(e){
     // Handle configurable key later - it will require message passing
     //var key = config.quickClipKey;
@@ -12,3 +13,4 @@ document.addEventListener('keypress', function(e){
         );
     }
 });
+*/
