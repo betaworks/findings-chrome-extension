@@ -6,7 +6,6 @@ function handleClick(info, tab) {
         "title": tab.title,
         "clip-method": 'chrome-context-menu' 
     };
-    console.log("posting: ", data);
     var notification = showNotification('Posting Clip to Findings...');
     $.ajax({
         type: 'POST',
