@@ -14,7 +14,8 @@
         },
         {
         "matches": ["http://*/*", "https://*/*"],
-        "js": ["config.js", "quick_clip.js"]
+        "css": ["highlighter.css"],
+        "js": ["config.js", "jquery-1.7.2.min.js",  "highlighter.js"]
         }
     ],
     "description": "Discover the highlights",
