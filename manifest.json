@@ -1,6 +1,6 @@
 {
     "name": "Findings",
-    "version": "0.41",
+    "version": "0.43",
     "manifest_version": 2,
     "icons": {
         "128": "icon-128x128.png",
@@ -14,7 +14,8 @@
         },
         {
         "matches": ["http://*/*", "https://*/*"],
-        "js": ["config.js", "quick_clip.js"]
+        "css": ["highlighter.css"],
+        "js": ["config.js", "jquery-1.7.2.min.js",  "highlighter.js"]
         }
     ],
     "description": "Discover the highlights",
