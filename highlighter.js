@@ -185,24 +185,27 @@ function doHighlight(node,className,searchFor,which){
     }
 
 function quickHighlight(textToFind){
-    search_for = new RegExp(textToFind.replace(/\s+/g,'\\s+'), 'gi')
+    search_for = new RegExp(textToFind.replace(/[.*+?|()\[\]{}\\$^]/g,'\\$&').replace(/\s+/g,'\\s+'),'ig');
     doHighlight(document, 'findings-highlight', search_for);
 }
 
 $( function(){
-    console.log("Console script is on: ", document.location.href)
-    console.log("Document referrer: ", document.referrer)
-    $.ajax({
-        url: 'http://dev.findings.com/source/highlights/',
-        type: 'POST',
-        data: {
-            url: document.location.href,
-        },
-        success: function(data){
-            console.log('data:', data);
-            for (var i=0; i < data.length; i++){
-                quickHighlight(data[i]);
+    if (document.referrer.search(/http[s]*:\/\/.*findings\.com/) > -1){
+        console.log("You came from findings - looking for highlights on this page.");
+        $.ajax({
+            url: 'http://dev.findings.com/source/highlights/',
+            type: 'POST',
+            data: {
+                url: document.location.href,
+            },
+            success: function(data){
+                console.log('data:', data);
+                for (var i=0; i < data.length; i++){
+                    quickHighlight(data[i]);
+                }
             }
-        }
-    });
+        });
+    } else {
+        console.log("You didn't come from findings.");
+    }
 });
