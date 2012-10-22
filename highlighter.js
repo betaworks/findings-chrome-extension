@@ -10,7 +10,7 @@
 //     fixed a bug which caused special regex characters in the
 //     search string to break the highlighter
 
-function doHighlight(node,className,searchFor,which){
+function doHighlight(node,className,clipID,searchFor,which){
     var doc = document;
 
     // normalize node argument
@@ -167,6 +167,7 @@ function doHighlight(node,className,searchFor,which){
             newNode = doc.createElement('span');
             newNode.appendChild(doc.createTextNode(textMiddle));
             newNode.className = className;
+            newNode.setAttribute('rel', clipID);
             parentNode.insertBefore(newNode,nextNode);
             if (textEnd){
                 newNode = doc.createTextNode(textEnd);
@@ -186,7 +187,7 @@ function doHighlight(node,className,searchFor,which){
 
 function quickHighlight(clipID, textToFind){
     search_for = new RegExp(textToFind.replace(/[.*+?|()\[\]{}\\$^]/g,'\\$&').replace(/\s+/g,'\\s+'),'ig');
-    doHighlight(document, 'findings-highlight findings-highlight-' + clipID, search_for);
+    doHighlight(document, 'findings-highlight findings-highlight-' + clipID, clipID, search_for);
 }
 
 $( function(){
@@ -197,40 +198,30 @@ $( function(){
             url: document.location.href,
         },
         success: function(data){
-            var c = '';
-            c += '<div id="findings-control">';
-            c +=     '<div class="logo_container">';
-            c +=         '<div id="logo"></div>';
-            c +=         '<div class="show_highlight_box"></div>';
-            c +=         '<div class="highlighter_box"></div>';
-            c +=     '</div>';
-            c += '</div>';
-
-            $('body').append(c);
-
-            for (var i=0; i < data.clips.length; i++){
-                var clip = data.clips[i];
-                quickHighlight(clip.id, clip.cliptext__content);
-                var username = clip.user__username;
-                var fullname = clip.user__fullname;
-                var image = clip.user__image;
-                var p = '';
-                p += '<div class="person_container">';
-                p += '<a href="https://findings.com/' + username + '/" target="_blank" class="person highlight-adam" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');"></a>';
-                p += '<a href="source_url_on_fidings" target="_blank" class="link_box"></a>';
-                p += '<div class="quote_box" rel="' + clip.id + '"></div>';
-                p += '<div class="name">' + fullname + '</div>';
-                p += '</div>';
-
-                $('#findings-control').append(p);
-            }
-
-            armFindingsControls();
+            handleClipFetch(data);
         }
     });
 });
 
-var armFindingsControls = function() {
+function tagUsersWithHighlightsInView(){
+    $('.findings-highlight').each(function(i, e){
+        var isInViewport = function(element){
+            var pageTop = $(window).scrollTop();
+            var pageBottom = $(window).scrollTop() + $(window).height();
+            var clipTop = $(element).offset().top;
+            var clipBottom = clipTop + $(element).height();
+            return (clipTop <= pageBottom) && (clipTop >= pageTop) ||
+                    (clipBottom >= pageTop) && (clipBottom <= pageBottom);
+        }
+
+        var clip_id = $(e).attr('rel');
+        $('#findings-person-' + clip_id).toggleClass('highlight', isInViewport(e));
+
+    });
+}
+
+
+function armFindingsControls() {
     $('#findings-control .person_container').mouseenter(function() {
         var rel = $(this).find('.person').attr('rel');
         $('.findings-highlight-' + rel).toggleClass('active', true);
@@ -250,28 +241,74 @@ var armFindingsControls = function() {
     $('.logo_container').mouseleave(function() {
         $(this).toggleClass('active', false);
     });
-/*
-    $('#findings-control .person').each(function() {
-        var $person = $(this);
-        var rel = $(this).attr('rel');
-        var offset = $('.' + rel).offset().top;
-        var bottom = $(window).height() + offset;
-        $(window).scroll(function() {
-            if ( (($(window).scrollTop() + $(window).height()) < bottom )) {
-                $person.addClass('highlight');
-            } else {
-                $person.removeClass('highlight');
-            }
-            if (($(window).scrollTop() + $(window).height()) < (offset - 30)) {
-                $person.removeClass('highlight');
-            }
-        });
+
+    // Tag users with hightlights initially in view
+    tagUsersWithHighlightsInView();
+
+    // Then tag users on scroll
+    $(window).scroll(function() {
+        tagUsersWithHighlightsInView();
     });
-*/
+
     $('#findings-control .person_container .quote_box').click(function() {
         var rel = $(this).attr('rel');
         var $first = $('.findings-highlight-' + rel).first();
         var offset = $first.offset().top;
         $('html,body').animate({ scrollTop: offset - 30 }, 200);
     });
+}
+
+function handleClipFetch(data){
+    var logo = "background-image: url('" + chrome.extension.getURL('images/logo_small_bar.png') + "');";
+    var control_actions = "background-image: url('" + chrome.extension.getURL('images/control_actions.png') + "');";
+    var user_actions = "background-image: url('" + chrome.extension.getURL('images/user_actions.png') + "');";
+
+    var c = '';
+    c += '<div id="findings-control">';
+    c +=     '<div class="logo_container">';
+    c +=         '<div id="logo" style="' + logo + '"></div>';
+    c +=         '<div class="show_highlight_box" style="' + control_actions + '"></div>';
+    c +=         '<div class="highlighter_box" style="' + control_actions +'"></div>';
+    c +=     '</div>';
+    c += '</div>';
+
+    $('body').append(c);
+
+    var source_url = data.source_url
+
+    // First do the highlighting, so we can then see what order the page is in
+    for (key in data.clips){
+        var clip = data.clips[key];
+        quickHighlight(clip.id, clip.content);
+    }
+
+    // Organize the clips in the order that they are on the page
+    clip_hash = {}
+    clip_order = []
+    $('.findings-highlight').each(function(i, e){
+        var id = e.getAttribute('rel');
+        if (!clip_hash[id]){
+            clip_order.push(id);
+            clip_hash[id] = id;
+        }
+    });
+
+    for (var i=0; i < clip_order.length; i++){
+        var clip = data.clips[clip_order[i]];
+        var username = clip.user__username;
+        var fullname = clip.user__fullname;
+        var image = clip.user__image;
+
+        var p = '';
+        p += '<div class="person_container">';
+        p += '<a href="https://findings.com/' + username + '/" target="_blank" class="person highlight-adam" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');" id="findings-person-' + clip.id + '"></a>';
+        p += '<a href="'+ clip.url +'" target="_blank" class="link_box" style="' + user_actions + '"></a>';
+        p += '<div class="quote_box" rel="' + clip.id + '" style="' + user_actions + '"></div>';
+        p += '<div class="name">' + fullname + '</div>';
+        p += '</div>';
+
+        $('#findings-control').append(p);
+    }
+
+    armFindingsControls();
 }
