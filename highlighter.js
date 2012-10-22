@@ -184,28 +184,23 @@ function doHighlight(node,className,searchFor,which){
         }
     }
 
-function quickHighlight(textToFind){
+function quickHighlight(clipID, textToFind){
     search_for = new RegExp(textToFind.replace(/[.*+?|()\[\]{}\\$^]/g,'\\$&').replace(/\s+/g,'\\s+'),'ig');
-    doHighlight(document, 'findings-highlight', search_for);
+    doHighlight(document, 'findings-highlight findings-highlight-' + clipID, search_for);
 }
 
 $( function(){
-    if (document.referrer.search(/http[s]*:\/\/.*findings\.com/) > -1){
-        console.log("You came from findings - looking for highlights on this page.");
-        $.ajax({
-            url: 'http://dev.findings.com/source/highlights/',
-            type: 'POST',
-            data: {
-                url: document.location.href,
-            },
-            success: function(data){
-                console.log('data:', data);
-                for (var i=0; i < data.length; i++){
-                    quickHighlight(data[i]);
-                }
+    $.ajax({
+        url: 'https://dev.findings.com/source/inline_highlights/',
+        type: 'POST',
+        data: {
+            url: document.location.href,
+        },
+        success: function(data){
+            for (var i=0; i < data.clips.length; i++){
+                var clip = data.clips[i];
+                quickHighlight(clip.id, clip.cliptext__content);
             }
-        });
-    } else {
-        console.log("You didn't come from findings.");
-    }
+        }
+    });
 });
