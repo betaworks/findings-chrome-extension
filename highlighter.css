@@ -1,3 +1,21 @@
-.findings-highlight {
-    background: #C6DAF3;
-}
+      /* Findings Styling */
+      .findings-highlight { background: rgba(255,242,51,0.3); }
+      .findings-highlight.active { background: rgba(255,242,51,0.8); border-bottom: none; }
+      .findings-control .show_highlight_box { display: block; width: 35px; height: 35px; float: left; background: #eaeaea; background-image: url('http://i.imgur.com/YCWgc.png'); box-sizing: border-box; background-size: 100px 40px; background-position: -52px -3px; display: none; }
+        .findings-control .highlighter_box { display: block; width: 35px; height: 35px; float: left; background: #eaeaea; background-image: url('http://i.imgur.com/YCWgc.png'); box-sizing: border-box; background-size: 100px 40px; background-position: -14px -3px; display: none; }
+      .findings-control { position: fixed; top: 20px; right: 0; }
+      .findings-control .logo_container { width: 35px; position: relative; float: left; clear: both; margin-left: 5px; cursor: pointer; }
+      .findings-control .logo_container.active { width: 105px; margin-left: -65px; }
+      .findings-control .logo_container.active .show_highlight_box, .findings-control .logo_container.active .highlighter_box { display: block; } 
+      .findings-control #logo { background-size: auto 35px; width: 35px; height: 35px; float: left; clear: both; }
+      .findings-control .person_container { width: 35px; position: relative; float: left; clear: both; margin-left: 5px; }
+      .findings-control .person_container .name { box-sizing: border-box; font-size: 11px; line-height: 11px; font-family: sans-serif; color: #fff; background: #111; line-height: 20px; text-align: left; position: absolute; height: 22px; right: 0; z-index: 999; top: -22px; padding: 2px 4px 0; display: none; float: left; width: 100%; }
+      .findings-control .person { background-size: auto 35px; width: 35px; height: 35px; clear: both; box-sizing: border-box; background-position: center center; float: left; }
+      .findings-control .person.highlight { border-left: solid 4px #5badd6; width: 39px; margin-left: -4px; }
+      .findings-control .quote_box { float: left; width: 35px; height: 35px; background-color: #eaeaea; background-image: url('http://i.imgur.com/kQwjzl.png'); box-sizing: border-box; background-size: 100px 40px; background-position: -50px -2px; display: none; }
+      .findings-control .quote_box:hover, .findings-control .link_box:hover { background-color: #bbb; }
+      .findings-control .link_box { display: block; width: 35px; height: 35px; float: left; background: #eaeaea; background-image: url('http://i.imgur.com/kQwjzl.png'); box-sizing: border-box; background-size: 100px 40px; background-position: -14px -3px;  display: none; }
+      .findings-control .person.active { border: solid 3px #5badd6; background-size: auto 40px; background-position: center center; }
+      .findings-control .person_container.active { width: 105px; margin-left: -65px; }
+      .findings-control .person_container.active .name { display: block; }
+      .findings-control .person_container.active .quote_box, .findings-control .person_container.active .link_box { display: block; cursor: pointer; }
