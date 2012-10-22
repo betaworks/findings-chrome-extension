@@ -197,10 +197,81 @@ $( function(){
             url: document.location.href,
         },
         success: function(data){
+            var c = '';
+            c += '<div id="findings-control">';
+            c +=     '<div class="logo_container">';
+            c +=         '<div id="logo"></div>';
+            c +=         '<div class="show_highlight_box"></div>';
+            c +=         '<div class="highlighter_box"></div>';
+            c +=     '</div>';
+            c += '</div>';
+
+            $('body').append(c);
+
             for (var i=0; i < data.clips.length; i++){
                 var clip = data.clips[i];
                 quickHighlight(clip.id, clip.cliptext__content);
+                var username = clip.user__username;
+                var fullname = clip.user__fullname;
+                var image = clip.user__image;
+                var p = '';
+                p += '<div class="person_container">';
+                p += '<a href="https://findings.com/' + username + '/" target="_blank" class="person highlight-adam" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');"></a>';
+                p += '<a href="source_url_on_fidings" target="_blank" class="link_box"></a>';
+                p += '<div class="quote_box" rel="' + clip.id + '"></div>';
+                p += '<div class="name">' + fullname + '</div>';
+                p += '</div>';
+
+                $('#findings-control').append(p);
             }
+
+            armFindingsControls();
         }
     });
 });
+
+var armFindingsControls = function() {
+    $('#findings-control .person_container').mouseenter(function() {
+        var rel = $(this).find('.person').attr('rel');
+        $('.findings-highlight-' + rel).toggleClass('active', true);
+        $(this).toggleClass('active', true);
+    });
+    $('#findings-control .person_container').mouseleave(function() {
+        var rel = $(this).find('.person').attr('rel');
+        $('.findings-highlight-' + rel).toggleClass('active', false);
+        $(this).toggleClass('active', false);
+    });
+    $('.person_container .name').mouseenter(function() {
+        $('.person_container').toggleClass('active', false);
+    });
+    $('.logo_container').mouseenter(function() {
+        $(this).toggleClass('active', true);
+    });
+    $('.logo_container').mouseleave(function() {
+        $(this).toggleClass('active', false);
+    });
+/*
+    $('#findings-control .person').each(function() {
+        var $person = $(this);
+        var rel = $(this).attr('rel');
+        var offset = $('.' + rel).offset().top;
+        var bottom = $(window).height() + offset;
+        $(window).scroll(function() {
+            if ( (($(window).scrollTop() + $(window).height()) < bottom )) {
+                $person.addClass('highlight');
+            } else {
+                $person.removeClass('highlight');
+            }
+            if (($(window).scrollTop() + $(window).height()) < (offset - 30)) {
+                $person.removeClass('highlight');
+            }
+        });
+    });
+*/
+    $('#findings-control .person_container .quote_box').click(function() {
+        var rel = $(this).attr('rel');
+        var $first = $('.findings-highlight-' + rel).first();
+        var offset = $first.offset().top;
+        $('html,body').animate({ scrollTop: offset - 30 }, 200);
+    });
+}
