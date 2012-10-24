@@ -212,7 +212,7 @@ function tagUsersWithHighlightsInView(){
         }
 
         var clip_id = $(e).attr('rel');
-        $('#findings-person-' + clip_id).toggleClass('highlight', isInViewport(e));
+        $('#findings-person-' + clip_id).parents('.person_container').toggleClass('highlight', isInViewport(e));
 
     });
 }
@@ -238,6 +238,15 @@ function armFindingsControls() {
     $('.logo_container').mouseleave(function() {
         $(this).toggleClass('active', false);
     });
+    $('.findings-highlight').mouseenter(function() {
+        var rel = $(this).attr('rel');
+        $('.findings-highlight-' + rel).toggleClass('active', true);
+        $('#findings-control .person[rel=' + rel + ']').parents('.person_container').toggleClass('highlight_hover', true);
+    });
+    $('.findings-highlight').mouseleave(function() {
+        $('.findings-highlight').toggleClass('active', false);
+        $('#findings-control .person').parents('.person_container').toggleClass('highlight_hover', false); 
+    });
 
     // Tag users with hightlights initially in view
     tagUsersWithHighlightsInView();
@@ -257,15 +266,17 @@ function armFindingsControls() {
 
 function handleClipFetch(data){
     var logo = "background-image: url('" + chrome.extension.getURL('images/logo_small_bar.png') + "');";
-    var control_actions = "background-image: url('" + chrome.extension.getURL('images/control_actions.png') + "');";
-    var user_actions = "background-image: url('" + chrome.extension.getURL('images/user_actions.png') + "');";
+    var control_actions = "background-image: url('" + chrome.extension.getURL('images/action_sprites.png') + "');";
+    var user_actions = "background-image: url('" + chrome.extension.getURL('images/action_sprites.png') + "');";
 
     var c = '';
     c += '<div id="findings-control">';
     c +=     '<div class="logo_container">';
-    c +=         '<div id="logo" style="' + logo + '"></div>';
-    c +=         '<div class="show_highlight_box" style="' + control_actions + '"></div>';
-    c +=         '<div class="highlighter_box" style="' + control_actions +'"></div>';
+    c +=        '<div class="inner_container">'
+    c +=            '<a href="http://findings.com" target="_blank" title="Findings" id="logo" style="' + logo + '"></a>';
+    c +=            '<div title="Close highlight bar" class="show_highlight_box" style="' + control_actions + '"></div>';
+    c +=            '<div title="Create quote" class="highlighter_box" style="' + control_actions +'"></div>';
+    c +=        '</div>'
     c +=     '</div>';
     c += '</div>';
 
@@ -298,10 +309,14 @@ function handleClipFetch(data){
 
         var p = '';
         p += '<div class="person_container">';
-        p += '<a href="https://findings.com/' + username + '/" target="_blank" class="person highlight-adam" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');" id="findings-person-' + clip.id + '"></a>';
-        p += '<a href="'+ clip.url +'" target="_blank" class="link_box" style="' + user_actions + '"></a>';
-        p += '<div class="quote_box" rel="' + clip.id + '" style="' + user_actions + '"></div>';
+        p += '<div class="inner_container">';
+        p += '<div class="person_cover"></div>'
+        p += '<a href="https://findings.com/' + username + '/" target="_blank" title="View user on Findings" class="person highlight-adam" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');" id="findings-person-' + clip.id + '"></a>';
+        p += '<a href="'+ clip.url +'" target="_blank" title="View quote on Findings" class="link_box" style="' + user_actions + '"></a>';
+        p += '<div title="Scroll to quote" class="quote_box" rel="' + clip.id + '" style="' + user_actions + '"></div>';
         p += '<div class="name">' + fullname + '</div>';
+        p += '</div>';
+        p += '<div class="marker"></div>'
         p += '</div>';
 
         $('#findings-control').append(p);
