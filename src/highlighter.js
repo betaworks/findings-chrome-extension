@@ -192,7 +192,7 @@ function quickHighlight(clipID, textToFind){
 
 $( function(){
     $.ajax({
-        url: 'https://highlights.findings.com/source/inline_highlights/',
+        url: 'https://dev.findings.com/source/inline_highlights/',
         type: 'GET',
         success: function(data){
             handleClipFetch(data);
@@ -312,7 +312,7 @@ function handleClipFetch(data){
         p += '<div class="inner_container">';
         p += '<div class="person_cover"></div>'
         p += '<a href="https://findings.com/' + username + '/" target="_blank" title="View user on Findings" class="person highlight-adam" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');" id="findings-person-' + clip.id + '"></a>';
-        p += '<a href="'+ clip.url +'" target="_blank" title="View quote on Findings" class="link_box" style="' + user_actions + '"></a>';
+        p += '<a href="http://findings.com'+ clip.url +'" target="_blank" title="View quote on Findings" class="link_box" style="' + user_actions + '"></a>';
         p += '<div title="Scroll to quote" class="quote_box" rel="' + clip.id + '" style="' + user_actions + '"></div>';
         p += '<div class="name">' + fullname + '</div>';
         p += '</div>';
