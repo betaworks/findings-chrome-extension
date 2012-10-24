@@ -1,0 +1,190 @@
+.findings-highlight {
+    background: rgba(255, 242, 51, 0.3);
+    -webkit-transition: background 0.1s linear;
+    }
+.findings-highlight.active {
+    background: rgba(255, 242, 51, 0.8);
+    border-bottom: none;
+    }
+
+#findings-control {
+    position: fixed;
+    top: 30px;
+    right: 0;
+    z-index: 2147483647;
+    background: rgba(255,255,255,0.8);
+    padding: 6px;
+    padding-right: 11px;
+    border: solid 1px #ccc;
+    border-right: none;
+    }
+
+/* Logo */
+#findings-control .logo_container {
+    width: 35px;
+    height: 35px;
+    position: relative;
+    float: left;
+    clear: both;
+    cursor: pointer;
+    }
+#findings-control .logo_container .inner_container {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+#findings-control #logo {
+    background-size: auto 35px;
+    width: 35px;
+    height: 35px;
+    float: left;
+    clear: both;
+    background-position: -1px 0;
+    }
+#findings-control .show_highlight_box {
+    display: block;
+    width: 35px;
+    height: 35px;
+    float: left;
+    background: #eaeaea;
+    box-sizing: border-box;
+    background-position: -90px 8px;
+    display: none;
+    }
+#findings-control .show_highlight_box:hover {
+    background-color: #bbb;
+    background-position: -90px -42px;
+}
+#findings-control .highlighter_box {
+    display: block;
+    width: 35px;
+    height: 35px;
+    float: left;
+    background: #eaeaea;
+    box-sizing: border-box;
+    background-position: -143px 8px;
+    display: none;
+    }
+#findings-control .highlighter_box:hover {
+    background-color: #bbb;
+    background-position: -143px -42px;
+}
+#findings-control .logo_container.active .inner_container {
+    width: 105px;
+    left: -70px;
+    }
+#findings-control .logo_container.active .show_highlight_box, #findings-control .logo_container.active .highlighter_box {
+    display: block;
+    }
+
+/* Avatars */
+#findings-control .person_container {
+    width: 41px;
+    position: relative;
+    float: left;
+    clear: both;
+    padding-right: 0;
+    height: 35px;
+    }
+#findings-control .person_container .inner_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: -5px;
+    float: left;
+    z-index: 8;
+}
+#findings-control .marker {
+    width: 6px;
+    height: 35px;
+    float: right;
+    background: #fff;
+    -webkit-transition: background 0.1s linear;
+}
+#findings-control .person {
+    background-size: auto 35px;
+    width: 35px;
+    height: 35px;
+    clear: both;
+    box-sizing: border-box;
+    background-position: center center;
+    float: left;
+    }
+#findings-control .person_container .name {
+    box-sizing: border-box;
+    font-size: 10px;
+    line-height: 10px;
+    font-family: sans-serif;
+    color: #fff;
+    background: #111;
+    line-height: 20px;
+    text-align: left;
+    position: absolute;
+    height: 20px;
+    right: 0;
+    z-index: 999;
+    top: 0;
+    padding: 0 4px 0;
+    display: none;
+    float: left;
+    width: 100%;
+    }
+#findings-control .quote_box {
+    float: left;
+    width: 35px;
+    height: 35px;
+    background-color: #eaeaea;
+    box-sizing: border-box;
+    background-position: -39px 8px;
+    display: none;
+    }
+#findings-control .quote_box:hover {
+    background-color: #bbb;
+    background-position: -39px -42px;
+    }
+
+#findings-control .link_box {
+    display: none;
+    width: 35px;
+    height: 35px;
+    float: left;
+    background: #eaeaea;
+    box-sizing: border-box;
+    background-position: 9px 8px;
+    }
+#findings-control .link_box:hover {
+    background-color: #bbb;
+    background-position: 9px -42px;
+    }
+
+/* Person Highlight */
+#findings-control .person_container.highlight .marker {
+    background: rgba(80,151,217,0.4);
+    }
+#findings-control .person_container:hover .inner_container {
+    }
+#findings-control .person_container.highlight:hover .marker {
+    background: rgba(80,151,217,1);
+}
+#findings-control .person_container.highlight_hover .marker {
+    background: rgba(80,151,217,1);
+    }
+
+/* Person Active */
+#findings-control .person_container.active {
+    }
+#findings-control .person_container.active .inner_container {
+    width: 105px;
+    left: -70px;
+    padding-top: 20px;
+    top: -20px;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    z-index: 9;
+    }
+#findings-control .person_container.active .name {
+    display: block;
+    }
+#findings-control .person_container.active .quote_box, #findings-control .person_container.active .link_box {
+    display: block;
+    cursor: pointer;
+    }
