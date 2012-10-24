@@ -192,7 +192,7 @@ function quickHighlight(clipID, textToFind){
 
 $( function(){
     $.ajax({
-        url: 'https://dev.findings.com/source/inline_highlights/',
+        url: 'https://highlights.findings.com/source/inline_highlights/',
         type: 'GET',
         success: function(data){
             handleClipFetch(data);
