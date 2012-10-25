@@ -229,6 +229,9 @@ function armFindingsControls() {
         $('.findings-highlight-' + rel).toggleClass('active', false);
         $(this).toggleClass('active', false);
     });
+    $('#findings-control .highlighter_box').click(function() {
+        chrome.extension.sendMessage({'action': 'loadBookmarklet'});
+    });
     $('#findings-control .show_highlight_box').click(function() {
         $('.findings-highlight').toggleClass('disabled', true);
         $('#findings-control').remove();
