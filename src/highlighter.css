@@ -32,6 +32,8 @@
     position: absolute;
     left: 0;
     top: 0;
+    right: auto;
+    width: 35px;
 }
 #findings-control #logo {
     background-size: auto 35px;
@@ -41,38 +43,39 @@
     clear: both;
     background-position: -1px 0;
     }
-#findings-control .show_highlight_box {
+#findings-control .close_highlight_box {
     display: block;
-    width: 35px;
-    height: 35px;
+    width: 16px;
+    height: 16px;
     float: left;
-    background: #eaeaea;
+    background: rgba(255,255,255,0.8);
     box-sizing: border-box;
-    background-position: -90px 8px;
-    display: none;
+    background-position: -96px 4px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0.8;
     }
-#findings-control .show_highlight_box:hover {
+#findings-control .close_highlight_box:hover {
     background-color: #bbb;
-    background-position: -90px -42px;
+    background-position: -96px -46px;
+    opacity: 1;
 }
 #findings-control .highlighter_box {
     display: block;
     width: 35px;
     height: 35px;
     float: left;
-    background: #eaeaea;
+    background: #dfdfdf;
     box-sizing: border-box;
-    background-position: -143px 8spx;
-    display: none;
+    background-position: -143px 8px;
+    clear: both;
+    cursor: pointer;
     }
 #findings-control .highlighter_box:hover {
     background-color: #bbb;
     background-position: -143px -42px;
 }
-#findings-control .logo_container.active .inner_container {
-    width: 105px;
-    left: -70px;
-    }
 #findings-control .logo_container.active .show_highlight_box, #findings-control .logo_container.active .highlighter_box {
     display: block;
     }

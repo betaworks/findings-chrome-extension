@@ -219,24 +219,18 @@ function tagUsersWithHighlightsInView(){
 
 
 function armFindingsControls() {
-    $('#findings-control .person_container').mouseenter(function() {
+    $('#findings-control .person_container .inner_container').mouseenter(function() {
         var rel = $(this).find('.person').attr('rel');
         $('.findings-highlight-' + rel).toggleClass('active', true);
-        $(this).toggleClass('active', true);
+        $(this).parent().toggleClass('active', true);
     });
-    $('#findings-control .person_container').mouseleave(function() {
+    $('#findings-control .person_container .inner_container').mouseleave(function() {
         var rel = $(this).find('.person').attr('rel');
         $('.findings-highlight-' + rel).toggleClass('active', false);
-        $(this).toggleClass('active', false);
+        $(this).parent().toggleClass('active', false);
     });
     $('.person_container .name').mouseenter(function() {
         $('.person_container').toggleClass('active', false);
-    });
-    $('.logo_container').mouseenter(function() {
-        $(this).toggleClass('active', true);
-    });
-    $('.logo_container').mouseleave(function() {
-        $(this).toggleClass('active', false);
     });
     $('.findings-highlight').mouseenter(function() {
         var rel = $(this).attr('rel');
@@ -274,10 +268,10 @@ function handleClipFetch(data){
     c +=     '<div class="logo_container">';
     c +=        '<div class="inner_container">'
     c +=            '<a href="http://findings.com" target="_blank" title="Findings" id="logo" style="' + logo + '"></a>';
-    c +=            '<div title="Close highlight bar" class="show_highlight_box" style="' + control_actions + '"></div>';
-    c +=            '<div title="Create quote" class="highlighter_box" style="' + control_actions +'"></div>';
+    c +=            '<div class="close_highlight_box" title="Close all" style="' + control_actions +'"></div>'
     c +=        '</div>'
     c +=     '</div>';
+    c +=     '<div title="Create quote" class="highlighter_box" style="' + control_actions +'"></div>'
     c += '</div>';
 
     $('body').append(c);
