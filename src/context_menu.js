@@ -20,5 +20,6 @@ function handleClick(info, tab) {
 var id = chrome.contextMenus.create({
     "title": "Clip to Findings",
     "contexts":['selection'],
-    "onclick": handleClick
+    "onclick": handleClick,
+    "documentUrlPatterns": ['http://*/*', 'https://*/*']
 });
