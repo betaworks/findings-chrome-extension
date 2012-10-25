@@ -13,7 +13,7 @@
 
 #findings-control {
     position: fixed;
-    top: 60px;
+    top: 40px;
     right: 0;
     z-index: 2147483647;
     background: rgba(255,255,255,0.8);
@@ -49,12 +49,12 @@
     }
 #findings-control .close_highlight_box {
     display: block;
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
     float: left;
     background: rgba(255,255,255,0.8);
     box-sizing: border-box;
-    background-position: -96px 4px;
+    background-position: -96px 5px;
     position: absolute;
     top: 0;
     right: 0;
@@ -62,7 +62,7 @@
     }
 #findings-control .close_highlight_box:hover {
     background-color: #bbb;
-    background-position: -96px -46px;
+    background-position: -96px -45px;
     opacity: 1;
 }
 #findings-control .highlighter_box {
