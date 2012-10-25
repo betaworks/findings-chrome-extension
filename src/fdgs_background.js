@@ -1,5 +1,8 @@
 chrome.extension.onMessage.addListener(
     function(request, sender, sendResponse) {
+        if (request.action == 'loadBookmarklet'){
+            injectBookmarkletIntoPage();
+        }
         if (request.url && request.title && request.content){
             var notification = showNotification('Posting Clip to Findings...');
             $.ajax({
@@ -28,9 +31,7 @@ var handleError = function(jqXHR, clippingNotification){
     notification = showNotification('Clip was not posted', 'There was an error tyring to reach the findings service. Please make sure you are logged in.', 5000);
 }
 
-// Add the bookmarklet to the current page. This is all we need to do to get
-// the clipping functionality working.
-chrome.browserAction.onClicked.addListener(function(tab) {
+function injectBookmarkletIntoPage(){
     var injectBookmarklet = "";
     injectBookmarklet += "var e=document.createElement('script');";
     injectBookmarklet += "e.setAttribute('id', 'fdgs_chrome_extension');";
@@ -40,6 +41,12 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     chrome.tabs.executeScript(null, {
         code: injectBookmarklet
     });
+}
+
+// Add the bookmarklet to the current page. This is all we need to do to get
+// the clipping functionality working.
+chrome.browserAction.onClicked.addListener(function(tab) {
+    injectBookmarkletIntoPage();
 });
 
 // The rest of this is all about amazon auto importing.

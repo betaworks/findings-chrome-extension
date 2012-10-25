@@ -7,9 +7,13 @@
     border-bottom: none;
     }
 
+.findings-highlight.disabled {
+    background: none;
+}
+
 #findings-control {
     position: fixed;
-    top: 30px;
+    top: 60px;
     right: 0;
     z-index: 2147483647;
     background: rgba(255,255,255,0.8);
