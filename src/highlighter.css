@@ -66,7 +66,7 @@
     float: left;
     background: #eaeaea;
     box-sizing: border-box;
-    background-position: -143px 8spx;
+    background-position: -143px 8px;
     display: none;
     }
 #findings-control .highlighter_box:hover {
