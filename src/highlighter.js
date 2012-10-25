@@ -191,13 +191,30 @@ function quickHighlight(clipID, textToFind){
 }
 
 $( function(){
-    $.ajax({
-        url: 'https://highlights.findings.com/source/inline_highlights/',
-        type: 'GET',
-        success: function(data){
-            handleClipFetch(data);
+/*
+    if ( typeof document.referer !== 'undefined'){
+        a = document.createElement('a');
+        a.href = document.referer;
+        referring_host = a.host;
+
+        if (referring_host.search('findings.com' > -1)){
+*/
+            data = {
+                url: document.location.href,
+                canonical: $('link[rel="canonical"]').attr('href') || ''
+            }
+            $.ajax({
+                url: 'https://highlights.findings.com/source/inline_highlights/',
+                type: 'POST',
+                data: data,
+                success: function(data){
+                    handleClipFetch(data);
+                }
+            });
+/*
         }
-    });
+    }
+*/
 });
 
 function tagUsersWithHighlightsInView(){
