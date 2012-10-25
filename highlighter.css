@@ -62,7 +62,7 @@
     float: left;
     background: #eaeaea;
     box-sizing: border-box;
-    background-position: -143px 8px;
+    background-position: -143px 8spx;
     display: none;
     }
 #findings-control .highlighter_box:hover {
@@ -98,7 +98,7 @@
     width: 6px;
     height: 35px;
     float: right;
-    background: #fff;
+    background: transparent;
     -webkit-transition: background 0.1s linear;
 }
 #findings-control .person {
