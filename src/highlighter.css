@@ -7,6 +7,10 @@
     border-bottom: none;
     }
 
+.findings-highlight.disabled {
+    background: none;
+}
+
 #findings-control {
     position: fixed;
     top: 30px;

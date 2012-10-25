@@ -229,6 +229,10 @@ function armFindingsControls() {
         $('.findings-highlight-' + rel).toggleClass('active', false);
         $(this).toggleClass('active', false);
     });
+    $('#findings-control .show_highlight_box').click(function() {
+        $('.findings-highlight').toggleClass('disabled', true);
+        $('#findings-control').remove();
+    });
     $('.person_container .name').mouseenter(function() {
         $('.person_container').toggleClass('active', false);
     });
