@@ -13,7 +13,7 @@ chrome.extension.onMessage.addListener(
                 url: config.findingsBaseURL + '/clips/enterclip/',
                 data: request,
                 success: function(data){ handleResponse(data, notification)},
-                error: function(jqXHR){ handleError(data, notification)}
+                error: function(jqXHR){ console.log("error"); handleError(data, notification)}
             });
         }
     }
@@ -24,12 +24,12 @@ var handleResponse = function(data, clippingNotification){
     if (data.success){
         showNotification('Posted Clip to Findings', data.clip_content, 5000);
     } else {
-        showNotification('Clip was not posted', data.message, 5000);
+        showNotification('Clip was not posted', getError(data.message), 5000);
     }
 }
 
 var handleError = function(jqXHR, clippingNotification){
-    clipping_notification.close();
+    clippingNotification.close();
     notification = showNotification('Clip was not posted', 'There was an error tyring to reach the findings service. Please make sure you are logged in.', 5000);
 }
 
