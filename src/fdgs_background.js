@@ -2,8 +2,10 @@ chrome.extension.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.action == 'loadBookmarklet'){
             injectBookmarkletIntoPage();
-        }
-        if (request.url && request.title && request.content){
+        } else if (request.action === 'checkInlineHighlightingEnabled') {
+            var response = {'inlineHighlightingEnabled': config.inlineHighlightingEnabled};
+            sendResponse(response);
+        } else if (request.url && request.title && request.content){
             var notification = showNotification('Posting Clip to Findings...');
             $.ajax({
                 type: 'POST',
@@ -11,7 +13,7 @@ chrome.extension.onMessage.addListener(
                 url: config.findingsBaseURL + '/clips/enterclip/',
                 data: request,
                 success: function(data){ handleResponse(data, notification)},
-                error: function(jqXHR){ handleError(data, notification)}
+                error: function(jqXHR){ console.log("error"); handleError(data, notification)}
             });
         }
     }
@@ -22,12 +24,12 @@ var handleResponse = function(data, clippingNotification){
     if (data.success){
         showNotification('Posted Clip to Findings', data.clip_content, 5000);
     } else {
-        showNotification('Clip was not posted', data.message, 5000);
+        showNotification('Clip was not posted', getError(data.message), 5000);
     }
 }
 
 var handleError = function(jqXHR, clippingNotification){
-    clipping_notification.close();
+    clippingNotification.close();
     notification = showNotification('Clip was not posted', 'There was an error tyring to reach the findings service. Please make sure you are logged in.', 5000);
 }
 
@@ -49,28 +51,11 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     injectBookmarkletIntoPage();
 });
 
-// The rest of this is all about amazon auto importing.
-function doAmazonSync(){
-    /*
-    var now = new Date().getTime();
-    var diff = now - config.lastAmazonSyncDate.getTime();
-    var until = config.amazonSyncInterval - diff;
-    if (config.amazonSyncInterval > 0 && until <= 0 && !KindleSync.isRunning){
-        KindleSync.sync();
-    }
-    */
-}
-
 function onDomReady(){
-    // Start the sync
-    // *** DISABLE SYNC FOR NOW ***
-    // setInterval(doAmazonSync, 60000);
-
     if(config.extensionFirstRun) {
         chrome.tabs.create({ url: chrome.extension.getURL('options.html') })
         config.extensionFirstRun = false;
     }
-
 }
 
 $(onDomReady)

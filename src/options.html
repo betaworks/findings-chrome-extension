@@ -3,7 +3,7 @@
         <title>Findings Extension Options</title>
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="options.css" type="text/css">
-        <script src="jquery-1.7.2.min.js"></script>
+        <script src="jquery-1.8.2.min.js"></script>
         <script src="config.js"></script>
         <script src="common.js"></script>
         <script src="options.js"></script>
@@ -14,9 +14,12 @@
             <span class='heading'><img class='logo' src='icon-48x48.png'/> Findings for Google Chrome</span>
             <div id='options'>
                 <div class='options_group'>
-    <div style='line-height: 18pt;'><span style='font-weight: bold'>AN UPDATE ON OUR AMAZON KINDLE SYNC FEATURE</span><br/><br/>
-    We no longer support importing highlights from Amazon Kindle. Please see <a href='http://blog.findings.com/post/31804403905/an-update-on-our-amazon-kindle-sync-feature' target='_new'>our blog post</a> for more detail.<br/><br/>
-    <div style='text-align: right;'>More questions? Email <a href='mailto:feedback@findings.com'>feedback@findings.com</a></div><br/>
+    <div style='line-height: 18pt;'><span style='font-weight: bold'>EXPERIMENTAL: Inline Highlighting</span><br/><br/>
+    We're experimenting with a new feature in the chrome extentsion - inline highlighting of text that's been clipped to Findings.
+    <br/><br/>
+    With this feature enabled, whenever you navigate to an original source page from findings.com, or from an fnd.gs link, we'll highlight any of the publically visible clips that have been captured from that page.
+    <br/><br/>
+    <label> <input type='checkbox' id='inline_highlighting_enabled'> Enable Inline Highlighting </label>
     </div>
             </div>
         </div>

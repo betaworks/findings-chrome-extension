@@ -55,27 +55,3 @@ h3{
     color: #777;
     margin-bottom: 10px;
 }
-
-#import_now {
-    background: none repeat scroll 0 0 #2A90BF;
-    border: medium none;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    color: white;
-    cursor: pointer;
-    font-size: 0.8em;
-    padding: 0.6em;
-    text-transform: uppercase;
-}
-
-#quick_clip_key {
-    width: 30px;
-    border: 2px solid #999;
-    text-align: center;
-    margin-left: 10px;
-    vertical-align: text-bottom;
-    color: #666;
-}
-
-#quick_clip_key.active {
-    border: 2px solid #99F;
-}
