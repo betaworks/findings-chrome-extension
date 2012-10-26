@@ -278,7 +278,7 @@ function armFindingsControls() {
         var rel = $(this).attr('rel');
         var $first = $('.findings-highlight-' + rel).first();
         var offset = $first.offset().top;
-        $('html,body').animate({ scrollTop: offset - 30 }, 200);
+        $('html,body').animate({ scrollTop: offset - 60 }, 200);
     });
 }
 
