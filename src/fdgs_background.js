@@ -2,8 +2,10 @@ chrome.extension.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.action == 'loadBookmarklet'){
             injectBookmarkletIntoPage();
-        }
-        if (request.url && request.title && request.content){
+        } else if (request.action === 'checkInlineHighlightingEnabled') {
+            var response = {'inlineHighlightingEnabled': config.inlineHighlightingEnabled};
+            sendResponse(response);
+        } else if (request.url && request.title && request.content){
             var notification = showNotification('Posting Clip to Findings...');
             $.ajax({
                 type: 'POST',

@@ -190,33 +190,6 @@ function quickHighlight(clipID, textToFind){
     doHighlight(document, 'findings-highlight findings-highlight-' + clipID, clipID, search_for);
 }
 
-$( function(){
-/*
-    if ( typeof document.referer !== 'undefined'){
-        a = document.createElement('a');
-        a.href = document.referer;
-        referring_host = a.host;
-
-        if (referring_host.search('findings.com' > -1)){
-*/
-            data = {
-                url: document.location.href,
-                canonical: $('link[rel="canonical"]').attr('href') || ''
-            }
-            $.ajax({
-                url: 'https://highlights.findings.com/source/inline_highlights/',
-                type: 'POST',
-                data: data,
-                success: function(data){
-                    handleClipFetch(data);
-                }
-            });
-/*
-        }
-    }
-*/
-});
-
 function tagUsersWithHighlightsInView(){
     $('.findings-highlight').each(function(i, e){
         var isInViewport = function(element){
@@ -342,3 +315,37 @@ function handleClipFetch(data){
 
     armFindingsControls();
 }
+
+function doInlineHighlighting(){
+    console.log("Document Referer:", document.referrer);
+    if ( typeof(document.referrer) !== 'undefined'){
+        a = document.createElement('a');
+        a.href = document.referrer;
+        referring_host = a.host;
+
+        console.log("Referring host:", referring_host);
+        if (referring_host.search('findings.com') > -1){
+            data = {
+                url: document.location.href,
+                canonical: $('link[rel="canonical"]').attr('href') || ''
+            }
+            $.ajax({
+                url: 'https://highlights.findings.com/source/inline_highlights/',
+                type: 'POST',
+                data: data,
+                success: function(data){
+                    handleClipFetch(data);
+                }
+            });
+        }
+    }
+}
+
+$( function(){
+    chrome.extension.sendMessage({action: "checkInlineHighlightingEnabled"}, function(response) {
+        console.log("Inline Highlighting Enabled:", response.inlineHighlightingEnabled);
+        if (response.inlineHighlightingEnabled){
+            doInlineHighlighting();
+        }
+    });
+});

@@ -9,11 +9,12 @@
     },
     "content_scripts": [
         {
-        "matches": ["http://*.findings.com/*", "https://*.findings.com/*", "http://findings.com/*", "https://findings.com/*"],
+        "matches": ["*://*.findings.com/*", "*://findings.com/*"],
         "js": ["detectinator.js"]
         },
         {
         "matches": ["http://*/*", "https://*/*"],
+        "exclude_matches": ["*://*.findings.com/*", "*://findings.com/*"],
         "css": ["highlighter.css"],
         "js": ["config.js", "jquery-1.7.2.min.js",  "highlighter.js"]
         }

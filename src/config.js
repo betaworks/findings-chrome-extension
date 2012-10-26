@@ -1,3 +1,4 @@
+var LSK_INLINE_HIGHLIGHTING_ENABLED = 'inline_highlighting_enabled';
 var LSK_QUICK_CLIP_KEY = 'quick_clip_key';
 var LSK_FIRST_RUN = 'first_run';
 var LSK_AMAZON_IMPORT_INTERVAL = 'amazonImportInterval';
@@ -35,6 +36,19 @@ var config = {
 
     set extensionFirstRun(value){
         localStorage[LSK_FIRST_RUN] = value;
+    },
+
+    // Inline Highlighting Option
+    get inlineHighlightingEnabled(){
+        if (typeof(localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED]) === 'undefined'){
+            localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED] = 'false';
+        }
+
+        return localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED] === 'true' ? true : false;
+    },
+
+    set inlineHighlightingEnabled(value){
+        localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED] = value;
     },
 
     // Desktop notifications
