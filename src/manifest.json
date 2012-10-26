@@ -9,10 +9,6 @@
     },
     "content_scripts": [
         {
-        "matches": ["*://*.findings.com/*", "*://findings.com/*"],
-        "js": ["detectinator.js"]
-        },
-        {
         "matches": ["http://*/*", "https://*/*"],
         "exclude_matches": ["*://*.findings.com/*", "*://findings.com/*"],
         "css": ["highlighter.css"],
