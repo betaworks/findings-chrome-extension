@@ -318,7 +318,7 @@ function handleClipFetch(data){
 
 function doInlineHighlighting(){
     console.log("Document Referer:", document.referrer);
-    if ( typeof(document.referrer) !== 'undefined'){
+    if ( document.referrer ){
         a = document.createElement('a');
         a.href = document.referrer;
         referring_host = a.host;
