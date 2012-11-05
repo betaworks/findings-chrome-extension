@@ -212,11 +212,13 @@ function armFindingsControls() {
     $('#findings-control .person_container .inner_container').mouseenter(function() {
         var rel = $(this).find('.person').attr('rel');
         $('.findings-highlight-' + rel).toggleClass('active', true);
+        $('.findings-comments-' + rel).toggleClass('active', true);
         $(this).parent().toggleClass('active', true);
     });
     $('#findings-control .person_container .inner_container').mouseleave(function() {
         var rel = $(this).find('.person').attr('rel');
         $('.findings-highlight-' + rel).toggleClass('active', false);
+        $('.findings-comments-' + rel).toggleClass('active', false);
         $(this).parent().toggleClass('active', false);
     });
     $('#findings-control .highlighter_box').click(function() {
@@ -252,6 +254,22 @@ function armFindingsControls() {
         var $first = $('.findings-highlight-' + rel).first();
         var offset = $first.offset().top;
         $('html,body').animate({ scrollTop: offset - 60 }, 200);
+    });
+
+    // Position the comments for a clip after the last highlighted
+    // span that represents the clip
+    $('.findings-comments').each(function() {
+        console.log($(this));
+        var rel = $(this).attr('rel');
+        var $highlight = $('.findings-highlight-' + rel).last();
+        var top_offset = $highlight.offset().top;
+        var left_offset = $highlight.offset().left;
+        var highlight_height = $highlight.height();
+        var bottom_offset = top_offset + highlight_height + 2;
+        $(this).css({
+            "left": left_offset,
+            "top": bottom_offset
+        });
     });
 }
 
@@ -316,6 +334,22 @@ function handleClipFetch(data){
         p += '</div>';
 
         $('#findings-control').append(p);
+
+        var comments = clip.comments;
+        if (comments.length > 0){
+            var c = '';
+            c += '<div class="findings-comments findings-comments-' + clip.id + '" rel="' + clip.id + '">';
+            for (var j=0; j < comments.length; j++){
+                var comment = comments[j]
+                var comment_user_image = comment.user__image;
+                c += '<div class="findings-comment">';
+                c += '<div class="comment-image" style="background-image: url(\'' + comment_user_image + '\');"></div>';
+                c += '<div class="comment-content">' + comment.content + '</div>';
+                c += '</div>';
+            }
+            c += '</div>'
+            $('body').append(c);
+        }
     }
 
     if (clip_order.length > 0){

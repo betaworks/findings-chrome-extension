@@ -198,3 +198,52 @@
     display: block;
     cursor: pointer;
     }
+
+/* Comments */
+/* These will be embedded in the page, so we need to do some resetting
+ * to make sure that the page's css doesn't fuck with us
+ */
+.findings-comments {
+    background: #000;
+    color: #fff;
+    line-height: 1.25em;
+    padding: 8px;
+    font-size: 16px;
+    font-family: sans-serif;
+    float: left;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: 500px;
+    min-height: 30px;
+    box-sizing: border-box;
+    display: none;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.findings-comments .findings-comment {
+    margin-bottom: 10px;
+}
+
+.findings-comments .findings-comment:last-child {
+    margin-bottom: 0px;
+}
+
+.findings-comments .findings-comment .comment-image {
+    height: 30px;
+    width: 30px;
+    background-size: 100% auto;
+    background-position: center center;
+    display: inline-block;
+}
+.findings-comments .findings-comment .comment-content {
+    display: inline-block;
+    vertical-align: top;
+    padding-left: 10px;
+    white-space: normal;
+}
+.findings-comments.active {
+    display: block;
+}
