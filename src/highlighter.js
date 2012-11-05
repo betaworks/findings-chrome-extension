@@ -186,6 +186,7 @@ function doHighlight(node,className,clipID,searchFor,which){
     }
 
 function quickHighlight(clipID, textToFind){
+    textToFind = textToFind.trim();
     search_for = new RegExp(textToFind.replace(/[.*+?|()\[\]{}\\$^]/g,'\\$&').replace(/\s+/g,'\\s+'),'ig');
     doHighlight(document, 'findings-highlight findings-highlight-' + clipID, clipID, search_for);
 }
@@ -234,11 +235,14 @@ function armFindingsControls() {
     $('.findings-highlight').mouseenter(function() {
         var rel = $(this).attr('rel');
         $('.findings-highlight-' + rel).toggleClass('active', true);
+        $('.findings-comments-' + rel).toggleClass('active', true);
         $('#findings-control .person[rel=' + rel + ']').parents('.person_container').toggleClass('highlight_hover', true);
     });
     $('.findings-highlight').mouseleave(function() {
+        var rel = $(this).attr('rel');
         $('.findings-highlight').toggleClass('active', false);
-        $('#findings-control .person').parents('.person_container').toggleClass('highlight_hover', false);
+        $('.findings-comments-' + rel).toggleClass('active', false);
+        $('#findings-control .person').parents('.person_container').toggleClass('highlight_hover', false); 
     });
 
     // Tag users with hightlights initially in view
@@ -259,7 +263,6 @@ function armFindingsControls() {
     // Position the comments for a clip after the last highlighted
     // span that represents the clip
     $('.findings-comments').each(function() {
-        console.log($(this));
         var rel = $(this).attr('rel');
         var $highlight = $('.findings-highlight-' + rel).last();
         var top_offset = $highlight.offset().top;

@@ -243,6 +243,7 @@
     vertical-align: top;
     padding-left: 10px;
     white-space: normal;
+    max-width: 450px;
 }
 .findings-comments.active {
     display: block;
