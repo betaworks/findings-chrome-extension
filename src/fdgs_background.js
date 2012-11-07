@@ -1,9 +1,17 @@
+var whitelist
+
 chrome.extension.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.action == 'loadBookmarklet'){
             injectBookmarkletIntoPage();
+        } else if (request.action === 'getWhitelist') {
+            var response = {'whitelist': whitelist};
+            sendResponse(response);
         } else if (request.action === 'checkInlineHighlightingEnabled') {
-            var response = {'inlineHighlightingEnabled': config.inlineHighlightingEnabled};
+            var response = {
+                'inlineHighlightingEnabled': config.inlineHighlightingEnabled,
+                'whitelist': whitelist
+            };
             sendResponse(response);
         } else if (request.url && request.title && request.content){
             var notification = showNotification('Posting Clip to Findings...');
@@ -59,3 +67,13 @@ function onDomReady(){
 }
 
 $(onDomReady)
+
+function loadHighlightWhitelist(){
+    $.ajax({
+        url: 'https://findings.com/source/inline_highlights/whitelist/',
+        success: function(data){
+            whitelist = data;
+        }
+    });
+}
+loadHighlightWhitelist();

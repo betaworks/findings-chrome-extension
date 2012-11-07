@@ -236,7 +236,7 @@ function armFindingsControls() {
     });
     $('.findings-highlight').mouseleave(function() {
         $('.findings-highlight').toggleClass('active', false);
-        $('#findings-control .person').parents('.person_container').toggleClass('highlight_hover', false); 
+        $('#findings-control .person').parents('.person_container').toggleClass('highlight_hover', false);
     });
 
     // Tag users with hightlights initially in view
@@ -271,9 +271,9 @@ function handleClipFetch(data){
     c +=     '<div title="Create quote" class="highlighter_box" style="' + control_actions +'"></div>'
     c += '</div>';
 
-    $('body').append(c);
-
-    var source_url = data.source_url
+    //
+    // Don't add the findings control container just yet... we'll wait until we know there are clips to show
+    //
 
     // First do the highlighting, so we can then see what order the page is in
     for (key in data.clips){
@@ -291,6 +291,11 @@ function handleClipFetch(data){
             clip_hash[id] = id;
         }
     });
+
+    // Only put up the controls if we've actually found highlights
+    if (clip_order.length > 0){
+        $('body').append(c);
+    }
 
     for (var i=0; i < clip_order.length; i++){
         var clip = data.clips[clip_order[i]];
@@ -313,18 +318,33 @@ function handleClipFetch(data){
         $('#findings-control').append(p);
     }
 
-    armFindingsControls();
+    if (clip_order.length > 0){
+        armFindingsControls();
+    }
 }
 
-function doInlineHighlighting(){
+function doInlineHighlighting(whitelist){
+    var host = document.location.host
     console.log("Document Referer:", document.referrer);
-    if ( document.referrer ){
+    var whitelisted = false;
+
+    var domainParts = host.split('.')
+    var subDomain = domainParts[domainParts.length-1]
+    for (var i = domainParts.length-2; i >= 0; i--){
+        subDomain = domainParts[i] + '.' + subDomain
+        if (typeof(whitelist[subDomain]) !== 'undefined'){
+            whitelisted = true;
+            console.log(host, "(", subDomain, ")", "is whitelisted");
+            break;
+        }
+    }
+    if ( whitelisted || document.referrer ){
         a = document.createElement('a');
         a.href = document.referrer;
         referring_host = a.host;
 
         console.log("Referring host:", referring_host);
-        if (referring_host.search('findings.com') > -1){
+        if (whitelisted || referring_host.search('findings.com') > -1){
             data = {
                 url: document.location.href,
                 canonical: $('link[rel="canonical"]').attr('href') || ''
@@ -337,7 +357,11 @@ function doInlineHighlighting(){
                     handleClipFetch(data);
                 }
             });
+        } else if (!whitelisted){
+            console.log("This was not referred from findings.com, and", host, "is not whitelisted");
         }
+    } else if (!whitelisted){
+        console.log("This page has no referrer, and", host, "is not whitelisted");
     }
 }
 
@@ -345,7 +369,7 @@ $( function(){
     chrome.extension.sendMessage({action: "checkInlineHighlightingEnabled"}, function(response) {
         console.log("Inline Highlighting Enabled:", response.inlineHighlightingEnabled);
         if (response.inlineHighlightingEnabled){
-            doInlineHighlighting();
+            doInlineHighlighting(response.whitelist);
         }
     });
 });
