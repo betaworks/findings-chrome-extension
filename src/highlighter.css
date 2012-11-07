@@ -221,6 +221,8 @@
     display: none;
     text-align: left;
     white-space: nowrap;
+    /* This should float above everything */
+    z-index: 2147483647;
 }
 
 .findings-comments .findings-comment {
