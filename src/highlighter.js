@@ -328,8 +328,12 @@ function handleClipFetch(data){
         var p = '';
         p += '<div class="fndgs_person_container">';
         p += '<div class="fndgs_inner_container">';
-        p += '<div class="fndgs_person_cover"></div>'
-        p += '<a href="https://findings.com/' + username + '/" target="_blank" title="View user on Findings" class="fndgs_person fndgs_highlight" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');" id="findings-person-' + clip.id + '"></a>';
+        p += '<div class="fndgs_person_cover"></div>';
+        p += '<a href="https://findings.com/' + username + '/" target="_blank" title="View user on Findings" class="fndgs_person fndgs_highlight" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');" id="findings-person-' + clip.id + '">';
+        if ( clip.comments.length > 0 ) {
+            p += '<div class="fndgs_comment_indicator" style="' + user_actions + '"></div>'
+        }
+        p += '</a>';
         p += '<a href="http://findings.com'+ clip.url +'" target="_blank" title="View quote on Findings" class="fndgs_link_box" style="' + user_actions + '"></a>';
         p += '<div title="Scroll to quote" class="fndgs_quote_box" rel="' + clip.id + '" style="' + user_actions + '"></div>';
         p += '<div class="fndgs_name">' + fullname + '</div>';
@@ -349,7 +353,7 @@ function handleClipFetch(data){
                 var comment_user_name = comment.user__fullname;
                 c += '<div class="findings-comment">';
                 c += '<div class="fndgs_comment-image" style="background-image: url(\'' + comment_user_image + '\');"></div>';
-                c += '<div class="fndgs_comment-content"><span class="fndngs_comment_user_name">' + comment_user_name + '</span> ' + comment.content + '</div>';
+                c += '<div class="fndgs_comment-content"><span class="fndgs_comment_user_name">' + comment_user_name + '</span> ' + comment.content + '</div>';
                 c += '</div>';
             }
             c += '</div>'

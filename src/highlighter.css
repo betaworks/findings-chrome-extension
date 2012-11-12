@@ -216,7 +216,7 @@
     font-size: 13px;
     font-family: sans-serif;
     float: left;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.6);
     position: absolute;
     top: 0;
     left: 0;
@@ -234,10 +234,15 @@
 .findings-comments .findings-comment {
     padding: 5px 0 3px 6px;
     clear: both;
-    border-top: solid 1px #ccc;
+    background: #eee;
+    border-bottom: solid 1px #ccc;
+    border-top: solid 1px #fafafa;
 }
 .findings-comments .findings-comment:first-child {
     border-top: none;
+}
+.findings-comments .findings-comment:last-child {
+    border-bottom: none;
 }
 
 .findings-comments .findings-comment:last-child {
@@ -264,7 +269,15 @@
     font-weight: bold;
     color: #000;
 }
-.findings-comment .fndngs_comment_user_name {
+#findings-control .fndgs_comment_indicator {
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    bottom: 3px;
+    left: 4px;
+    background-position: -250px 1px;
+}
+.findings-comment .fndgs_comment_user_name {
     font-weight: bold;
 }
 .findings-comments.fndgs_active {
