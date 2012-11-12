@@ -57,6 +57,11 @@
     background-position: -96px 6px;
     background-color: #ddd;
     }
+#findings-control .fndgs_close_highlight_box:hover {
+    background-position: -96px -44px;
+    background-color: #bbb;
+    opacity: 1;
+}
 #findings-control .fndgs_highlight_settings {
     height: 19px;
     width: 17px;
@@ -64,12 +69,7 @@
     background-position: -195px 6px;
     background-color: #ddd;
 }
-#findings-control .fndgs_close_highlight_box:hover {
-    background-position: -94px -44px;
-    background-color: #bbb;
-    opacity: 1;
-}
-#findings-control .fndngs_highlight_settings:hover {
+#findings-control .fndgs_highlight_settings:hover {
     background-position: -195px -45px;
     background-color: #bbb;
 }
