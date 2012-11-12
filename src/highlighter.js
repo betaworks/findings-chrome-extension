@@ -346,9 +346,10 @@ function handleClipFetch(data){
             for (var j=0; j < comments.length; j++){
                 var comment = comments[j]
                 var comment_user_image = comment.user__image;
+                var comment_user_name = comment.user__fullname;
                 c += '<div class="findings-comment">';
                 c += '<div class="fndgs_comment-image" style="background-image: url(\'' + comment_user_image + '\');"></div>';
-                c += '<div class="fndgs_comment-content">' + comment.content + '</div>';
+                c += '<div class="fndgs_comment-content"><span class="fndngs_comment_user_name">' + comment_user_name + '</span> ' + comment.content + '</div>';
                 c += '</div>';
             }
             c += '</div>'

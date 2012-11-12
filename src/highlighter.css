@@ -175,7 +175,7 @@
 
 /* Person Highlight */
 #findings-control .fndgs_person_container.fndgs_highlight .fndgs_marker {
-    background: rgba(80,151,217,0.4);
+    background: rgba(80,151,217,0.5);
     }
 #findings-control .fndgs_person_container:hover .fndgs_inner_container {
     }
@@ -210,11 +210,10 @@
  * to make sure that the page's css doesn't fuck with us
  */
 .findings-comments {
-    background: #000;
-    color: #fff;
-    line-height: 1.25em;
-    padding: 8px;
-    font-size: 16px;
+    background: #fff;
+    color: #222;
+    line-height: 1.35em;
+    font-size: 13px;
     font-family: sans-serif;
     float: left;
     box-shadow: 0 1px 3px rgba(0,0,0,0.4);
@@ -229,10 +228,16 @@
     white-space: nowrap;
     /* This should float above everything */
     z-index: 2147483647;
+    border: solid 4px rgba(80,151,217,1);
 }
 
 .findings-comments .findings-comment {
-    margin-bottom: 10px;
+    padding: 5px 0 3px 6px;
+    clear: both;
+    border-top: solid 1px #ccc;
+}
+.findings-comments .findings-comment:first-child {
+    border-top: none;
 }
 
 .findings-comments .findings-comment:last-child {
@@ -241,6 +246,7 @@
 
 .findings-comments .findings-comment .fndgs_comment-image {
     height: 30px;
+    margin-top: 3px;
     width: 30px;
     background-size: 100% auto;
     background-position: center center;
@@ -249,9 +255,17 @@
 .findings-comments .findings-comment .fndgs_comment-content {
     display: inline-block;
     vertical-align: top;
-    padding-left: 10px;
+    padding-left: 8px;
+    padding-right: 12px;
     white-space: normal;
     max-width: 450px;
+}
+.findings-comments .findings-comment a {
+    font-weight: bold;
+    color: #000;
+}
+.findings-comment .fndngs_comment_user_name {
+    font-weight: bold;
 }
 .findings-comments.fndgs_active {
     display: block;
