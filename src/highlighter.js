@@ -285,8 +285,9 @@ function handleClipFetch(data){
     c += '<div id="findings-control">';
     c +=     '<div class="logo_container">';
     c +=        '<div class="inner_container">'
+    c +=            '<div class="highlight_settings" title="Settings" style="' + control_actions +'"></div>'
+    c +=            '<div class="close_highlight_box" title="Close" style="' + control_actions +'"></div>'
     c +=            '<a href="http://findings.com" target="_blank" title="Findings" id="logo" style="' + logo + '"></a>';
-    c +=            '<div class="close_highlight_box" title="Close all" style="' + control_actions +'"></div>'
     c +=        '</div>'
     c +=     '</div>';
     c +=     '<div title="Create quote" class="highlighter_box" style="' + control_actions +'"></div>'

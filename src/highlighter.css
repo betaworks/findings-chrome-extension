@@ -26,7 +26,7 @@
 /* Logo */
 #findings-control .logo_container {
     width: 35px;
-    height: 35px;
+    height: 54px;
     position: relative;
     float: left;
     clear: both;
@@ -48,24 +48,29 @@
     background-position: -1px 0;
     }
 #findings-control .close_highlight_box {
-    display: block;
-    width: 20px;
-    height: 20px;
+    height: 19px;
+    width: 18px;
     float: left;
-    border-radius: 20px;
-    background-color: #ddd;
+    border-left: solid 1px #ccc;
     box-sizing: border-box;
-    background-position: -94px 6px;
-    position: absolute;
-    top: -13px;
-    left: 20px;
-    opacity: 1;
-    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    background-position: -96px 6px;
+    background-color: #ddd;
     }
 #findings-control .close_highlight_box:hover {
-    background-position: -94px -44px;
+    background-position: -96px -44px;
     background-color: #bbb;
     opacity: 1;
+}
+#findings-control .highlight_settings {
+    height: 19px;
+    width: 17px;
+    float: left;
+    background-position: -195px 6px;
+    background-color: #ddd;
+}
+#findings-control .highlight_settings:hover {
+    background-position: -195px -45px;
+    background-color: #bbb;
 }
 #findings-control .highlighter_box {
     display: block;
