@@ -2,12 +2,12 @@
     background: rgba(255, 242, 51, 0.3);
     -webkit-transition: background 0.1s linear;
     }
-.findings-highlight.active {
+.findings-highlight.fndgs_active {
     background: rgba(255, 242, 51, 0.6);
     border-bottom: none;
     }
 
-.findings-highlight.disabled {
+.findings-highlight.fndgs_disabled {
     background: none;
 }
 
@@ -24,7 +24,7 @@
     }
 
 /* Logo */
-#findings-control .logo_container {
+#findings-control .fndgs_logo_container {
     width: 35px;
     height: 35px;
     position: relative;
@@ -32,14 +32,14 @@
     clear: both;
     cursor: pointer;
     }
-#findings-control .logo_container .inner_container {
+#findings-control .fndgs_logo_container .fndgs_inner_container {
     position: absolute;
     left: 0;
     top: 0;
     right: auto;
     width: 35px;
 }
-#findings-control #logo {
+#findings-control #fndgs_logo {
     background-size: auto 35px;
     width: 35px;
     height: 35px;
@@ -47,7 +47,7 @@
     clear: both;
     background-position: -1px 0;
     }
-#findings-control .close_highlight_box {
+#findings-control .fndgs_close_highlight_box {
     display: block;
     width: 20px;
     height: 20px;
@@ -62,12 +62,12 @@
     opacity: 1;
     box-shadow: 0 0 2px rgba(0,0,0,0.5);
     }
-#findings-control .close_highlight_box:hover {
+#findings-control .fndgs_close_highlight_box:hover {
     background-position: -94px -44px;
     background-color: #bbb;
     opacity: 1;
 }
-#findings-control .highlighter_box {
+#findings-control .fndgs_highlighter_box {
     display: block;
     width: 35px;
     height: 35px;
@@ -79,16 +79,16 @@
     cursor: pointer;
     display: none;
     }
-#findings-control .highlighter_box:hover {
+#findings-control .fndgs_highlighter_box:hover {
     background-color: #bbb;
     background-position: -143px -42px;
 }
-#findings-control .logo_container.active .show_highlight_box, #findings-control .logo_container.active .highlighter_box {
+#findings-control .fndgs_logo_container.fndgs_active .fndgs_show_highlight_box, #findings-control .fndgs_logo_container.fndgs_active .fndgs_highlighter_box {
     display: block;
     }
 
 /* Avatars */
-#findings-control .person_container {
+#findings-control .fndgs_person_container {
     width: 41px;
     position: relative;
     float: left;
@@ -96,7 +96,7 @@
     padding-right: 0;
     height: 35px;
     }
-#findings-control .person_container .inner_container {
+#findings-control .fndgs_person_container .fndgs_inner_container {
     position: absolute;
     top: 0;
     left: 0;
@@ -104,14 +104,14 @@
     float: left;
     z-index: 8;
 }
-#findings-control .marker {
+#findings-control .fndgs_marker {
     width: 6px;
     height: 35px;
     float: right;
     background: transparent;
     -webkit-transition: background 0.1s linear;
 }
-#findings-control .person {
+#findings-control .fndgs_person {
     background-size: auto 35px;
     width: 35px;
     height: 35px;
@@ -120,7 +120,7 @@
     background-position: center center;
     float: left;
     }
-#findings-control .person_container .name {
+#findings-control .fndgs_person_container .fndgs_name {
     box-sizing: border-box;
     font-size: 10px;
     line-height: 10px;
@@ -139,7 +139,7 @@
     float: left;
     width: 100%;
     }
-#findings-control .quote_box {
+#findings-control .fndgs_quote_box {
     float: left;
     width: 35px;
     height: 35px;
@@ -148,12 +148,12 @@
     background-position: -39px 8px;
     display: none;
     }
-#findings-control .quote_box:hover {
+#findings-control .fndgs_quote_box:hover {
     background-color: #bbb;
     background-position: -39px -42px;
     }
 
-#findings-control .link_box {
+#findings-control .fndgs_link_box {
     display: none;
     width: 35px;
     height: 35px;
@@ -162,28 +162,28 @@
     box-sizing: border-box;
     background-position: 9px 8px;
     }
-#findings-control .link_box:hover {
+#findings-control .fndgs_link_box:hover {
     background-color: #bbb;
     background-position: 9px -42px;
     }
 
 /* Person Highlight */
-#findings-control .person_container.highlight .marker {
+#findings-control .fndgs_person_container.fndgs_highlight .fndgs_marker {
     background: rgba(80,151,217,0.4);
     }
-#findings-control .person_container:hover .inner_container {
+#findings-control .fndgs_person_container:hover .fndgs_inner_container {
     }
-#findings-control .person_container.highlight:hover .marker {
+#findings-control .fndgs_person_container.fndgs_highlight:hover .fndgs_marker {
     background: rgba(80,151,217,1);
 }
-#findings-control .person_container.highlight_hover .marker {
+#findings-control .fndgs_person_container.fndgs_highlight_hover .fndgs_marker {
     background: rgba(80,151,217,1);
     }
 
 /* Person Active */
-#findings-control .person_container.active {
+#findings-control .fndgs_person_container.fndgs_active {
     }
-#findings-control .person_container.active .inner_container {
+#findings-control .fndgs_person_container.fndgs_active .fndgs_inner_container {
     width: 105px;
     left: -70px;
     padding-top: 20px;
@@ -191,10 +191,10 @@
     box-shadow: 0 0 2px rgba(0,0,0,0.5);
     z-index: 9;
     }
-#findings-control .person_container.active .name {
+#findings-control .fndgs_person_container.fndgs_active .fndgs_name {
     display: block;
     }
-#findings-control .person_container.active .quote_box, #findings-control .person_container.active .link_box {
+#findings-control .fndgs_person_container.fndgs_active .fndgs_quote_box, #findings-control .fndgs_person_container.fndgs_active .fndgs_link_box {
     display: block;
     cursor: pointer;
     }
@@ -233,20 +233,20 @@
     margin-bottom: 0px;
 }
 
-.findings-comments .findings-comment .comment-image {
+.findings-comments .findings-comment .fndgs_comment-image {
     height: 30px;
     width: 30px;
     background-size: 100% auto;
     background-position: center center;
     display: inline-block;
 }
-.findings-comments .findings-comment .comment-content {
+.findings-comments .findings-comment .fndgs_comment-content {
     display: inline-block;
     vertical-align: top;
     padding-left: 10px;
     white-space: normal;
     max-width: 450px;
 }
-.findings-comments.active {
+.findings-comments.fndgs_active {
     display: block;
 }

@@ -203,46 +203,46 @@ function tagUsersWithHighlightsInView(){
         }
 
         var clip_id = $(e).attr('rel');
-        $('#findings-person-' + clip_id).parents('.person_container').toggleClass('highlight', isInViewport(e));
+        $('#findings-person-' + clip_id).parents('.fndgs_person_container').toggleClass('fndgs_highlight', isInViewport(e));
 
     });
 }
 
 
 function armFindingsControls() {
-    $('#findings-control .person_container .inner_container').mouseenter(function() {
-        var rel = $(this).find('.person').attr('rel');
-        $('.findings-highlight-' + rel).toggleClass('active', true);
-        $('.findings-comments-' + rel).toggleClass('active', true);
-        $(this).parent().toggleClass('active', true);
+    $('#findings-control .fndgs_person_container .fndgs_inner_container').mouseenter(function() {
+        var rel = $(this).find('.fndgs_person').attr('rel');
+        $('.findings-highlight-' + rel).toggleClass('fndgs_active', true);
+        $('.findings-comments-' + rel).toggleClass('fndgs_active', true);
+        $(this).parent().toggleClass('fndgs_active', true);
     });
-    $('#findings-control .person_container .inner_container').mouseleave(function() {
-        var rel = $(this).find('.person').attr('rel');
-        $('.findings-highlight-' + rel).toggleClass('active', false);
-        $('.findings-comments-' + rel).toggleClass('active', false);
-        $(this).parent().toggleClass('active', false);
+    $('#findings-control .fndgs_person_container .fndgs_inner_container').mouseleave(function() {
+        var rel = $(this).find('.fndgs_person').attr('rel');
+        $('.findings-highlight-' + rel).toggleClass('fndgs_active', false);
+        $('.findings-comments-' + rel).toggleClass('fndgs_active', false);
+        $(this).parent().toggleClass('fndgs_active', false);
     });
-    $('#findings-control .highlighter_box').click(function() {
-        chrome.extension.sendMessage({'action': 'loadBookmarklet'});
+    $('#findings-control .fndgs_highlighter_box').click(function() {
+        chrome.extension.sendMessage({'fndgs_action': 'loadBookmarklet'});
     });
-    $('#findings-control .close_highlight_box').click(function() {
-        $('.findings-highlight').toggleClass('disabled', true);
+    $('#findings-control .fndgs_close_highlight_box').click(function() {
+        $('.findings-highlight').toggleClass('fndgs_disabled', true);
         $('#findings-control').remove();
     });
-    $('.person_container .name').mouseenter(function() {
-        $('.person_container').toggleClass('active', false);
+    $('.fndgs_person_container .fndgs_name').mouseenter(function() {
+        $('.fndgs_person_container').toggleClass('fndgs_active', false);
     });
     $('.findings-highlight').mouseenter(function() {
         var rel = $(this).attr('rel');
-        $('.findings-highlight-' + rel).toggleClass('active', true);
-        $('.findings-comments-' + rel).toggleClass('active', true);
-        $('#findings-control .person[rel=' + rel + ']').parents('.person_container').toggleClass('highlight_hover', true);
+        $('.findings-highlight-' + rel).toggleClass('fndgs_active', true);
+        $('.findings-comments-' + rel).toggleClass('fndgs_active', true);
+        $('#findings-control .fndgs_person[rel=' + rel + ']').parents('.fndgs_person_container').toggleClass('fndgs_highlight_hover', true);
     });
     $('.findings-highlight').mouseleave(function() {
         var rel = $(this).attr('rel');
-        $('.findings-highlight').toggleClass('active', false);
-        $('.findings-comments-' + rel).toggleClass('active', false);
-        $('#findings-control .person').parents('.person_container').toggleClass('highlight_hover', false); 
+        $('.findings-highlight').toggleClass('fndgs_active', false);
+        $('.findings-comments-' + rel).toggleClass('fndgs_active', false);
+        $('#findings-control .fndgs_person').parents('.fndgs_person_container').toggleClass('fndgs_highlight_hover', false); 
     });
 
     // Tag users with hightlights initially in view
@@ -253,7 +253,7 @@ function armFindingsControls() {
         tagUsersWithHighlightsInView();
     });
 
-    $('#findings-control .person_container .quote_box').click(function() {
+    $('#findings-control .fndgs_person_container .fndgs_quote_box').click(function() {
         var rel = $(this).attr('rel');
         var $first = $('.findings-highlight-' + rel).first();
         var offset = $first.offset().top;
@@ -283,13 +283,13 @@ function handleClipFetch(data){
 
     var c = '';
     c += '<div id="findings-control">';
-    c +=     '<div class="logo_container">';
-    c +=        '<div class="inner_container">'
-    c +=            '<a href="http://findings.com" target="_blank" title="Findings" id="logo" style="' + logo + '"></a>';
-    c +=            '<div class="close_highlight_box" title="Close all" style="' + control_actions +'"></div>'
+    c +=     '<div class="fndgs_logo_container">';
+    c +=        '<div class="fndgs_inner_container">'
+    c +=            '<a href="http://findings.com" target="_blank" title="Findings" id="fndgs_logo" style="' + logo + '"></a>';
+    c +=            '<div class="fndgs_close_highlight_box" title="Close all" style="' + control_actions +'"></div>'
     c +=        '</div>'
     c +=     '</div>';
-    c +=     '<div title="Create quote" class="highlighter_box" style="' + control_actions +'"></div>'
+    c +=     '<div title="Create quote" class="fndgs_highlighter_box" style="' + control_actions +'"></div>'
     c += '</div>';
 
     //
@@ -325,15 +325,15 @@ function handleClipFetch(data){
         var image = clip.user__image;
 
         var p = '';
-        p += '<div class="person_container">';
-        p += '<div class="inner_container">';
-        p += '<div class="person_cover"></div>'
-        p += '<a href="https://findings.com/' + username + '/" target="_blank" title="View user on Findings" class="person highlight-adam" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');" id="findings-person-' + clip.id + '"></a>';
-        p += '<a href="http://findings.com'+ clip.url +'" target="_blank" title="View quote on Findings" class="link_box" style="' + user_actions + '"></a>';
-        p += '<div title="Scroll to quote" class="quote_box" rel="' + clip.id + '" style="' + user_actions + '"></div>';
-        p += '<div class="name">' + fullname + '</div>';
+        p += '<div class="fndgs_person_container">';
+        p += '<div class="fndgs_inner_container">';
+        p += '<div class="fndgs_person_cover"></div>'
+        p += '<a href="https://findings.com/' + username + '/" target="_blank" title="View user on Findings" class="fndgs_person fndgs_highlight" rel="'+ clip.id +'" style="background-image: url(\'' + image + '\');" id="findings-person-' + clip.id + '"></a>';
+        p += '<a href="http://findings.com'+ clip.url +'" target="_blank" title="View quote on Findings" class="fndgs_link_box" style="' + user_actions + '"></a>';
+        p += '<div title="Scroll to quote" class="fndgs_quote_box" rel="' + clip.id + '" style="' + user_actions + '"></div>';
+        p += '<div class="fndgs_name">' + fullname + '</div>';
         p += '</div>';
-        p += '<div class="marker"></div>'
+        p += '<div class="fndgs_marker"></div>'
         p += '</div>';
 
         $('#findings-control').append(p);
@@ -346,8 +346,8 @@ function handleClipFetch(data){
                 var comment = comments[j]
                 var comment_user_image = comment.user__image;
                 c += '<div class="findings-comment">';
-                c += '<div class="comment-image" style="background-image: url(\'' + comment_user_image + '\');"></div>';
-                c += '<div class="comment-content">' + comment.content + '</div>';
+                c += '<div class="fndgs_comment-image" style="background-image: url(\'' + comment_user_image + '\');"></div>';
+                c += '<div class="fndgs_comment-content">' + comment.content + '</div>';
                 c += '</div>';
             }
             c += '</div>'
