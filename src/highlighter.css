@@ -233,6 +233,7 @@
 
 .findings-comments .findings-comment {
     padding: 5px 0 3px 6px;
+    min-height: 36px;
     clear: both;
     background: #eee;
     border-bottom: solid 1px #ccc;
@@ -262,6 +263,7 @@
     vertical-align: top;
     padding-left: 8px;
     padding-right: 12px;
+    margin-right: 20px;
     white-space: normal;
     max-width: 450px;
 }
