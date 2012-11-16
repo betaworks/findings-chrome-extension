@@ -1,4 +1,7 @@
-var LSK_INLINE_HIGHLIGHTING_ENABLED = 'inline_highlighting_enabled';
+// This is the first key that we used. This was set to default off. We'll deprecate using this one
+// in favor of the _production one when we release this officially
+// var LSK_INLINE_HIGHLIGHTING_ENABLED = 'inline_highlighting_enabled';
+var LSK_INLINE_HIGHLIGHTING_ENABLED_PRODUCTION = 'inline_highlighting_enabled_production';
 var LSK_FIRST_RUN = 'first_run';
 
 var config = {
@@ -23,15 +26,15 @@ var config = {
 
     // Inline Highlighting Option
     get inlineHighlightingEnabled(){
-        if (typeof(localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED]) === 'undefined'){
-            localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED] = 'false';
+        if (typeof(localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED_PRODUCTION]) === 'undefined'){
+            localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED_PRODUCTION] = 'true';
         }
 
-        return localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED] === 'true' ? true : false;
+        return localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED_PRODUCTION] === 'true' ? true : false;
     },
 
     set inlineHighlightingEnabled(value){
-        localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED] = value;
+        localStorage[LSK_INLINE_HIGHLIGHTING_ENABLED_PRODUCTION] = value;
     }
 
 }
