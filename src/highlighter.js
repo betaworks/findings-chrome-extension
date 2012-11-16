@@ -244,6 +244,10 @@ function armFindingsControls() {
         $('.findings-comments-' + rel).toggleClass('fndgs_active', false);
         $('#findings-control .fndgs_person').parents('.fndgs_person_container').toggleClass('fndgs_highlight_hover', false); 
     });
+    $('.fndgs_highlight_settings').click(function() {
+        var url = chrome.extension.getURL("options.html");
+        window.open(url);
+    });
 
     // Tag users with hightlights initially in view
     tagUsersWithHighlightsInView();
