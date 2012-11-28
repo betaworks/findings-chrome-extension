@@ -109,6 +109,7 @@
     right: -5px;
     float: left;
     z-index: 8;
+    width: 35px;
 }
 #findings-control .fndgs_marker {
     width: 6px;
